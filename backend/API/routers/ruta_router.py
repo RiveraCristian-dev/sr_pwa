@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import json, os
-from core.dijktra import dijkstra, path_distance
-from core.calculos import calcular_tiempo, calcular_costo, calcular_energia
+from backend.core.dijktra import dijkstra, path_distance
+from backend.core.calculos import calcular_tiempo, calcular_costo, calcular_energia
 
 router = APIRouter()
 
@@ -11,11 +11,15 @@ class RutaRequest(BaseModel):
     destino: str
 
 # load graph once (relative path)
+# BASE_DIR = carpeta /backend
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-GRAPH_PATH = os.path.join(BASE_DIR, "backend", "data", "graph.json")
+
+# GRAPH_PATH = /backend/data/graph.json
+GRAPH_PATH = os.path.join(BASE_DIR, "data", "graph.json")
 
 with open(GRAPH_PATH, "r") as f:
     GRAPH = json.load(f)
+
 
 @router.post('/ruta')
 def obtener_ruta(payload: RutaRequest):
