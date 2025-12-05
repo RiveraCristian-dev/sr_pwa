@@ -21,3 +21,7 @@ app.include_router(simulacion_router, prefix="/simulacion", tags=["Simulación"]
 @app.get("/")
 def root():
     return {"message": "API del Simulador de Rutas funcionando"}
+
+from .depedencies import create_tables
+# ... (código existente)
+create_tables()  # Crea tablas al iniciar (opcional)
