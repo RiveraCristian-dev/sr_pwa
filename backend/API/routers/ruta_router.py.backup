@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from ..dependencies import get_db  # Conexión a BD 
 from ..models import NodoMapa, Vehiculo, RutaOptimizada
