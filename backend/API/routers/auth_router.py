@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+Ôªøfrom fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
@@ -17,7 +17,7 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str
 
-SECRET_KEY = "tu_clave_secreta_aqui"  # Cambia en producciÛn
+SECRET_KEY = "tu_clave_secreta_aqui"  # Cambia en producci√≥n
 ALGORITHM = "HS256"
 
 def create_access_token(data: dict):
@@ -29,8 +29,8 @@ def create_access_token(data: dict):
 @router.post("/login", response_model=TokenResponse)
 def login(request: LoginRequest, db=Depends(get_db)):
     user = db.query(Usuario).filter(Usuario.email == request.email).first()
-    if not user or user.password_hash != request.password:  # Placeholder: hashea passwords en producciÛn
-        raise HTTPException(status_code=401, detail="Credenciales inv·lidas")
+    if not user or user.password_hash != request.password:  # Placeholder: hashea passwords en producci√≥n
+        raise HTTPException(status_code=401, detail="Credenciales inv√°lidas")
     token = create_access_token({"sub": user.email, "rol": user.rol})
     return {"access_token": token, "token_type": "bearer"}
 
