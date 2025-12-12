@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_1ded867b322dcca22d9c55aa4b4efa18 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_1ded867b322dcca22d9c55aa4b4efa18" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_1ded867b322dcca22d9c55aa4b4efa18 = L.map(
+                "map_1ded867b322dcca22d9c55aa4b4efa18",
+                {
+                    center: [19.668851, -99.179975],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 13,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_257ba0fe19fb59e068760cbf227d01c7 = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "Data by \u0026copy; \u003ca target=\"_blank\" href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var poly_line_8f8eb5144a6b160ac7f5587641844b8e = L.polyline(
+                [[19.668851, -99.179975], [19.66909, -99.17993], [19.66953, -99.17986], [19.66959, -99.18024], [19.66963, -99.1805], [19.66935, -99.18055], [19.66921, -99.18058], [19.66897, -99.18062], [19.66875, -99.18114], [19.6685, -99.18107], [19.66815, -99.18097], [19.66773, -99.18086], [19.66754, -99.18083], [19.66739, -99.18082], [19.66655, -99.18095], [19.66649, -99.18096], [19.66603, -99.18106], [19.66585, -99.1811], [19.66569, -99.18114], [19.6655, -99.18117], [19.66525, -99.18123], [19.66419, -99.18145], [19.66288, -99.18172], [19.66271, -99.18175], [19.66239, -99.18181], [19.66233, -99.18182], [19.66191, -99.18189], [19.66159, -99.18195], [19.66112, -99.18203], [19.66098, -99.18207], [19.66065, -99.18212], [19.6602, -99.18222], [19.65999, -99.18225], [19.65855, -99.18253], [19.65811, -99.18261], [19.65773, -99.18269], [19.65729, -99.18279], [19.65607, -99.18308], [19.65532, -99.18319], [19.65518, -99.18321], [19.65491, -99.18325], [19.65469, -99.18328], [19.65452, -99.1833], [19.65427, -99.18333], [19.65365, -99.18341], [19.65348, -99.18343], [19.65277, -99.18352], [19.65257, -99.18354], [19.65207, -99.18364], [19.65199, -99.18365], [19.65161, -99.18372], [19.65097, -99.18382], [19.65064, -99.18386], [19.65046, -99.18388], [19.65022, -99.18392], [19.64948, -99.18402], [19.6493, -99.18404], [19.64911, -99.18407], [19.64893, -99.18409], [19.64858, -99.18414], [19.6481, -99.1842], [19.64782, -99.18424], [19.64773, -99.18425], [19.64764, -99.18426], [19.647, -99.18433], [19.64662, -99.18436], [19.64629, -99.18441], [19.64554, -99.18449], [19.64484, -99.18448], [19.6444, -99.18448], [19.64398, -99.18452], [19.6437, -99.18454], [19.64343, -99.18457], [19.64307, -99.18462], [19.64251, -99.18466], [19.64185, -99.18471], [19.64108, -99.18476], [19.63937, -99.18479], [19.63911, -99.18479], [19.63873, -99.1848], [19.63857, -99.18481], [19.63839, -99.18481], [19.63829, -99.18481], [19.63811, -99.18481], [19.63802, -99.18481], [19.63786, -99.18481], [19.63765, -99.18479], [19.63581, -99.18464], [19.63532, -99.18465], [19.63447, -99.18467], [19.63408, -99.18469], [19.6337, -99.18471], [19.63229, -99.18475], [19.63185, -99.18478], [19.63105, -99.18487], [19.63089, -99.18487], [19.63051, -99.18489], [19.62989, -99.18491], [19.62891, -99.18491], [19.62809, -99.18491], [19.62707, -99.18495], [19.62627, -99.18497], [19.62594, -99.18499], [19.62564, -99.18502], [19.62447, -99.18518], [19.62401, -99.18524], [19.62401, -99.18533], [19.62402, -99.18725], [19.62402, -99.18746], [19.62402, -99.18771], [19.62403, -99.18797], [19.62402, -99.1894], [19.62402, -99.19041], [19.62402, -99.19067], [19.62401, -99.19086], [19.62399, -99.19098], [19.62392, -99.19122], [19.6238, -99.19137], [19.62375, -99.19146], [19.6237, -99.19164], [19.62367, -99.19185], [19.6236, -99.19226], [19.62359, -99.19237], [19.62357, -99.19255], [19.62354, -99.19287], [19.62352, -99.193], [19.62352, -99.19311], [19.62358, -99.19338], [19.62343, -99.1932], [19.62319, -99.19281], [19.62311, -99.19269], [19.62303, -99.19261], [19.62293, -99.19254], [19.62281, -99.19248], [19.62252, -99.19238], [19.62233, -99.19235], [19.62222, -99.19233], [19.622, -99.19223], [19.62189, -99.19219], [19.62174, -99.19216], [19.62096, -99.19204], [19.62082, -99.19202], [19.6207, -99.192], [19.6199, -99.19186], [19.619, -99.19177], [19.61837, -99.19167], [19.61812, -99.19162], [19.61784, -99.1915], [19.61761, -99.19138], [19.61734, -99.19123], [19.61705, -99.19107], [19.61655, -99.19099], [19.61517, -99.19077], [19.61267, -99.19036], [19.61218, -99.19028], [19.60927, -99.1898], [19.60873, -99.18972], [19.60767, -99.18955], [19.60712, -99.18946], [19.60307, -99.18876], [19.60294, -99.18874], [19.6024, -99.18865], [19.60191, -99.1886], [19.60142, -99.18859], [19.60103, -99.18862], [19.60086, -99.18865], [19.60067, -99.1887], [19.6005, -99.18876], [19.60001, -99.18898], [19.59971, -99.18917], [19.59945, -99.18938], [19.59903, -99.18981], [19.5987, -99.19022], [19.59845, -99.19063], [19.59827, -99.19101], [19.59818, -99.19126], [19.59811, -99.19152], [19.598, -99.19214], [19.59788, -99.19303], [19.59773, -99.1944], [19.59762, -99.19533], [19.59736, -99.19751], [19.59731, -99.19794], [19.59723, -99.19857], [19.59717, -99.19892], [19.59704, -99.19937], [19.59692, -99.19967], [19.59671, -99.20007], [19.59653, -99.20034], [19.59623, -99.2007], [19.59593, -99.20098], [19.59562, -99.20121], [19.59524, -99.20143], [19.59497, -99.20155], [19.59453, -99.20169], [19.59419, -99.20175], [19.59384, -99.20178], [19.59367, -99.20178], [19.59307, -99.20174], [19.59193, -99.20164], [19.59172, -99.20162], [19.59039, -99.20151], [19.59001, -99.20149], [19.58958, -99.2015], [19.58929, -99.20154], [19.58903, -99.2016], [19.58877, -99.20168], [19.58842, -99.20184], [19.58817, -99.20199], [19.58794, -99.20216], [19.58766, -99.20242], [19.58686, -99.20321], [19.58663, -99.20344], [19.58651, -99.20356], [19.58618, -99.20385], [19.58594, -99.20402], [19.58582, -99.20409], [19.58557, -99.20422], [19.58531, -99.20433], [19.58507, -99.2044], [19.58484, -99.20445], [19.58435, -99.20451], [19.58324, -99.20459], [19.58294, -99.20461], [19.58247, -99.20466], [19.58211, -99.20473], [19.5816, -99.20489], [19.58137, -99.20501], [19.5811, -99.20514], [19.57985, -99.2059], [19.57932, -99.20622], [19.57793, -99.20704], [19.57776, -99.20713], [19.57746, -99.2073], [19.57736, -99.20736], [19.57727, -99.20741], [19.57694, -99.2076], [19.57677, -99.20769], [19.57646, -99.20783], [19.57602, -99.20798], [19.57573, -99.20805], [19.57537, -99.20809], [19.57488, -99.20813], [19.57434, -99.20813], [19.57395, -99.2081], [19.57354, -99.20804], [19.57314, -99.20796], [19.57281, -99.20791], [19.57235, -99.2079], [19.57204, -99.20792], [19.57157, -99.20797], [19.5713, -99.20803], [19.57051, -99.20824], [19.56972, -99.20847], [19.56952, -99.20853], [19.56904, -99.20866], [19.56855, -99.20879], [19.56822, -99.20882], [19.56805, -99.20882], [19.56775, -99.20879], [19.56733, -99.20869], [19.56697, -99.20853], [19.56673, -99.20838], [19.56651, -99.20821], [19.56591, -99.2077], [19.56571, -99.20753], [19.56544, -99.20731], [19.56515, -99.2071], [19.56487, -99.20693], [19.56456, -99.20678], [19.56418, -99.20662], [19.56399, -99.20656], [19.56346, -99.20644], [19.56312, -99.20639], [19.56237, -99.20635], [19.56215, -99.20634], [19.56196, -99.20633], [19.55932, -99.20618], [19.55785, -99.20611], [19.55572, -99.206], [19.55494, -99.20597], [19.55467, -99.20597], [19.55424, -99.206], [19.55389, -99.20605], [19.55351, -99.20614], [19.55309, -99.20628], [19.55286, -99.20637], [19.55238, -99.20662], [19.55226, -99.20668], [19.55183, -99.20694], [19.55173, -99.207], [19.55148, -99.20716], [19.55136, -99.20724], [19.54997, -99.20813], [19.54957, -99.20839], [19.54603, -99.2106], [19.54541, -99.21099], [19.54182, -99.21325], [19.54048, -99.21409], [19.53923, -99.21489], [19.53815, -99.2157], [19.53539, -99.2178], [19.53509, -99.21803], [19.53291, -99.21969], [19.53258, -99.21994], [19.53103, -99.22113], [19.53065, -99.22142], [19.5304, -99.22161], [19.52883, -99.2228], [19.52874, -99.22287], [19.52846, -99.22308], [19.52837, -99.22315], [19.52655, -99.22455], [19.52577, -99.22516], [19.525, -99.22572], [19.52479, -99.22588], [19.52428, -99.22628], [19.52341, -99.22693], [19.52252, -99.22761], [19.52098, -99.22878], [19.52008, -99.22948], [19.51902, -99.23029], [19.51871, -99.23052], [19.51854, -99.23065], [19.51823, -99.23089], [19.51815, -99.23095], [19.51797, -99.23109], [19.51786, -99.23118], [19.51775, -99.23127], [19.51753, -99.23146], [19.5174, -99.23159], [19.51708, -99.23191], [19.51672, -99.23221], [19.51666, -99.23226], [19.51655, -99.23234], [19.51512, -99.23344], [19.51444, -99.23396], [19.51426, -99.23409], [19.51362, -99.23459], [19.51317, -99.23492], [19.51247, -99.23538], [19.51177, -99.23575], [19.51149, -99.23588], [19.51074, -99.23618], [19.51013, -99.23637], [19.50958, -99.23651], [19.50875, -99.23666], [19.50803, -99.23673], [19.507, -99.23675], [19.50681, -99.23675], [19.50454, -99.23678], [19.50435, -99.23678], [19.50263, -99.23681], [19.5022, -99.23681], [19.50184, -99.23681], [19.50119, -99.23686], [19.50001, -99.23708], [19.49966, -99.23712], [19.49943, -99.23713], [19.4989, -99.23712], [19.49867, -99.2371], [19.4985, -99.23708], [19.49752, -99.23691], [19.49715, -99.23688], [19.49687, -99.23688], [19.49579, -99.23689], [19.4956, -99.23689], [19.49499, -99.2369], [19.49244, -99.23693], [19.49104, -99.23694], [19.49069, -99.23693], [19.49053, -99.23692], [19.49036, -99.23689], [19.49011, -99.23687], [19.48989, -99.23684], [19.48972, -99.23681], [19.48967, -99.2368], [19.48958, -99.23678], [19.48932, -99.23675], [19.48898, -99.23676], [19.48886, -99.23675], [19.4887, -99.23673], [19.48846, -99.23668], [19.48683, -99.23583], [19.48591, -99.23535], [19.48334, -99.23401], [19.48299, -99.23383], [19.48217, -99.2334], [19.48134, -99.23297], [19.47866, -99.23157], [19.47791, -99.23118], [19.47749, -99.23096], [19.47697, -99.23069], [19.47334, -99.2288], [19.4729, -99.22857], [19.47074, -99.22744], [19.46972, -99.22691], [19.46769, -99.22586], [19.46664, -99.22531], [19.46629, -99.22513], [19.46581, -99.22486], [19.46512, -99.22451], [19.46359, -99.22371], [19.46311, -99.22344], [19.46237, -99.22308], [19.46201, -99.22289], [19.46059, -99.22215], [19.45986, -99.22177], [19.45942, -99.22152], [19.45892, -99.22126], [19.45862, -99.22119], [19.45837, -99.22113], [19.45774, -99.22103], [19.4576, -99.22098], [19.45733, -99.22084], [19.4571, -99.2207], [19.45702, -99.22065], [19.45691, -99.22058], [19.45687, -99.22055], [19.45675, -99.22044], [19.45669, -99.22035], [19.45665, -99.22024], [19.45662, -99.22006], [19.45659, -99.22], [19.45644, -99.21965], [19.45632, -99.21944], [19.45616, -99.21924], [19.45599, -99.21907], [19.4553, -99.2184], [19.45501, -99.21811], [19.45452, -99.21762], [19.45424, -99.21732], [19.45405, -99.21709], [19.45364, -99.21659], [19.45334, -99.21622], [19.453, -99.2158], [19.4527, -99.21541], [19.45197, -99.21444], [19.45143, -99.21371], [19.45061, -99.21256], [19.45032, -99.21216], [19.45024, -99.21204], [19.45014, -99.21186], [19.45004, -99.2116], [19.45001, -99.21149], [19.44997, -99.21123], [19.44991, -99.21052], [19.44986, -99.21024], [19.44982, -99.21009], [19.44977, -99.20996], [19.44935, -99.20901], [19.44919, -99.20865], [19.44897, -99.20815], [19.44841, -99.20695], [19.44798, -99.20609], [19.44793, -99.20601], [19.44786, -99.20591], [19.44777, -99.20579], [19.44764, -99.20567], [19.44717, -99.20534], [19.447, -99.2052], [19.44689, -99.20508], [19.44681, -99.20497], [19.44667, -99.2047], [19.44653, -99.20438], [19.44628, -99.20381], [19.44613, -99.20347], [19.4456, -99.20227], [19.44529, -99.20158], [19.44501, -99.20095], [19.44468, -99.20019], [19.44433, -99.19932], [19.44428, -99.19921], [19.44401, -99.19855], [19.44382, -99.19806], [19.44354, -99.19719], [19.4434, -99.19674], [19.44327, -99.19632], [19.4432, -99.19605], [19.44299, -99.19439], [19.4429, -99.19367], [19.44283, -99.19314], [19.44278, -99.19291], [19.44268, -99.19263], [19.4426, -99.19248], [19.44248, -99.19231], [19.44241, -99.19223], [19.44217, -99.19201], [19.44171, -99.19166], [19.44067, -99.19087], [19.44049, -99.19072], [19.44029, -99.19055], [19.44007, -99.19032], [19.43989, -99.19008], [19.43975, -99.18987], [19.43954, -99.18948], [19.43935, -99.18904], [19.43924, -99.1887], [19.43917, -99.18838], [19.43912, -99.18806], [19.43896, -99.18634], [19.43894, -99.18613], [19.43892, -99.18589], [19.43889, -99.18555], [19.43885, -99.18528], [19.43882, -99.18516], [19.43859, -99.18447], [19.43848, -99.18414], [19.43839, -99.18388], [19.43831, -99.18361], [19.43827, -99.1835], [19.43811, -99.18308], [19.43804, -99.18293], [19.43787, -99.18268], [19.43725, -99.18194], [19.43713, -99.18178], [19.43702, -99.18159], [19.43692, -99.18138], [19.43683, -99.18116], [19.4366, -99.18057], [19.43648, -99.18032], [19.43635, -99.18006], [19.43621, -99.17979], [19.43602, -99.17943], [19.43574, -99.17892], [19.43555, -99.17855], [19.43548, -99.17841], [19.43518, -99.17777], [19.4349, -99.17719], [19.43474, -99.17686], [19.43463, -99.17662], [19.43452, -99.17636], [19.43437, -99.17602], [19.43423, -99.17568], [19.43413, -99.17545], [19.43402, -99.17525], [19.4334, -99.17428], [19.43314, -99.17388], [19.43309, -99.1738], [19.4329, -99.1735], [19.43246, -99.1728], [19.43241, -99.17267], [19.43238, -99.17249], [19.43239, -99.17232], [19.43245, -99.17214], [19.43254, -99.172], [19.43262, -99.17192], [19.43275, -99.17182], [19.43374, -99.17117], [19.43398, -99.17101], [19.43441, -99.17072], [19.43447, -99.17068], [19.43486, -99.17041], [19.43461, -99.16962], [19.43445, -99.16908], [19.4343, -99.16853], [19.43426, -99.16839], [19.43418, -99.1681], [19.43387, -99.16697], [19.43386, -99.16693], [19.43372, -99.16643], [19.43366, -99.1662], [19.43331, -99.16498], [19.4332, -99.16457], [19.4328, -99.16308], [19.43268, -99.16265], [19.43254, -99.16218], [19.43236, -99.16158], [19.43224, -99.16117], [19.4321, -99.16068], [19.43204, -99.16047], [19.43198, -99.16026], [19.43174, -99.15935], [19.43173, -99.1593], [19.43171, -99.15922], [19.4317, -99.15917], [19.43162, -99.15883], [19.43153, -99.15847], [19.43148, -99.15832], [19.43143, -99.15815], [19.43139, -99.15803], [19.43178, -99.15722], [19.43201, -99.15673], [19.43269, -99.15528], [19.43272, -99.15516], [19.43274, -99.15499], [19.4327, -99.15488], [19.43268, -99.15477], [19.43267, -99.1545], [19.43275, -99.15439], [19.43288, -99.15428], [19.43319, -99.15416], [19.43327, -99.15405], [19.43331, -99.15397], [19.43372, -99.15309], [19.43357, -99.15206], [19.4334, -99.15092], [19.43336, -99.15062], [19.43301, -99.15078], [19.43265, -99.15094], [19.43205, -99.1512], [19.43176, -99.15132], [19.43153, -99.14996], [19.43138, -99.14896], [19.43128, -99.14814], [19.43127, -99.14809], [19.43126, -99.14802], [19.43104, -99.14661], [19.43086, -99.14549], [19.43062, -99.14382], [19.4306, -99.14368], [19.43054, -99.14329], [19.43046, -99.14271], [19.43043, -99.14247], [19.43029, -99.14147], [19.43037, -99.14146], [19.43079, -99.1414], [19.43122, -99.14134], [19.43168, -99.14128], [19.43203, -99.14123], [19.43181, -99.13966], [19.43167, -99.13865], [19.4315, -99.1374], [19.43149, -99.1373], [19.43139, -99.13662], [19.43124, -99.13558], [19.43111, -99.13451], [19.43098, -99.13358], [19.43083, -99.13257], [19.4308, -99.13236], [19.4307, -99.13157], [19.43066, -99.13124], [19.43126, -99.13114], [19.43156, -99.1311], [19.4316, -99.1314], [19.43169, -99.13232]],
+                {"bubblingMouseEvents": true, "color": "#0055FF", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "#0055FF", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.7, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            poly_line_8f8eb5144a6b160ac7f5587641844b8e.bindTooltip(
+                `<div>
+                     Ruta Sugerida
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var circle_edda24ec50340fb84e007ab442af645f = L.circle(
+                [19.64915, -99.14326],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_c4deb74e385a3da23f0aff1e26530f5a = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_799d95418ebaa8f3e987515f69c8bca0 = $(`<div id="html_799d95418ebaa8f3e987515f69c8bca0" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_c4deb74e385a3da23f0aff1e26530f5a.setContent(html_799d95418ebaa8f3e987515f69c8bca0);
+            
+        
+
+        circle_edda24ec50340fb84e007ab442af645f.bindPopup(popup_c4deb74e385a3da23f0aff1e26530f5a)
+        ;
+
+        
+    
+    
+            var circle_3fe0b7ba2d04c0c24fa9338a273ca71e = L.circle(
+                [19.5457, -99.16084],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_f76d5dd2ede09864c9a8713c2935ed29 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_17d29d0d5a04f82622ef3e6c1662ac49 = $(`<div id="html_17d29d0d5a04f82622ef3e6c1662ac49" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_f76d5dd2ede09864c9a8713c2935ed29.setContent(html_17d29d0d5a04f82622ef3e6c1662ac49);
+            
+        
+
+        circle_3fe0b7ba2d04c0c24fa9338a273ca71e.bindPopup(popup_f76d5dd2ede09864c9a8713c2935ed29)
+        ;
+
+        
+    
+    
+            var circle_5e3b5afd3dfbbc21409ecad0a3fc3e1c = L.circle(
+                [19.63862, -99.15552],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_c77a0bbcad6cbb945f8b0ae7e8a43de7 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_6d7bc8ebee327e54ac540fdd45beb0f0 = $(`<div id="html_6d7bc8ebee327e54ac540fdd45beb0f0" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_c77a0bbcad6cbb945f8b0ae7e8a43de7.setContent(html_6d7bc8ebee327e54ac540fdd45beb0f0);
+            
+        
+
+        circle_5e3b5afd3dfbbc21409ecad0a3fc3e1c.bindPopup(popup_c77a0bbcad6cbb945f8b0ae7e8a43de7)
+        ;
+
+        
+    
+    
+            var marker_4a2197e2b1b3aeb20685408556e154ae = L.marker(
+                [19.46257, -99.22281],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_151e639d76d364ff65440840d28c9485 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_4a2197e2b1b3aeb20685408556e154ae.setIcon(icon_151e639d76d364ff65440840d28c9485);
+        
+    
+        var popup_4258cecf75faa3e2daf5f5a1416e5c56 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b27f31b6d7a40c0dcd1122412ca1f899 = $(`<div id="html_b27f31b6d7a40c0dcd1122412ca1f899" style="width: 100.0%; height: 100.0%;">Obras: At Boulevard Toluca/Avenida 1ro de Mayo - road construction</div>`)[0];
+                popup_4258cecf75faa3e2daf5f5a1416e5c56.setContent(html_b27f31b6d7a40c0dcd1122412ca1f899);
+            
+        
+
+        marker_4a2197e2b1b3aeb20685408556e154ae.bindPopup(popup_4258cecf75faa3e2daf5f5a1416e5c56)
+        ;
+
+        
+    
+    
+            var marker_5ebe12b2f34bcc0f242574b6f5ecf882 = L.marker(
+                [19.47571, -99.13414],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_bc4ba0c0c0c53b98681a5991c4364e2a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_5ebe12b2f34bcc0f242574b6f5ecf882.setIcon(icon_bc4ba0c0c0c53b98681a5991c4364e2a);
+        
+    
+        var popup_41f198db300e6ec84aefcf54fa965614 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a3b2572d09dec53acb8e5bf2f88cc77f = $(`<div id="html_a3b2572d09dec53acb8e5bf2f88cc77f" style="width: 100.0%; height: 100.0%;">Obras: road construction. Roadway reduced to two lanes</div>`)[0];
+                popup_41f198db300e6ec84aefcf54fa965614.setContent(html_a3b2572d09dec53acb8e5bf2f88cc77f);
+            
+        
+
+        marker_5ebe12b2f34bcc0f242574b6f5ecf882.bindPopup(popup_41f198db300e6ec84aefcf54fa965614)
+        ;
+
+        
+    
+    
+            var circle_23df7a3fa4b7967e8c4bbae0f54a0fda = L.circle(
+                [19.64941, -99.14801],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_1dd579ca0b505e00862710ff9fb5b805 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d24c929767fe7b8eb39f6edc57fe3e39 = $(`<div id="html_d24c929767fe7b8eb39f6edc57fe3e39" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_1dd579ca0b505e00862710ff9fb5b805.setContent(html_d24c929767fe7b8eb39f6edc57fe3e39);
+            
+        
+
+        circle_23df7a3fa4b7967e8c4bbae0f54a0fda.bindPopup(popup_1dd579ca0b505e00862710ff9fb5b805)
+        ;
+
+        
+    
+    
+            var circle_0a63d52610292a87c2e069c8ea9d8986 = L.circle(
+                [19.55828, -99.19464],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_492dedea6ae5d544ce297a7e871be67e = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d1ce06b458265609a76fd249f6cd1fe3 = $(`<div id="html_d1ce06b458265609a76fd249f6cd1fe3" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_492dedea6ae5d544ce297a7e871be67e.setContent(html_d1ce06b458265609a76fd249f6cd1fe3);
+            
+        
+
+        circle_0a63d52610292a87c2e069c8ea9d8986.bindPopup(popup_492dedea6ae5d544ce297a7e871be67e)
+        ;
+
+        
+    
+    
+            var circle_364987245ccce2637b17f7ce49c0394a = L.circle(
+                [19.60646, -99.1674],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_7af450eccf26f7bcb4e65d4d416a4c4b = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_2aa2db677bd907fd4b950c6805df73d5 = $(`<div id="html_2aa2db677bd907fd4b950c6805df73d5" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_7af450eccf26f7bcb4e65d4d416a4c4b.setContent(html_2aa2db677bd907fd4b950c6805df73d5);
+            
+        
+
+        circle_364987245ccce2637b17f7ce49c0394a.bindPopup(popup_7af450eccf26f7bcb4e65d4d416a4c4b)
+        ;
+
+        
+    
+    
+            var marker_30e6b33661be9265a5c38fa2422d5ea7 = L.marker(
+                [19.43318, -99.14924],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_240e6cc3e7fd4c87007eca303f6494a6 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_30e6b33661be9265a5c38fa2422d5ea7.setIcon(icon_240e6cc3e7fd4c87007eca303f6494a6);
+        
+    
+        var popup_6de55065fc0f98aa69b494af71a5aa37 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_e7b6a102d7734da87cbbe54094f03160 = $(`<div id="html_e7b6a102d7734da87cbbe54094f03160" style="width: 100.0%; height: 100.0%;">Obras: road construction</div>`)[0];
+                popup_6de55065fc0f98aa69b494af71a5aa37.setContent(html_e7b6a102d7734da87cbbe54094f03160);
+            
+        
+
+        marker_30e6b33661be9265a5c38fa2422d5ea7.bindPopup(popup_6de55065fc0f98aa69b494af71a5aa37)
+        ;
+
+        
+    
+    
+            var circle_869e7d4d959cc2352584f410124ddcff = L.circle(
+                [19.4374, -99.13776],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_d730a2ef2ef5754acffd409c27b6a44e = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_5588d368b59b61a532b21631e46efe9e = $(`<div id="html_5588d368b59b61a532b21631e46efe9e" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_d730a2ef2ef5754acffd409c27b6a44e.setContent(html_5588d368b59b61a532b21631e46efe9e);
+            
+        
+
+        circle_869e7d4d959cc2352584f410124ddcff.bindPopup(popup_d730a2ef2ef5754acffd409c27b6a44e)
+        ;
+
+        
+    
+    
+            var marker_cc3a1ad75520dbc405522dba44b2349c = L.marker(
+                [19.45947, -99.2216],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_89f095d29753bab720d2337279ef71ef = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_cc3a1ad75520dbc405522dba44b2349c.setIcon(icon_89f095d29753bab720d2337279ef71ef);
+        
+    
+        var popup_3fbdb18a15060f24b6876aa1e9fda7cf = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a7172858f91435d4b57990e1773a67ce = $(`<div id="html_a7172858f91435d4b57990e1773a67ce" style="width: 100.0%; height: 100.0%;">Obras: At Avenida Río San Joaquín/Parque de los Remedios - road construction</div>`)[0];
+                popup_3fbdb18a15060f24b6876aa1e9fda7cf.setContent(html_a7172858f91435d4b57990e1773a67ce);
+            
+        
+
+        marker_cc3a1ad75520dbc405522dba44b2349c.bindPopup(popup_3fbdb18a15060f24b6876aa1e9fda7cf)
+        ;
+
+        
+    
+    
+            var circle_8d68ff2592077e02110f18061deca19b = L.circle(
+                [19.60918, -99.18045],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_7c68d9ea2cfae0100bfecda6b832c665 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_baacdc061b4d86f33f9936c5e38e7360 = $(`<div id="html_baacdc061b4d86f33f9936c5e38e7360" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_7c68d9ea2cfae0100bfecda6b832c665.setContent(html_baacdc061b4d86f33f9936c5e38e7360);
+            
+        
+
+        circle_8d68ff2592077e02110f18061deca19b.bindPopup(popup_7c68d9ea2cfae0100bfecda6b832c665)
+        ;
+
+        
+    
+    
+            var marker_22b7bdcb825baf91d8b846cc923a2405 = L.marker(
+                [19.43309, -99.14863],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_4b27d08b44e7afbd2d8694e91cb665db = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_22b7bdcb825baf91d8b846cc923a2405.setIcon(icon_4b27d08b44e7afbd2d8694e91cb665db);
+        
+    
+        var popup_cc5b0478653b6a5a30f15e713d76f5d3 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_f9e3b1fa9477359ebffce7899a8191cf = $(`<div id="html_f9e3b1fa9477359ebffce7899a8191cf" style="width: 100.0%; height: 100.0%;">Obras: Closed due to road construction</div>`)[0];
+                popup_cc5b0478653b6a5a30f15e713d76f5d3.setContent(html_f9e3b1fa9477359ebffce7899a8191cf);
+            
+        
+
+        marker_22b7bdcb825baf91d8b846cc923a2405.bindPopup(popup_cc5b0478653b6a5a30f15e713d76f5d3)
+        ;
+
+        
+    
+    
+            var marker_fd5cd1c07eb5272a3aeaaa6be4f5ffbb = L.marker(
+                [19.59004, -99.23562],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_871ad2c90d0bd78ba7776cccf3202934 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_fd5cd1c07eb5272a3aeaaa6be4f5ffbb.setIcon(icon_871ad2c90d0bd78ba7776cccf3202934);
+        
+    
+        var popup_aec4511b9664363d248a9e2e864df5e5 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_6687d011d8e15b29d3de892c45954238 = $(`<div id="html_6687d011d8e15b29d3de892c45954238" style="width: 100.0%; height: 100.0%;">Obras: road construction</div>`)[0];
+                popup_aec4511b9664363d248a9e2e864df5e5.setContent(html_6687d011d8e15b29d3de892c45954238);
+            
+        
+
+        marker_fd5cd1c07eb5272a3aeaaa6be4f5ffbb.bindPopup(popup_aec4511b9664363d248a9e2e864df5e5)
+        ;
+
+        
+    
+    
+            var marker_c5d3570a0a511403bfbac9e0d22b27bc = L.marker(
+                [19.50059, -99.17518],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_a3c84979ceb92332564970865b05a05c = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_c5d3570a0a511403bfbac9e0d22b27bc.setIcon(icon_a3c84979ceb92332564970865b05a05c);
+        
+    
+        var popup_e876a4b5da694ac3564ca95fa9a191a5 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b87482fc1e7ab867c2d698f49b7f090e = $(`<div id="html_b87482fc1e7ab867c2d698f49b7f090e" style="width: 100.0%; height: 100.0%;">Obras: road construction. Roadway reduced to two lanes</div>`)[0];
+                popup_e876a4b5da694ac3564ca95fa9a191a5.setContent(html_b87482fc1e7ab867c2d698f49b7f090e);
+            
+        
+
+        marker_c5d3570a0a511403bfbac9e0d22b27bc.bindPopup(popup_e876a4b5da694ac3564ca95fa9a191a5)
+        ;
+
+        
+    
+    
+            var circle_a91ed77865391c4d25d5d2cf75927be4 = L.circle(
+                [19.52554, -99.14439],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_be6b97b604609df41620686b7eab878c = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a5927ec891f69c114951b7f2dc9e12d5 = $(`<div id="html_a5927ec891f69c114951b7f2dc9e12d5" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_be6b97b604609df41620686b7eab878c.setContent(html_a5927ec891f69c114951b7f2dc9e12d5);
+            
+        
+
+        circle_a91ed77865391c4d25d5d2cf75927be4.bindPopup(popup_be6b97b604609df41620686b7eab878c)
+        ;
+
+        
+    
+    
+            var marker_1791a30cc2aca017b2bb2ede4349915f = L.marker(
+                [19.43537, -99.14888],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_3a4b2de4d937f3ba120a90bade9dfabd = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_1791a30cc2aca017b2bb2ede4349915f.setIcon(icon_3a4b2de4d937f3ba120a90bade9dfabd);
+        
+    
+        var popup_141f55475adf1e20607598cb36ce0a0a = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_6f818c3fe11ce8a0a47038e24d777d6e = $(`<div id="html_6f818c3fe11ce8a0a47038e24d777d6e" style="width: 100.0%; height: 100.0%;">Obras: Closed due to road construction</div>`)[0];
+                popup_141f55475adf1e20607598cb36ce0a0a.setContent(html_6f818c3fe11ce8a0a47038e24d777d6e);
+            
+        
+
+        marker_1791a30cc2aca017b2bb2ede4349915f.bindPopup(popup_141f55475adf1e20607598cb36ce0a0a)
+        ;
+
+        
+    
+    
+            var circle_c78db971d80851f01de5fbcad661c2b9 = L.circle(
+                [19.54528, -99.1607],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_840267885add95940e5bd8aa70044ded = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a5615bb5b5ff9b9e5e232b7ea20323f1 = $(`<div id="html_a5615bb5b5ff9b9e5e232b7ea20323f1" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_840267885add95940e5bd8aa70044ded.setContent(html_a5615bb5b5ff9b9e5e232b7ea20323f1);
+            
+        
+
+        circle_c78db971d80851f01de5fbcad661c2b9.bindPopup(popup_840267885add95940e5bd8aa70044ded)
+        ;
+
+        
+    
+    
+            var circle_2510fe6b0a4e56a7dc7377ba4f203ec1 = L.circle(
+                [19.63958, -99.14812],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_4be253f3fb5a4707c81a278c9feac3b3 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_fe7cf8cad6e87ecaff9f04eea9a58f30 = $(`<div id="html_fe7cf8cad6e87ecaff9f04eea9a58f30" style="width: 100.0%; height: 100.0%;">Tráfico: At Circuito Exterior Mexiquense - Closed</div>`)[0];
+                popup_4be253f3fb5a4707c81a278c9feac3b3.setContent(html_fe7cf8cad6e87ecaff9f04eea9a58f30);
+            
+        
+
+        circle_2510fe6b0a4e56a7dc7377ba4f203ec1.bindPopup(popup_4be253f3fb5a4707c81a278c9feac3b3)
+        ;
+
+        
+    
+    
+            var marker_e086e2324cbd59d1761387b973922a21 = L.marker(
+                [19.6416, -99.19535],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_43a3b720c3334ea845f5f042efe5d949 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_e086e2324cbd59d1761387b973922a21.setIcon(icon_43a3b720c3334ea845f5f042efe5d949);
+        
+    
+        var popup_12d6a872ba70bd0c2c64e0327f0479dc = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_69afa557894115ae64b5fbf725057559 = $(`<div id="html_69afa557894115ae64b5fbf725057559" style="width: 100.0%; height: 100.0%;">Obras: At Camino a Tepalcapa - road construction. Roadway reduced to two lanes</div>`)[0];
+                popup_12d6a872ba70bd0c2c64e0327f0479dc.setContent(html_69afa557894115ae64b5fbf725057559);
+            
+        
+
+        marker_e086e2324cbd59d1761387b973922a21.bindPopup(popup_12d6a872ba70bd0c2c64e0327f0479dc)
+        ;
+
+        
+    
+    
+            var marker_5a08240513c2f49c5255c31c92d32d4a = L.marker(
+                [19.46894, -99.18242],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_1b8f24d51ad9afa16b0a1e69b60d1f55 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_5a08240513c2f49c5255c31c92d32d4a.setIcon(icon_1b8f24d51ad9afa16b0a1e69b60d1f55);
+        
+    
+        var popup_da8c705d7454debf310aa06fbca9d1d9 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_44c3eb483182536f8ce9e920a832379e = $(`<div id="html_44c3eb483182536f8ce9e920a832379e" style="width: 100.0%; height: 100.0%;">Obras: road construction. Roadway reduced to two lanes</div>`)[0];
+                popup_da8c705d7454debf310aa06fbca9d1d9.setContent(html_44c3eb483182536f8ce9e920a832379e);
+            
+        
+
+        marker_5a08240513c2f49c5255c31c92d32d4a.bindPopup(popup_da8c705d7454debf310aa06fbca9d1d9)
+        ;
+
+        
+    
+    
+            var marker_125e6724dee8b3798305dda6dde82114 = L.marker(
+                [19.44776, -99.20634],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_cbf7731e671784ff5ccc63ba8bb49519 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_125e6724dee8b3798305dda6dde82114.setIcon(icon_cbf7731e671784ff5ccc63ba8bb49519);
+        
+    
+        var popup_83910120816a3bca123198ec9efd5f76 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_3af9e055ce6644553d7a195042d7e676 = $(`<div id="html_3af9e055ce6644553d7a195042d7e676" style="width: 100.0%; height: 100.0%;">Obras: At Presa Salinillas/Blvd Presa Escame - road construction. Roadway reduced to two lanes</div>`)[0];
+                popup_83910120816a3bca123198ec9efd5f76.setContent(html_3af9e055ce6644553d7a195042d7e676);
+            
+        
+
+        marker_125e6724dee8b3798305dda6dde82114.bindPopup(popup_83910120816a3bca123198ec9efd5f76)
+        ;
+
+        
+    
+    
+            var circle_f6f875b15e0452b6ed18f0e16fec8544 = L.circle(
+                [19.44616, -99.20496],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_16a9a53d7585d363c293b1e6dd6a4996 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_278ff539cfc7fa63ae9be66ddcc75497 = $(`<div id="html_278ff539cfc7fa63ae9be66ddcc75497" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_16a9a53d7585d363c293b1e6dd6a4996.setContent(html_278ff539cfc7fa63ae9be66ddcc75497);
+            
+        
+
+        circle_f6f875b15e0452b6ed18f0e16fec8544.bindPopup(popup_16a9a53d7585d363c293b1e6dd6a4996)
+        ;
+
+        
+    
+    
+            var marker_44f05b0b1bd50a64691025ad164264bc = L.marker(
+                [19.4741, -99.13435],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_087546edc62b5426abd2acf3cf6db4be = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_44f05b0b1bd50a64691025ad164264bc.setIcon(icon_087546edc62b5426abd2acf3cf6db4be);
+        
+    
+        var popup_3756307c6851a498e73331889a66e7c0 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_148ad5b917b5fedc94bdfa7e96e7305b = $(`<div id="html_148ad5b917b5fedc94bdfa7e96e7305b" style="width: 100.0%; height: 100.0%;">Obras: At Av Fortuna/Eje 4 Nte - road construction. Roadway reduced to two lanes</div>`)[0];
+                popup_3756307c6851a498e73331889a66e7c0.setContent(html_148ad5b917b5fedc94bdfa7e96e7305b);
+            
+        
+
+        marker_44f05b0b1bd50a64691025ad164264bc.bindPopup(popup_3756307c6851a498e73331889a66e7c0)
+        ;
+
+        
+    
+    
+            var marker_ad29a429a86719ce032c61cb5bcd7fdc = L.marker(
+                [19.4695, -99.13822],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_3bcb2147b20f361accf6450667859260 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_ad29a429a86719ce032c61cb5bcd7fdc.setIcon(icon_3bcb2147b20f361accf6450667859260);
+        
+    
+        var popup_17ae1b8066cbf90028877e624aa60c04 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b1609da04bfe5e98ed7b26f8bac6c068 = $(`<div id="html_b1609da04bfe5e98ed7b26f8bac6c068" style="width: 100.0%; height: 100.0%;">Obras: At Av Lazaro Cardenas/Eje Central - road construction. Roadway reduced to two lanes</div>`)[0];
+                popup_17ae1b8066cbf90028877e624aa60c04.setContent(html_b1609da04bfe5e98ed7b26f8bac6c068);
+            
+        
+
+        marker_ad29a429a86719ce032c61cb5bcd7fdc.bindPopup(popup_17ae1b8066cbf90028877e624aa60c04)
+        ;
+
+        
+    
+    
+            var marker_5f230300d5ec4277d701eb35e9e52bab = L.marker(
+                [19.49865, -99.16982],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_d5dc2621b9c1d3510121a10b63cf6012 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_5f230300d5ec4277d701eb35e9e52bab.setIcon(icon_d5dc2621b9c1d3510121a10b63cf6012);
+        
+    
+        var popup_bb61e032fbadc72a7fd73259ed241973 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_dcb33ec187a5f2df2df0443a3b59f66b = $(`<div id="html_dcb33ec187a5f2df2df0443a3b59f66b" style="width: 100.0%; height: 100.0%;">Obras: At Av Ceylan - road construction. Roadway reduced to two lanes</div>`)[0];
+                popup_bb61e032fbadc72a7fd73259ed241973.setContent(html_dcb33ec187a5f2df2df0443a3b59f66b);
+            
+        
+
+        marker_5f230300d5ec4277d701eb35e9e52bab.bindPopup(popup_bb61e032fbadc72a7fd73259ed241973)
+        ;
+
+        
+    
+    
+            var circle_8e03a50c2d322494cbf69153c5d334eb = L.circle(
+                [19.44716, -99.20675],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_788be159af6cdfef5e74dbd5c3ba2665 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_8637d4740e3092d7c9cf3708f0d137b7 = $(`<div id="html_8637d4740e3092d7c9cf3708f0d137b7" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_788be159af6cdfef5e74dbd5c3ba2665.setContent(html_8637d4740e3092d7c9cf3708f0d137b7);
+            
+        
+
+        circle_8e03a50c2d322494cbf69153c5d334eb.bindPopup(popup_788be159af6cdfef5e74dbd5c3ba2665)
+        ;
+
+        
+    
+    
+            var circle_3ab577e4c06528338334147cedeeb310 = L.circle(
+                [19.64051, -99.15305],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_4b4452746195419d69ca1634f3a1913e = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_399dcae3962e4a9af2a7ca0245c4c020 = $(`<div id="html_399dcae3962e4a9af2a7ca0245c4c020" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_4b4452746195419d69ca1634f3a1913e.setContent(html_399dcae3962e4a9af2a7ca0245c4c020);
+            
+        
+
+        circle_3ab577e4c06528338334147cedeeb310.bindPopup(popup_4b4452746195419d69ca1634f3a1913e)
+        ;
+
+        
+    
+    
+            var circle_a28d0c2b8a9fd42a32d8eec7cd8bd9c4 = L.circle(
+                [19.43217, -99.15682],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 250, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_1e6dca77a800be068dbd2b22729ed78c = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_8ee51c564881edd06489e714328bf16d = $(`<div id="html_8ee51c564881edd06489e714328bf16d" style="width: 100.0%; height: 100.0%;">Tráfico: At Av Insurgentes Centro - Incidents</div>`)[0];
+                popup_1e6dca77a800be068dbd2b22729ed78c.setContent(html_8ee51c564881edd06489e714328bf16d);
+            
+        
+
+        circle_a28d0c2b8a9fd42a32d8eec7cd8bd9c4.bindPopup(popup_1e6dca77a800be068dbd2b22729ed78c)
+        ;
+
+        
+    
+    
+            var marker_c4c0d15fbf54d9f2e6313d1767b8df43 = L.marker(
+                [19.44404, -99.13973],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_a859e21ab0b2c73b796248e551f980de = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_c4c0d15fbf54d9f2e6313d1767b8df43.setIcon(icon_a859e21ab0b2c73b796248e551f980de);
+        
+    
+        var popup_39f15e794c9b624f52f8fa88e784120f = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_292446ed59d1ffbe21e377d5b244c562 = $(`<div id="html_292446ed59d1ffbe21e377d5b244c562" style="width: 100.0%; height: 100.0%;">Obras: At Av Paseo de la Reforma - road construction</div>`)[0];
+                popup_39f15e794c9b624f52f8fa88e784120f.setContent(html_292446ed59d1ffbe21e377d5b244c562);
+            
+        
+
+        marker_c4c0d15fbf54d9f2e6313d1767b8df43.bindPopup(popup_39f15e794c9b624f52f8fa88e784120f)
+        ;
+
+        
+    
+    
+            var circle_e43b0157d2056d53c400ba7bd0f58420 = L.circle(
+                [19.44955, -99.1416],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_56559cb7182241286831b9ae9ccba23d = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_c7a853b24a34d8ff741c0893c7edf2a9 = $(`<div id="html_c7a853b24a34d8ff741c0893c7edf2a9" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_56559cb7182241286831b9ae9ccba23d.setContent(html_c7a853b24a34d8ff741c0893c7edf2a9);
+            
+        
+
+        circle_e43b0157d2056d53c400ba7bd0f58420.bindPopup(popup_56559cb7182241286831b9ae9ccba23d)
+        ;
+
+        
+    
+    
+            var circle_9c93ffe944acf89d53b4c6ab564a6cce = L.circle(
+                [19.49907, -99.17469],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 250, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_aeb59fb9d0808a109e23071439b9f366 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_ebc21941f3c7a5903103321b6ea1d48f = $(`<div id="html_ebc21941f3c7a5903103321b6ea1d48f" style="width: 100.0%; height: 100.0%;">Tráfico: At Carretera Azcapotzalco-La Villa - Incidents</div>`)[0];
+                popup_aeb59fb9d0808a109e23071439b9f366.setContent(html_ebc21941f3c7a5903103321b6ea1d48f);
+            
+        
+
+        circle_9c93ffe944acf89d53b4c6ab564a6cce.bindPopup(popup_aeb59fb9d0808a109e23071439b9f366)
+        ;
+
+        
+    
+    
+            var marker_45668524bce6d565014fba2459e5f940 = L.marker(
+                [19.50311, -99.15054],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_2675e50cae915265f99534a67d57413f = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_45668524bce6d565014fba2459e5f940.setIcon(icon_2675e50cae915265f99534a67d57413f);
+        
+    
+        var popup_6520afccdb4ac9a68ee15f81ced1e346 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_9c7bcb7da1d76beaf829b33f6df5efcd = $(`<div id="html_9c7bcb7da1d76beaf829b33f6df5efcd" style="width: 100.0%; height: 100.0%;">Obras: At Montevideo/Eje 5 N - road construction. Roadway reduced to two lanes</div>`)[0];
+                popup_6520afccdb4ac9a68ee15f81ced1e346.setContent(html_9c7bcb7da1d76beaf829b33f6df5efcd);
+            
+        
+
+        marker_45668524bce6d565014fba2459e5f940.bindPopup(popup_6520afccdb4ac9a68ee15f81ced1e346)
+        ;
+
+        
+    
+    
+            var circle_2e5c154d20903789fc9f6293534fe9fc = L.circle(
+                [19.66768, -99.19206],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_3d1a93052e5c1eb6436b40e969955980 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_48fbd517db3ce9abc8dd55dc655ff927 = $(`<div id="html_48fbd517db3ce9abc8dd55dc655ff927" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_3d1a93052e5c1eb6436b40e969955980.setContent(html_48fbd517db3ce9abc8dd55dc655ff927);
+            
+        
+
+        circle_2e5c154d20903789fc9f6293534fe9fc.bindPopup(popup_3d1a93052e5c1eb6436b40e969955980)
+        ;
+
+        
+    
+    
+            var marker_ed451d2313af164e7a8f84072c49016f = L.marker(
+                [19.60623, -99.20893],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_e24dfbc6f557de4aeedd2fcb96581868 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "exclamation-triangle", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_ed451d2313af164e7a8f84072c49016f.setIcon(icon_e24dfbc6f557de4aeedd2fcb96581868);
+        
+    
+        var popup_4a973248696b84e0c8b5e8f83be6d73e = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_29a07625c4fae1fca686262bb0bd6911 = $(`<div id="html_29a07625c4fae1fca686262bb0bd6911" style="width: 100.0%; height: 100.0%;">Accidente: At Autopista México Querétaro - Backed-up traffic. Approach with care</div>`)[0];
+                popup_4a973248696b84e0c8b5e8f83be6d73e.setContent(html_29a07625c4fae1fca686262bb0bd6911);
+            
+        
+
+        marker_ed451d2313af164e7a8f84072c49016f.bindPopup(popup_4a973248696b84e0c8b5e8f83be6d73e)
+        ;
+
+        
+    
+    
+            var circle_768c6ed9eb25f629c9e280ffa4e6d4be = L.circle(
+                [19.43655, -99.15307],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 250, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_59d4dda2fe94af3b6afb42affa443e3f = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_794107f15d8c0909300f0a455ab4267f = $(`<div id="html_794107f15d8c0909300f0a455ab4267f" style="width: 100.0%; height: 100.0%;">Tráfico: Incidents</div>`)[0];
+                popup_59d4dda2fe94af3b6afb42affa443e3f.setContent(html_794107f15d8c0909300f0a455ab4267f);
+            
+        
+
+        circle_768c6ed9eb25f629c9e280ffa4e6d4be.bindPopup(popup_59d4dda2fe94af3b6afb42affa443e3f)
+        ;
+
+        
+    
+    
+            var circle_e39a4f37382714406c4b1fb2221196bc = L.circle(
+                [19.60984, -99.18038],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_63b2ae54fc3479173cf17d89785e6c88 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_87e5624c015b51317e7be7b36ad66311 = $(`<div id="html_87e5624c015b51317e7be7b36ad66311" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_63b2ae54fc3479173cf17d89785e6c88.setContent(html_87e5624c015b51317e7be7b36ad66311);
+            
+        
+
+        circle_e39a4f37382714406c4b1fb2221196bc.bindPopup(popup_63b2ae54fc3479173cf17d89785e6c88)
+        ;
+
+        
+    
+    
+            var circle_3a143c88d02b99ff88e2f402f59ab7a8 = L.circle(
+                [19.44948, -99.19472],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_e98cdbc75ffb87822ab8ad3f1e13dcdf = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_4c2ca42c2574afcda90ebbd40966b64b = $(`<div id="html_4c2ca42c2574afcda90ebbd40966b64b" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_e98cdbc75ffb87822ab8ad3f1e13dcdf.setContent(html_4c2ca42c2574afcda90ebbd40966b64b);
+            
+        
+
+        circle_3a143c88d02b99ff88e2f402f59ab7a8.bindPopup(popup_e98cdbc75ffb87822ab8ad3f1e13dcdf)
+        ;
+
+        
+    
+    
+            var circle_8ab2503c72cc8083539ec0e19aab10e0 = L.circle(
+                [19.66625, -99.1917],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_9aac1f165c8df474ac5356943e8a98c3 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a95a489102a963c98fd309ffc87d2cc6 = $(`<div id="html_a95a489102a963c98fd309ffc87d2cc6" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_9aac1f165c8df474ac5356943e8a98c3.setContent(html_a95a489102a963c98fd309ffc87d2cc6);
+            
+        
+
+        circle_8ab2503c72cc8083539ec0e19aab10e0.bindPopup(popup_9aac1f165c8df474ac5356943e8a98c3)
+        ;
+
+        
+    
+    
+            var marker_5a57a2410416620bf97bca4f9bed2533 = L.marker(
+                [19.66913, -99.13274],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_c254cc27ca10d015444dc7ec6e91718b = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_5a57a2410416620bf97bca4f9bed2533.setIcon(icon_c254cc27ca10d015444dc7ec6e91718b);
+        
+    
+        var popup_f1509f7d492799950c1211de451e60c0 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_0d9aed440724693cf8b71351ea47ff01 = $(`<div id="html_0d9aed440724693cf8b71351ea47ff01" style="width: 100.0%; height: 100.0%;">Obras: Closed due to road construction</div>`)[0];
+                popup_f1509f7d492799950c1211de451e60c0.setContent(html_0d9aed440724693cf8b71351ea47ff01);
+            
+        
+
+        marker_5a57a2410416620bf97bca4f9bed2533.bindPopup(popup_f1509f7d492799950c1211de451e60c0)
+        ;
+
+        
+    
+    
+            var marker_4437818824bc032492ddb4fa55f9f257 = L.marker(
+                [19.67006, -99.18702],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_39a5708013b93e89b7b644132a5f0e11 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_4437818824bc032492ddb4fa55f9f257.setIcon(icon_39a5708013b93e89b7b644132a5f0e11);
+        
+    
+        var popup_961f9462d467960f2cf13f2bec106982 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d2fc1884d7a6e1c1652920d84c367dbe = $(`<div id="html_d2fc1884d7a6e1c1652920d84c367dbe" style="width: 100.0%; height: 100.0%;">Obras: Between Interceptor O/Emisor and Guillermo Gonzalez Camarena - Closed due to road construction</div>`)[0];
+                popup_961f9462d467960f2cf13f2bec106982.setContent(html_d2fc1884d7a6e1c1652920d84c367dbe);
+            
+        
+
+        marker_4437818824bc032492ddb4fa55f9f257.bindPopup(popup_961f9462d467960f2cf13f2bec106982)
+        ;
+
+        
+    
+    
+            var circle_c6dfcce233c240de5b9ec5465fd25dd8 = L.circle(
+                [19.44019, -99.20302],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 250, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_ef5be5277502c3088cdb56d41d85f62c = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_deca04d4e7452dbf0b76a8469df94e2d = $(`<div id="html_deca04d4e7452dbf0b76a8469df94e2d" style="width: 100.0%; height: 100.0%;">Tráfico: Incidents</div>`)[0];
+                popup_ef5be5277502c3088cdb56d41d85f62c.setContent(html_deca04d4e7452dbf0b76a8469df94e2d);
+            
+        
+
+        circle_c6dfcce233c240de5b9ec5465fd25dd8.bindPopup(popup_ef5be5277502c3088cdb56d41d85f62c)
+        ;
+
+        
+    
+    
+            var circle_82115d957c3486fb2010cd19ac6c0ff6 = L.circle(
+                [19.66847, -99.19141],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_4bc6b21bb429832238b73e89d64b9f71 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_afe2b4aa33243fb6cc8c3757adf061f1 = $(`<div id="html_afe2b4aa33243fb6cc8c3757adf061f1" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_4bc6b21bb429832238b73e89d64b9f71.setContent(html_afe2b4aa33243fb6cc8c3757adf061f1);
+            
+        
+
+        circle_82115d957c3486fb2010cd19ac6c0ff6.bindPopup(popup_4bc6b21bb429832238b73e89d64b9f71)
+        ;
+
+        
+    
+    
+            var circle_460a6a48110d93940b95444be0b9a45f = L.circle(
+                [19.63919, -99.15331],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_fe7382af4a6677573ea46d29bbdc943d = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_472d44777b3816ae117513688ce4cf8f = $(`<div id="html_472d44777b3816ae117513688ce4cf8f" style="width: 100.0%; height: 100.0%;">Tráfico: Between Circuito Exterior Mexiquense and Avenida Isla Cozumel/Hda Portales - Closed</div>`)[0];
+                popup_fe7382af4a6677573ea46d29bbdc943d.setContent(html_472d44777b3816ae117513688ce4cf8f);
+            
+        
+
+        circle_460a6a48110d93940b95444be0b9a45f.bindPopup(popup_fe7382af4a6677573ea46d29bbdc943d)
+        ;
+
+        
+    
+    
+            var marker_fc2c634c8eba63ee0d6a181c75dbeec7 = L.marker(
+                [19.66832, -99.19583],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_70b5b21a91219bac17d7833085d36334 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_fc2c634c8eba63ee0d6a181c75dbeec7.setIcon(icon_70b5b21a91219bac17d7833085d36334);
+        
+    
+        var popup_4a45f58b21668f6c8477e065fa664f71 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_4b58873edb76db91e85b17c41b6f2691 = $(`<div id="html_4b58873edb76db91e85b17c41b6f2691" style="width: 100.0%; height: 100.0%;">Obras: Between Guillermo Gonzalez Camarena and Interceptor O/Emisor - Closed due to road construction</div>`)[0];
+                popup_4a45f58b21668f6c8477e065fa664f71.setContent(html_4b58873edb76db91e85b17c41b6f2691);
+            
+        
+
+        marker_fc2c634c8eba63ee0d6a181c75dbeec7.bindPopup(popup_4a45f58b21668f6c8477e065fa664f71)
+        ;
+
+        
+    
+    
+            var circle_a4364f42fbaa24013d909e8ee70bb9fd = L.circle(
+                [19.4619, -99.22247],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_9df0fc81502e98b624b94e2700ab7e32 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_ad70941a51d31006b99e66f0ee675fd0 = $(`<div id="html_ad70941a51d31006b99e66f0ee675fd0" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_9df0fc81502e98b624b94e2700ab7e32.setContent(html_ad70941a51d31006b99e66f0ee675fd0);
+            
+        
+
+        circle_a4364f42fbaa24013d909e8ee70bb9fd.bindPopup(popup_9df0fc81502e98b624b94e2700ab7e32)
+        ;
+
+        
+    
+    
+            var circle_6b5bf40d4ea41ba2f14c0bf8d012a9f3 = L.circle(
+                [19.54635, -99.14294],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_c751dde56fc522cc3f37b4062deacf70 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a06612a1df62734d4af24175e054b833 = $(`<div id="html_a06612a1df62734d4af24175e054b833" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_c751dde56fc522cc3f37b4062deacf70.setContent(html_a06612a1df62734d4af24175e054b833);
+            
+        
+
+        circle_6b5bf40d4ea41ba2f14c0bf8d012a9f3.bindPopup(popup_c751dde56fc522cc3f37b4062deacf70)
+        ;
+
+        
+    
+    
+            var circle_2a01af85f807dd101475716aeb16b865 = L.circle(
+                [19.433, -99.14207],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 250, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_5391f1da03517899b6c24656f0f27aa9 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_983c82b5fe73f7d5d9380a81a4a514b0 = $(`<div id="html_983c82b5fe73f7d5d9380a81a4a514b0" style="width: 100.0%; height: 100.0%;">Tráfico: Incidents</div>`)[0];
+                popup_5391f1da03517899b6c24656f0f27aa9.setContent(html_983c82b5fe73f7d5d9380a81a4a514b0);
+            
+        
+
+        circle_2a01af85f807dd101475716aeb16b865.bindPopup(popup_5391f1da03517899b6c24656f0f27aa9)
+        ;
+
+        
+    
+    
+            var circle_db442e5978e567ec461dc4248b707dc8 = L.circle(
+                [19.46162, -99.16345],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_7d52863d0e7d6c23c2bd8e836ef6b0a0 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_fa72fae4a132aacbd9eff8d634e2e74f = $(`<div id="html_fa72fae4a132aacbd9eff8d634e2e74f" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_7d52863d0e7d6c23c2bd8e836ef6b0a0.setContent(html_fa72fae4a132aacbd9eff8d634e2e74f);
+            
+        
+
+        circle_db442e5978e567ec461dc4248b707dc8.bindPopup(popup_7d52863d0e7d6c23c2bd8e836ef6b0a0)
+        ;
+
+        
+    
+    
+            var circle_70fb5eb3f7af2534e16e2cce84551fc8 = L.circle(
+                [19.66866, -99.19161],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_57b6c56b5f426bdcf8f06a2d64edeac5 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_670fcdfe7fda955decf7a93bc281fda0 = $(`<div id="html_670fcdfe7fda955decf7a93bc281fda0" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_57b6c56b5f426bdcf8f06a2d64edeac5.setContent(html_670fcdfe7fda955decf7a93bc281fda0);
+            
+        
+
+        circle_70fb5eb3f7af2534e16e2cce84551fc8.bindPopup(popup_57b6c56b5f426bdcf8f06a2d64edeac5)
+        ;
+
+        
+    
+    
+            var circle_98d15137aba846489bcbc68b69ce6b3a = L.circle(
+                [19.43489, -99.14477],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 250, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_301962b947c0ec1c90f19ab430c4ab0a = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_ba44badbb6f64198abe02fdc4e2002aa = $(`<div id="html_ba44badbb6f64198abe02fdc4e2002aa" style="width: 100.0%; height: 100.0%;">Tráfico: Incidents</div>`)[0];
+                popup_301962b947c0ec1c90f19ab430c4ab0a.setContent(html_ba44badbb6f64198abe02fdc4e2002aa);
+            
+        
+
+        circle_98d15137aba846489bcbc68b69ce6b3a.bindPopup(popup_301962b947c0ec1c90f19ab430c4ab0a)
+        ;
+
+        
+    
+    
+            var circle_ef0f20e500e9e44c549234314aa47957 = L.circle(
+                [19.45193, -99.19398],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_89d20ecb7d6445ff68fdc781726c6148 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_08eb329444f3f242ec88b1a0d4d1a866 = $(`<div id="html_08eb329444f3f242ec88b1a0d4d1a866" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_89d20ecb7d6445ff68fdc781726c6148.setContent(html_08eb329444f3f242ec88b1a0d4d1a866);
+            
+        
+
+        circle_ef0f20e500e9e44c549234314aa47957.bindPopup(popup_89d20ecb7d6445ff68fdc781726c6148)
+        ;
+
+        
+    
+    
+            var circle_90e063da3b370315dedb411ac589c791 = L.circle(
+                [19.43139, -99.13662],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 250, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_4af3c692dc6e6fdc428237634a08f623 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d1b28379d5fd1639b223ffc9fadd35bd = $(`<div id="html_d1b28379d5fd1639b223ffc9fadd35bd" style="width: 100.0%; height: 100.0%;">Tráfico: Incidents</div>`)[0];
+                popup_4af3c692dc6e6fdc428237634a08f623.setContent(html_d1b28379d5fd1639b223ffc9fadd35bd);
+            
+        
+
+        circle_90e063da3b370315dedb411ac589c791.bindPopup(popup_4af3c692dc6e6fdc428237634a08f623)
+        ;
+
+        
+    
+    
+            var marker_5596fdee9add78b0b90ff472561159ad = L.marker(
+                [19.44473, -99.14372],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_edad7d3250538a9396c1ba51f052b1c0 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_5596fdee9add78b0b90ff472561159ad.setIcon(icon_edad7d3250538a9396c1ba51f052b1c0);
+        
+    
+        var popup_e5812e900368f9cd1539f1ab37a8d18b = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_e00e1add7396de93c32ceaf9e2173f50 = $(`<div id="html_e00e1add7396de93c32ceaf9e2173f50" style="width: 100.0%; height: 100.0%;">Obras: At Av Paseo de la Reforma - road construction</div>`)[0];
+                popup_e5812e900368f9cd1539f1ab37a8d18b.setContent(html_e00e1add7396de93c32ceaf9e2173f50);
+            
+        
+
+        marker_5596fdee9add78b0b90ff472561159ad.bindPopup(popup_e5812e900368f9cd1539f1ab37a8d18b)
+        ;
+
+        
+    
+    
+            var marker_4ac8b77cd0474726659d29d864e6f621 = L.marker(
+                [19.44019, -99.16005],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_cdae20d3fab26459c7ccc3eb2162c422 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_4ac8b77cd0474726659d29d864e6f621.setIcon(icon_cdae20d3fab26459c7ccc3eb2162c422);
+        
+    
+        var popup_d039220ed35f947cd263933580fa6bc4 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_4b7ea00b09a7195485466912bf125fd7 = $(`<div id="html_4b7ea00b09a7195485466912bf125fd7" style="width: 100.0%; height: 100.0%;">Obras: road construction</div>`)[0];
+                popup_d039220ed35f947cd263933580fa6bc4.setContent(html_4b7ea00b09a7195485466912bf125fd7);
+            
+        
+
+        marker_4ac8b77cd0474726659d29d864e6f621.bindPopup(popup_d039220ed35f947cd263933580fa6bc4)
+        ;
+
+        
+    
+    
+            var circle_2df6dd7539ce0bcf0555de4dcf7e6bd7 = L.circle(
+                [19.63938, -99.15093],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_24436c7328a731298f335fdb14f6ce36 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_a2ad862754caca12298af04d66b1d594 = $(`<div id="html_a2ad862754caca12298af04d66b1d594" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_24436c7328a731298f335fdb14f6ce36.setContent(html_a2ad862754caca12298af04d66b1d594);
+            
+        
+
+        circle_2df6dd7539ce0bcf0555de4dcf7e6bd7.bindPopup(popup_24436c7328a731298f335fdb14f6ce36)
+        ;
+
+        
+    
+    
+            var marker_04d8a9e7b102f9df15adfdba6f51d1e2 = L.marker(
+                [19.47043, -99.13351],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_0c5f88bddbcc25a948d06c6879527623 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_04d8a9e7b102f9df15adfdba6f51d1e2.setIcon(icon_0c5f88bddbcc25a948d06c6879527623);
+        
+    
+        var popup_c785a7aee548d660000a29c0f32ce307 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_9269807eda76c9d409605dc110d7792f = $(`<div id="html_9269807eda76c9d409605dc110d7792f" style="width: 100.0%; height: 100.0%;">Obras: At Eje Central/Av Insurgentes Norte - road construction</div>`)[0];
+                popup_c785a7aee548d660000a29c0f32ce307.setContent(html_9269807eda76c9d409605dc110d7792f);
+            
+        
+
+        marker_04d8a9e7b102f9df15adfdba6f51d1e2.bindPopup(popup_c785a7aee548d660000a29c0f32ce307)
+        ;
+
+        
+    
+    
+            var circle_ed3a8c30dae0febe19657ba18170eb45 = L.circle(
+                [19.44541, -99.19546],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_b809c6cd6252a25f330e0868dbd7e650 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d20b3f8ca85160fd5691533ef2c50fe5 = $(`<div id="html_d20b3f8ca85160fd5691533ef2c50fe5" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_b809c6cd6252a25f330e0868dbd7e650.setContent(html_d20b3f8ca85160fd5691533ef2c50fe5);
+            
+        
+
+        circle_ed3a8c30dae0febe19657ba18170eb45.bindPopup(popup_b809c6cd6252a25f330e0868dbd7e650)
+        ;
+
+        
+    
+    
+            var marker_2779836ca619759a6ac171ce1f96f041 = L.marker(
+                [19.44558, -99.14885],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_2459086c253e50bbe97320680e799530 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_2779836ca619759a6ac171ce1f96f041.setIcon(icon_2459086c253e50bbe97320680e799530);
+        
+    
+        var popup_2f6973762b9ecf222b4b00843b6128f3 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_0f032d942b368709bacafc9ae5bfb451 = $(`<div id="html_0f032d942b368709bacafc9ae5bfb451" style="width: 100.0%; height: 100.0%;">Obras: At Eje 1 Poniente/Guerrero - road construction</div>`)[0];
+                popup_2f6973762b9ecf222b4b00843b6128f3.setContent(html_0f032d942b368709bacafc9ae5bfb451);
+            
+        
+
+        marker_2779836ca619759a6ac171ce1f96f041.bindPopup(popup_2f6973762b9ecf222b4b00843b6128f3)
+        ;
+
+        
+    
+    
+            var circle_3e416290427dd2f2a55416073d3afea2 = L.circle(
+                [19.50282, -99.15722],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_89b61d11bd7dcd99a324ee8b94fdd2c9 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_14686efdb2b1a4a13b39d00cc56aa57a = $(`<div id="html_14686efdb2b1a4a13b39d00cc56aa57a" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_89b61d11bd7dcd99a324ee8b94fdd2c9.setContent(html_14686efdb2b1a4a13b39d00cc56aa57a);
+            
+        
+
+        circle_3e416290427dd2f2a55416073d3afea2.bindPopup(popup_89b61d11bd7dcd99a324ee8b94fdd2c9)
+        ;
+
+        
+    
+    
+            var circle_edeb9d86554e29d37a123408fdfe1e90 = L.circle(
+                [19.43642, -99.17972],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 250, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_be2a8fcabb6307160a60615144ee8cc6 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_e635429f523035c285c7577127559bbf = $(`<div id="html_e635429f523035c285c7577127559bbf" style="width: 100.0%; height: 100.0%;">Tráfico: At C Lago Como - Accident. Two lanes blocked</div>`)[0];
+                popup_be2a8fcabb6307160a60615144ee8cc6.setContent(html_e635429f523035c285c7577127559bbf);
+            
+        
+
+        circle_edeb9d86554e29d37a123408fdfe1e90.bindPopup(popup_be2a8fcabb6307160a60615144ee8cc6)
+        ;
+
+        
+    
+    
+            var marker_e1fae5100eb16631f91b494ec5d1a244 = L.marker(
+                [19.47465, -99.13314],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+            var icon_72c0e04fd49f31316014eec1518db55a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "wrench", "iconColor": "white", "markerColor": "orange", "prefix": "fa"}
+            );
+            marker_e1fae5100eb16631f91b494ec5d1a244.setIcon(icon_72c0e04fd49f31316014eec1518db55a);
+        
+    
+        var popup_e6cde04b00360d3ba2fa9facfbe487ee = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_303bca18cceea31b77097c6a3a8efcb0 = $(`<div id="html_303bca18cceea31b77097c6a3a8efcb0" style="width: 100.0%; height: 100.0%;">Obras: road construction</div>`)[0];
+                popup_e6cde04b00360d3ba2fa9facfbe487ee.setContent(html_303bca18cceea31b77097c6a3a8efcb0);
+            
+        
+
+        marker_e1fae5100eb16631f91b494ec5d1a244.bindPopup(popup_e6cde04b00360d3ba2fa9facfbe487ee)
+        ;
+
+        
+    
+    
+            var circle_fa3fabe674a9b369e7ae8c3eb407dac1 = L.circle(
+                [19.44711, -99.1951],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.3, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 350, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_b1af11ae7164dd253d85083a7b430678 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_6d9a6be455a099755e49e88fc92ce35e = $(`<div id="html_6d9a6be455a099755e49e88fc92ce35e" style="width: 100.0%; height: 100.0%;">Tráfico: Closed</div>`)[0];
+                popup_b1af11ae7164dd253d85083a7b430678.setContent(html_6d9a6be455a099755e49e88fc92ce35e);
+            
+        
+
+        circle_fa3fabe674a9b369e7ae8c3eb407dac1.bindPopup(popup_b1af11ae7164dd253d85083a7b430678)
+        ;
+
+        
+    
+    
+            var marker_95f73d8e69b8d513806c83cc0866fc5b = L.marker(
+                [19.668851, -99.179975],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var custom_icon_1a9780cea951f7124f73170b8079243f = L.icon({"iconAnchor": [17, 35], "iconSize": [35, 35], "iconUrl": "https://assets.mapquestapi.com/icon/v2/marker-start.png", "popupAnchor": [0, -35]});
+        marker_95f73d8e69b8d513806c83cc0866fc5b.setIcon(custom_icon_1a9780cea951f7124f73170b8079243f);
+        
+    
+        var popup_9f9967cd74ed88a96ec2265906cc7e1f = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_d73b66aa4131c4d25c5ea1f620ccf094 = $(`<div id="html_d73b66aa4131c4d25c5ea1f620ccf094" style="width: 100.0%; height: 100.0%;"><b>INICIO:</b> Diríjase al norte por Calle Sor Juana Inés de la Cruz. Siga durante 76 m.</div>`)[0];
+                popup_9f9967cd74ed88a96ec2265906cc7e1f.setContent(html_d73b66aa4131c4d25c5ea1f620ccf094);
+            
+        
+
+        marker_95f73d8e69b8d513806c83cc0866fc5b.bindPopup(popup_9f9967cd74ed88a96ec2265906cc7e1f)
+        ;
+
+        
+    
+    
+            var circle_marker_7df4dbf21b7ce27a7d077f2eac0a0833 = L.circleMarker(
+                [19.66953, -99.17986],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_1b19dfd891614aa748405db8a16a9999 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_57e64cc6e8a8313c0b0548dc6b283039 = $(`<div id="html_57e64cc6e8a8313c0b0548dc6b283039" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 1:</b><br>             Gire a la izquierda en Calle Carrillo Puerto. Siga durante 69 m.             <br><b>Distancia:</b> 100 mts         </div>         </div>`)[0];
+                popup_1b19dfd891614aa748405db8a16a9999.setContent(html_57e64cc6e8a8313c0b0548dc6b283039);
+            
+        
+
+        circle_marker_7df4dbf21b7ce27a7d077f2eac0a0833.bindPopup(popup_1b19dfd891614aa748405db8a16a9999)
+        ;
+
+        
+    
+    
+            var circle_marker_9dc2c5f7170c76166a8a8c41781f905c = L.circleMarker(
+                [19.66963, -99.18050000000001],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_8bdf6b6696831f788f70d83fcf6f82a1 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_deabfa9928d27d72d64c8df2ee44fabd = $(`<div id="html_deabfa9928d27d72d64c8df2ee44fabd" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 2:</b><br>             Gire a la izquierda en Calle Pino Suárez. Siga durante 75 m.             <br><b>Distancia:</b> 100 mts         </div>         </div>`)[0];
+                popup_8bdf6b6696831f788f70d83fcf6f82a1.setContent(html_deabfa9928d27d72d64c8df2ee44fabd);
+            
+        
+
+        circle_marker_9dc2c5f7170c76166a8a8c41781f905c.bindPopup(popup_8bdf6b6696831f788f70d83fcf6f82a1)
+        ;
+
+        
+    
+    
+            var circle_marker_21b80c611d1458db6eff99113fe467b9 = L.circleMarker(
+                [19.66897, -99.18062],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_a3cb0b9dc9cdf4ba8bfd1faa68c93eb2 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_6ec3f656a6eede7c99f7f6fd0dcbf3d1 = $(`<div id="html_6ec3f656a6eede7c99f7f6fd0dcbf3d1" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 3:</b><br>             Gire a la derecha en dirección a Avenida 16 de Septiembre. Siga durante 60 m.             <br><b>Distancia:</b> 100 mts         </div>         </div>`)[0];
+                popup_a3cb0b9dc9cdf4ba8bfd1faa68c93eb2.setContent(html_6ec3f656a6eede7c99f7f6fd0dcbf3d1);
+            
+        
+
+        circle_marker_21b80c611d1458db6eff99113fe467b9.bindPopup(popup_a3cb0b9dc9cdf4ba8bfd1faa68c93eb2)
+        ;
+
+        
+    
+    
+            var circle_marker_555c5d1fd5df6240f0161396fa4427e2 = L.circleMarker(
+                [19.668750000000003, -99.18114],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_f443da1e662bb8efaf5fcef6da6e5672 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_f589391b5ebfed663a6a0033d5e4609c = $(`<div id="html_f589391b5ebfed663a6a0033d5e4609c" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 4:</b><br>             Gire a la izquierda en Avenida 16 de Septiembre. Siga durante 5.0 km.             <br><b>Distancia:</b> 5.00 km         </div>         </div>`)[0];
+                popup_f443da1e662bb8efaf5fcef6da6e5672.setContent(html_f589391b5ebfed663a6a0033d5e4609c);
+            
+        
+
+        circle_marker_555c5d1fd5df6240f0161396fa4427e2.bindPopup(popup_f443da1e662bb8efaf5fcef6da6e5672)
+        ;
+
+        
+    
+    
+            var circle_marker_af4db986161600f84a1c7b8fe0cae42b = L.circleMarker(
+                [19.624009999999984, -99.18524000000006],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_c6361a6a9ffdc3ffa8e2a26403bf6b5f = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_f887c88be6e9865b66666a4fac6c8fcc = $(`<div id="html_f887c88be6e9865b66666a4fac6c8fcc" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 5:</b><br>             Gire a la derecha en Avenida Camino a Tepalcapa hacia Víaducto Bicentenario/Mexico D. F. Siga durante 589 m.             <br><b>Distancia:</b> 600 mts         </div>         </div>`)[0];
+                popup_c6361a6a9ffdc3ffa8e2a26403bf6b5f.setContent(html_f887c88be6e9865b66666a4fac6c8fcc);
+            
+        
+
+        circle_marker_af4db986161600f84a1c7b8fe0cae42b.bindPopup(popup_c6361a6a9ffdc3ffa8e2a26403bf6b5f)
+        ;
+
+        
+    
+    
+            var circle_marker_5f723776ecf933db5c42ba0cbf745900 = L.circleMarker(
+                [19.624009999999984, -99.19086000000004],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_0b550625f7e8a7c10761914e98684b17 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_185f52d3ff4d74fb642517bf74571409 = $(`<div id="html_185f52d3ff4d74fb642517bf74571409" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 6:</b><br>             Manténgase a la izquierda en Avenida Camino a Tepalcapa hacia Viaducto Bicentenario. Siga durante 277 m.             <br><b>Distancia:</b> 300 mts         </div>         </div>`)[0];
+                popup_0b550625f7e8a7c10761914e98684b17.setContent(html_185f52d3ff4d74fb642517bf74571409);
+            
+        
+
+        circle_marker_5f723776ecf933db5c42ba0cbf745900.bindPopup(popup_0b550625f7e8a7c10761914e98684b17)
+        ;
+
+        
+    
+    
+            var circle_marker_70adce02f8964642fc8c0e1708a1444f = L.circleMarker(
+                [19.623579999999986, -99.19338000000006],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_d4ebc033bd8a2f12eeb4bb80f85df578 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_0eafe80689fe1e1cbe6cee718aa408b6 = $(`<div id="html_0eafe80689fe1e1cbe6cee718aa408b6" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 7:</b><br>             Haga un giro pronunciado a la izquierda en Calle Canal del Norte. Siga durante 164 m.             <br><b>Distancia:</b> 200 mts         </div>         </div>`)[0];
+                popup_d4ebc033bd8a2f12eeb4bb80f85df578.setContent(html_0eafe80689fe1e1cbe6cee718aa408b6);
+            
+        
+
+        circle_marker_70adce02f8964642fc8c0e1708a1444f.bindPopup(popup_d4ebc033bd8a2f12eeb4bb80f85df578)
+        ;
+
+        
+    
+    
+            var circle_marker_1b71655e6b6810e5c582b4e840c55c0c = L.circleMarker(
+                [19.622519999999984, -99.19238000000007],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_e9b153a764877c95989791984ec99f4e = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_61ac029da1a47c1ef626f078839480ec = $(`<div id="html_61ac029da1a47c1ef626f078839480ec" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 8:</b><br>             Continúe por Autopista México-Querétaro. Siga durante 33 m.             <br><b>Distancia:</b> 0 mts         </div>         </div>`)[0];
+                popup_e9b153a764877c95989791984ec99f4e.setContent(html_61ac029da1a47c1ef626f078839480ec);
+            
+        
+
+        circle_marker_1b71655e6b6810e5c582b4e840c55c0c.bindPopup(popup_e9b153a764877c95989791984ec99f4e)
+        ;
+
+        
+    
+    
+            var circle_marker_7e8b0fbc01a0cc65b4314c781243cb65 = L.circleMarker(
+                [19.622219999999984, -99.19233000000007],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_9c90c675f388a6b9aafacc063d819d64 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_950fd2748319133017be77a6ae99063c = $(`<div id="html_950fd2748319133017be77a6ae99063c" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 9:</b><br>             Tome la rampa de la izquierda en Autopista México-Querétaro hacia Cd. de Mexico. Siga durante 5.3 km.             <br><b>Distancia:</b> 5.30 km         </div>         </div>`)[0];
+                popup_9c90c675f388a6b9aafacc063d819d64.setContent(html_950fd2748319133017be77a6ae99063c);
+            
+        
+
+        circle_marker_7e8b0fbc01a0cc65b4314c781243cb65.bindPopup(popup_9c90c675f388a6b9aafacc063d819d64)
+        ;
+
+        
+    
+    
+            var circle_marker_32b29170eb4ca8521ec9f0b7d5722f7c = L.circleMarker(
+                [19.58483999999998, -99.20445000000001],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_06260b31d98cc97571135528fb376cb1 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_63dfdbb38f9397f820037db937cc25dd = $(`<div id="html_63dfdbb38f9397f820037db937cc25dd" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 10:</b><br>             Continúe por Viaducto Bicentenario. Siga durante 15.5 km.             <br><b>Distancia:</b> 15.50 km         </div>         </div>`)[0];
+                popup_06260b31d98cc97571135528fb376cb1.setContent(html_63dfdbb38f9397f820037db937cc25dd);
+            
+        
+
+        circle_marker_32b29170eb4ca8521ec9f0b7d5722f7c.bindPopup(popup_06260b31d98cc97571135528fb376cb1)
+        ;
+
+        
+    
+    
+            var circle_marker_71f87f7a86f847768577dba383d9cef1 = L.circleMarker(
+                [19.458919999999978, -99.22125999999997],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_ff9a1154a101a02c6616c4dc6bb08602 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_4440d4c2f9a80f0262c41e58628db686 = $(`<div id="html_4440d4c2f9a80f0262c41e58628db686" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 11:</b><br>             En Avenida Río San Joaquín, tome la salida en dirección a Rio San Joaquin. Siga durante 429 m.             <br><b>Distancia:</b> 400 mts         </div>         </div>`)[0];
+                popup_ff9a1154a101a02c6616c4dc6bb08602.setContent(html_4440d4c2f9a80f0262c41e58628db686);
+            
+        
+
+        circle_marker_71f87f7a86f847768577dba383d9cef1.bindPopup(popup_ff9a1154a101a02c6616c4dc6bb08602)
+        ;
+
+        
+    
+    
+            var circle_marker_0e23a6ccacf2322f87e8f9209ceb1e97 = L.circleMarker(
+                [19.455989999999982, -99.21906999999996],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_1c07b65ef92c097c36e732bd9f100190 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_6fbcf4ecdd1ed49a39f4cdd3a8ab7bd1 = $(`<div id="html_6fbcf4ecdd1ed49a39f4cdd3a8ab7bd1" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 12:</b><br>             Manténgase a la izquierda en Avenida Río San Joaquín hacia Legaria. Siga durante 4.3 km.             <br><b>Distancia:</b> 4.30 km         </div>         </div>`)[0];
+                popup_1c07b65ef92c097c36e732bd9f100190.setContent(html_6fbcf4ecdd1ed49a39f4cdd3a8ab7bd1);
+            
+        
+
+        circle_marker_0e23a6ccacf2322f87e8f9209ceb1e97.bindPopup(popup_1c07b65ef92c097c36e732bd9f100190)
+        ;
+
+        
+    
+    
+            var circle_marker_93e4f5ee6eb7a668a6f3f626b1f120e2 = L.circleMarker(
+                [19.438479999999984, -99.18413999999993],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_2580a7191ad5bb21a967d6e5fe50ceca = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_1c8a9c7b2952f76f1066eac2d328b820 = $(`<div id="html_1c8a9c7b2952f76f1066eac2d328b820" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 13:</b><br>             Continúe por Avenida Ejército Nacional. Siga durante 972 m.             <br><b>Distancia:</b> 1.00 km         </div>         </div>`)[0];
+                popup_2580a7191ad5bb21a967d6e5fe50ceca.setContent(html_1c8a9c7b2952f76f1066eac2d328b820);
+            
+        
+
+        circle_marker_93e4f5ee6eb7a668a6f3f626b1f120e2.bindPopup(popup_2580a7191ad5bb21a967d6e5fe50ceca)
+        ;
+
+        
+    
+    
+            var circle_marker_713412906ab1c2242193d9fa1c6992b1 = L.circleMarker(
+                [19.434369999999987, -99.17601999999992],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_ae061bd15435a7694b1cec5ec38aea5b = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_d4838570b7cdd6d49e2d9c42d78a9feb = $(`<div id="html_d4838570b7cdd6d49e2d9c42d78a9feb" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 14:</b><br>             Manténgase a la izquierda en dirección a Avenida Melchor Ocampo. Siga durante 738 m.             <br><b>Distancia:</b> 700 mts         </div>         </div>`)[0];
+                popup_ae061bd15435a7694b1cec5ec38aea5b.setContent(html_d4838570b7cdd6d49e2d9c42d78a9feb);
+            
+        
+
+        circle_marker_713412906ab1c2242193d9fa1c6992b1.bindPopup(popup_ae061bd15435a7694b1cec5ec38aea5b)
+        ;
+
+        
+    
+    
+            var circle_marker_7d4ec34865661f1eb211d0e3ea7501df = L.circleMarker(
+                [19.43440999999999, -99.17071999999995],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_cc18d2e674992f53d2fdb98bfd35c93e = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_fd6d49b1919da1028ec01dd86f8c768e = $(`<div id="html_fd6d49b1919da1028ec01dd86f8c768e" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 15:</b><br>             Continúe por Avenida Melchor Ocampo. Siga durante 60 m.             <br><b>Distancia:</b> 100 mts         </div>         </div>`)[0];
+                popup_cc18d2e674992f53d2fdb98bfd35c93e.setContent(html_fd6d49b1919da1028ec01dd86f8c768e);
+            
+        
+
+        circle_marker_7d4ec34865661f1eb211d0e3ea7501df.bindPopup(popup_cc18d2e674992f53d2fdb98bfd35c93e)
+        ;
+
+        
+    
+    
+            var circle_marker_f97a2fd505bb7397a12b1cf8467f5b35 = L.circleMarker(
+                [19.43485999999999, -99.17040999999995],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_67ce84bee6bfbaee0c39ed13ce66545c = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_ab6ce6f10cfe279a3de8fb2be0022486 = $(`<div id="html_ab6ce6f10cfe279a3de8fb2be0022486" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 16:</b><br>             Gire a la derecha en Manuel Villalongín. Siga durante 1.3 km.             <br><b>Distancia:</b> 1.30 km         </div>         </div>`)[0];
+                popup_67ce84bee6bfbaee0c39ed13ce66545c.setContent(html_ab6ce6f10cfe279a3de8fb2be0022486);
+            
+        
+
+        circle_marker_f97a2fd505bb7397a12b1cf8467f5b35.bindPopup(popup_67ce84bee6bfbaee0c39ed13ce66545c)
+        ;
+
+        
+    
+    
+            var circle_marker_d58e9f0c478f93d056ea5387430dcf70 = L.circleMarker(
+                [19.43147999999999, -99.15831999999992],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_c30c2be123a736590fa7d48324ee44b9 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_8574328d049e11e48b511b98edc7b8cb = $(`<div id="html_8574328d049e11e48b511b98edc7b8cb" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 17:</b><br>             Continúe por General Prim en dirección a Reforma Centro. Siga durante 32 m.             <br><b>Distancia:</b> 0 mts         </div>         </div>`)[0];
+                popup_c30c2be123a736590fa7d48324ee44b9.setContent(html_8574328d049e11e48b511b98edc7b8cb);
+            
+        
+
+        circle_marker_d58e9f0c478f93d056ea5387430dcf70.bindPopup(popup_c30c2be123a736590fa7d48324ee44b9)
+        ;
+
+        
+    
+    
+            var circle_marker_52c6b91a5581f419d4b4274b2a9cbaa9 = L.circleMarker(
+                [19.43138999999999, -99.15802999999993],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_20100f0846e243790ff33076d88e8cfd = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_f35ddb45f4ad01046586eda3ea654530 = $(`<div id="html_f35ddb45f4ad01046586eda3ea654530" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 18:</b><br>             Gire a la izquierda en Paseo de la Reforma hacia Reforma Centro. Siga durante 606 m.             <br><b>Distancia:</b> 600 mts         </div>         </div>`)[0];
+                popup_20100f0846e243790ff33076d88e8cfd.setContent(html_f35ddb45f4ad01046586eda3ea654530);
+            
+        
+
+        circle_marker_52c6b91a5581f419d4b4274b2a9cbaa9.bindPopup(popup_20100f0846e243790ff33076d88e8cfd)
+        ;
+
+        
+    
+    
+            var circle_marker_909b805c05a9dfe647fa266fee03eb2c = L.circleMarker(
+                [19.433719999999983, -99.1530899999999],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_b83940255f2085391729cbd40ac36d07 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_0f11fa67892a3a941ab0024d9a069ada = $(`<div id="html_0f11fa67892a3a941ab0024d9a069ada" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 19:</b><br>             Gire a la derecha en Donato Guerra hacia Donato Guerra/Atenas. Siga durante 263 m.             <br><b>Distancia:</b> 300 mts         </div>         </div>`)[0];
+                popup_b83940255f2085391729cbd40ac36d07.setContent(html_0f11fa67892a3a941ab0024d9a069ada);
+            
+        
+
+        circle_marker_909b805c05a9dfe647fa266fee03eb2c.bindPopup(popup_b83940255f2085391729cbd40ac36d07)
+        ;
+
+        
+    
+    
+            var circle_marker_551c9df31545f943ba5de098c62b89fc = L.circleMarker(
+                [19.433359999999983, -99.1506199999999],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_ddb85e2950c3526c9cd2ada02494bd69 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_abee0296db72ac8c20e05d209a432e85 = $(`<div id="html_abee0296db72ac8c20e05d209a432e85" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 20:</b><br>             Gire a la derecha en Bucareli. Siga durante 192 m.             <br><b>Distancia:</b> 200 mts         </div>         </div>`)[0];
+                popup_ddb85e2950c3526c9cd2ada02494bd69.setContent(html_abee0296db72ac8c20e05d209a432e85);
+            
+        
+
+        circle_marker_551c9df31545f943ba5de098c62b89fc.bindPopup(popup_ddb85e2950c3526c9cd2ada02494bd69)
+        ;
+
+        
+    
+    
+            var circle_marker_fa75cf9e1b562ecac554ce19e9d62f81 = L.circleMarker(
+                [19.431759999999983, -99.15131999999988],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_e840883680a71dfed4a82956819a7e16 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_6166d4883d7e63126f4b6d938507a3df = $(`<div id="html_6166d4883d7e63126f4b6d938507a3df" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 21:</b><br>             Gire a la izquierda en Calle Ayuntamiento. Siga durante 1.0 km.             <br><b>Distancia:</b> 1.00 km         </div>         </div>`)[0];
+                popup_e840883680a71dfed4a82956819a7e16.setContent(html_6166d4883d7e63126f4b6d938507a3df);
+            
+        
+
+        circle_marker_fa75cf9e1b562ecac554ce19e9d62f81.bindPopup(popup_e840883680a71dfed4a82956819a7e16)
+        ;
+
+        
+    
+    
+            var circle_marker_5cce513d71c23188b7f40a420f41f869 = L.circleMarker(
+                [19.430289999999985, -99.14146999999986],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_9b85bd5d3764411f7aee5b637eca8b0b = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_8a7a3c961f19b1f4b7dc91cf3320ddb4 = $(`<div id="html_8a7a3c961f19b1f4b7dc91cf3320ddb4" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 22:</b><br>             Gire a la izquierda en Eje Central. Siga durante 195 m.             <br><b>Distancia:</b> 200 mts         </div>         </div>`)[0];
+                popup_9b85bd5d3764411f7aee5b637eca8b0b.setContent(html_8a7a3c961f19b1f4b7dc91cf3320ddb4);
+            
+        
+
+        circle_marker_5cce513d71c23188b7f40a420f41f869.bindPopup(popup_9b85bd5d3764411f7aee5b637eca8b0b)
+        ;
+
+        
+    
+    
+            var circle_marker_f23b75b7946a58ad0af4b8fc27b18f9b = L.circleMarker(
+                [19.432029999999987, -99.14122999999984],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_211246b615e563433bf81cbe68433676 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_ebb05ead7e262a974056b2056476d9bf = $(`<div id="html_ebb05ead7e262a974056b2056476d9bf" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 23:</b><br>             Gire a la derecha en Calle Venustiano Carranza hacia V Carranza/Artículo 123/Av 20 de Noviembre. Siga durante 1.1 km.             <br><b>Distancia:</b> 1.10 km         </div>         </div>`)[0];
+                popup_211246b615e563433bf81cbe68433676.setContent(html_ebb05ead7e262a974056b2056476d9bf);
+            
+        
+
+        circle_marker_f23b75b7946a58ad0af4b8fc27b18f9b.bindPopup(popup_211246b615e563433bf81cbe68433676)
+        ;
+
+        
+    
+    
+            var circle_marker_81511109807d259a1fc9eccdb5f0d665 = L.circleMarker(
+                [19.430659999999992, -99.13123999999985],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_6869bcd668df01f73a2ee06248105144 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_8eca1318c90f0efcc107d4fe190c716d = $(`<div id="html_8eca1318c90f0efcc107d4fe190c716d" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 24:</b><br>             Gire a la izquierda en Maestro Erasmo Castellanos Quinto. Siga durante 102 m.             <br><b>Distancia:</b> 100 mts         </div>         </div>`)[0];
+                popup_6869bcd668df01f73a2ee06248105144.setContent(html_8eca1318c90f0efcc107d4fe190c716d);
+            
+        
+
+        circle_marker_81511109807d259a1fc9eccdb5f0d665.bindPopup(popup_6869bcd668df01f73a2ee06248105144)
+        ;
+
+        
+    
+    
+            var circle_marker_9d5d354b1fb902bcf005ead5ef7e19fa = L.circleMarker(
+                [19.43155999999999, -99.13109999999985],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_83601676156c6b3b166b309f3722b482 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_8850e9c4fab045a03f6057e88f1b98a5 = $(`<div id="html_8850e9c4fab045a03f6057e88f1b98a5" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 25:</b><br>             Gire a la izquierda en Corregidora. Siga durante 32 m.             <br><b>Distancia:</b> 0 mts         </div>         </div>`)[0];
+                popup_83601676156c6b3b166b309f3722b482.setContent(html_8850e9c4fab045a03f6057e88f1b98a5);
+            
+        
+
+        circle_marker_9d5d354b1fb902bcf005ead5ef7e19fa.bindPopup(popup_83601676156c6b3b166b309f3722b482)
+        ;
+
+        
+    
+    
+            var circle_marker_619e3fa163fea417a3fbff73ab808f36 = L.circleMarker(
+                [19.43159999999999, -99.13139999999984],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "white", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var popup_f8431b34c04bf53546273535cf58819b = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_2ba1b6e325ac796183fb1c728a5b65f3 = $(`<div id="html_2ba1b6e325ac796183fb1c728a5b65f3" style="width: 100.0%; height: 100.0%;">         <div style="font-family: Arial; width: 200px;">             <b>Paso 26:</b><br>             Continúe por Calle Josefa Ortiz de Domínguez. Siga durante 97 m.             <br><b>Distancia:</b> 100 mts         </div>         </div>`)[0];
+                popup_f8431b34c04bf53546273535cf58819b.setContent(html_2ba1b6e325ac796183fb1c728a5b65f3);
+            
+        
+
+        circle_marker_619e3fa163fea417a3fbff73ab808f36.bindPopup(popup_f8431b34c04bf53546273535cf58819b)
+        ;
+
+        
+    
+    
+            var marker_9618771a2462f4663e5e5bce107b672b = L.marker(
+                [19.43168999999999, -99.13231999999984],
+                {}
+            ).addTo(map_1ded867b322dcca22d9c55aa4b4efa18);
+        
+    
+        var custom_icon_323852cb3d595c53fdeb5e554cc7772b = L.icon({"iconAnchor": [17, 35], "iconSize": [35, 35], "iconUrl": "https://assets.mapquestapi.com/icon/v2/marker-end.png", "popupAnchor": [0, -35]});
+        marker_9618771a2462f4663e5e5bce107b672b.setIcon(custom_icon_323852cb3d595c53fdeb5e554cc7772b);
+        
+    
+        var popup_2bee0ccd2fe30d3fd9a29838d7cc3666 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_c747d772d5862c68325eac17400b3c85 = $(`<div id="html_c747d772d5862c68325eac17400b3c85" style="width: 100.0%; height: 100.0%;"><b>LLEGADA:</b> Ha llegado a Calle Josefa Ortiz de Domínguez. Su destino está a la derecha.</div>`)[0];
+                popup_2bee0ccd2fe30d3fd9a29838d7cc3666.setContent(html_c747d772d5862c68325eac17400b3c85);
+            
+        
+
+        marker_9618771a2462f4663e5e5bce107b672b.bindPopup(popup_2bee0ccd2fe30d3fd9a29838d7cc3666)
+        ;
+
+        
+    
+</script>
+</html>

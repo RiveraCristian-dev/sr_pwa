@@ -1,0 +1,10 @@
+# Requisitos para empezar
+pip install fastapi==0.104.1
+pip install uvicorn==0.24.0
+pip install sqlalchemy==2.0.23
+pip install requests==2.31.0
+pip install networkx==3.2.1
+pip install folium==0.14.0
+pip install python-dotenv==1.0.0
+pip install pydantic==2.5.0
+pip install pymysql==1.1.0pi
