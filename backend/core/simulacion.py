@@ -1,5 +1,5 @@
 import folium
-import dijkstra
+from . import dijkstra
 
 def generar_mapa_visual(G, ruta_geometria, incidentes, nombre_archivo="mapa.html"):
     if not G or not ruta_geometria:
