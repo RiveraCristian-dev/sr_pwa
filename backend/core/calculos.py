@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, text
 # 1. Conexión a la base de datos
 # ==========================================================
 
-engine = create_engine("mysql+mysqlconnector://root:Mysqldb20@localhost/logistica")
+engine = create_engine("mysql+mysqlconnector://root:Mysqldb20@localhost/simpwadb")
 
 
 # ==========================================================
