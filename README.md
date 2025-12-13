@@ -5,16 +5,16 @@ Leeer y ejecutar Scripts para debuguear
 
 # Diagnóstico completo
 
-python debug_backend.py
+python scripts/debug_backend.py
 
 # Probar todos los endpoints (API debe estar corriendo)
 
-python test_endpoints.py
+python scripts/test_endpoints.py
 
 # Verificación rápida
 
-python quick_check.py
+python scripts/quick_check.py
 
-# servidor local host
+# INICIARservidor local host
 
 uvicorn backend.API.main:app --reload --port 8000 / http://localhost:8000/docs

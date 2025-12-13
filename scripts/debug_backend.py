@@ -1,7 +1,7 @@
 ﻿#!/usr/bin/env python3
 """
 DEBUG COMPLETO DEL BACKEND - Simulador de Rutas PWA
-Guarda este archivo en la raÃ­z del proyecto (sr_pwa/)
+
 """
 
 import sys
@@ -9,60 +9,59 @@ import os
 from pathlib import Path
 
 def print_section(title, char="="):
-    """Imprime una secciÃ³n con formato"""
     line = char * 60
     print(f"\n{line}")
     print(f" {title}")
     print(f"{line}")
 
 def main():
-    print_section("DIAGNÃ“STICO COMPLETO DEL BACKEND - SIMULADOR RUTAS PWA")
+    print_section("DIAGNOSTICO COMPLETO DEL BACKEND")
     
-    # Configurar path
-    current_dir = Path(__file__).parent.parent
+    current_dir = Path(__file__).resolve().parent.parent
     sys.path.insert(0, str(current_dir))
     
-    # ========== 1. VERIFICAR ESTRUCTURA ==========
+    # 1. ESTRUCTURA
     print_section("1. ESTRUCTURA DE CARPETAS", "-")
     
-    folders_to_check = [
-        current_dir / "backend",
-        current_dir / "backend/core",
-        current_dir / "backend/API",
-        current_dir / "backend/API/routers",
-        current_dir / "database",
-        current_dir / "frontend"
+    folders = [
+        ("backend", "Backend principal"),
+        ("backend/core", "Logica core"),
+        ("backend/API", "API FastAPI"),
+        ("backend/API/routers", "Routers"),
+        ("database", "Base de datos"),
+        ("frontend", "Frontend"),
     ]
     
-    for folder in folders_to_check:
-        status = "âœ…" if folder.exists() else "âŒ"
-        print(f"{status} {folder.relative_to(current_dir)}")
+    for folder, desc in folders:
+        path = current_dir / folder
+        print(f"[{'OK' if path.exists() else 'ERROR'}] {desc}: {folder}")
     
-    # ========== 2. VERIFICAR ARCHIVOS CRÃTICOS ==========
-    print_section("2. ARCHIVOS CRÃTICOS", "-")
+    # 2. ARCHIVOS
+    print_section("2. ARCHIVOS CRITICOS", "-")
     
-    critical_files = [
-        (current_dir / ".env", "Variables de entorno"),
-        (current_dir / "requirements.txt", "Dependencias"),
-        (current_dir / "backend/core/dijkstra.py", "LÃ³gica Dijkstra"),
-        (current_dir / "backend/core/calculos.py", "CÃ¡lculos logÃ­sticos"),
-        (current_dir / "backend/core/simulacion.py", "GeneraciÃ³n mapas"),
-        (current_dir / "backend/API/main.py", "API FastAPI"),
-        (current_dir / "backend/API/dependencies.py", "ConexiÃ³n BD"),
-        (current_dir / "database/schema_mysql.sql", "Esquema BD"),
+    files = [
+        (".env", "Variables entorno"),
+        ("requirements.txt", "Dependencias"),
+        ("backend/core/dijkstra.py", "Logica Dijkstra"),
+        ("backend/core/calculos.py", "Calculos logisticos"),
+        ("backend/core/simulacion.py", "Generacion mapas"),
+        ("backend/API/main.py", "API FastAPI"),
+        ("backend/API/dependencies.py", "Conexion BD"),
+        ("database/schema_mysql.sql", "Esquema BD"),
     ]
     
-    for file_path, description in critical_files:
-        if file_path.exists():
-            size = file_path.stat().st_size
-            print(f"âœ… {description:25} ({size} bytes)")
+    for file_path, desc in files:
+        full_path = current_dir / file_path
+        if full_path.exists():
+            size = full_path.stat().st_size
+            print(f"[OK]  {desc:25} ({size} bytes)")
         else:
-            print(f"âŒ {description:25} NO ENCONTRADO")
+            print(f"[ERROR] {desc:25} NO ENCONTRADO")
     
-    # ========== 3. VERIFICAR DEPENDENCIAS ==========
+    # 3. DEPENDENCIAS
     print_section("3. DEPENDENCIAS PYTHON", "-")
     
-    required_modules = [
+    modules = [
         ("fastapi", "FastAPI"),
         ("uvicorn", "Uvicorn"),
         ("sqlalchemy", "SQLAlchemy"),
@@ -74,36 +73,35 @@ def main():
         ("dotenv", "python-dotenv"),
     ]
     
-    for module_name, display_name in required_modules:
+    for mod, name in modules:
         try:
-            __import__(module_name)
-            print(f"âœ… {display_name:15} instalado")
+            __import__(mod)
+            print(f"[OK]  {name:15} instalado")
         except ImportError:
-            print(f"âŒ {display_name:15} FALTA")
+            print(f"[ERROR] {name:15} FALTA")
     
-    # ========== 4. VERIFICAR IMPORTS DE MÃ“DULOS ==========
-    print_section("4. IMPORTS DE MÃ“DULOS PROPIOS", "-")
+    # 4. IMPORTS PROPIOS
+    print_section("4. IMPORTS DE MODULOS", "-")
     
-    modules_to_test = [
-        ("backend.core.dijkstra", ["obtener_datos_ruta", "construir_grafo_logico"]),
-        ("backend.core.calculos", ["calcular_pedido"]),
-        ("backend.core.simulacion", ["generar_mapa_visual"]),
-        ("backend.API.dependencies", ["get_db", "create_tables"]),
-        ("backend.API.main", ["app"]),
-    ]
+    try:
+        from backend.core.dijkstra import obtener_datos_ruta
+        print("[OK]  backend.core.dijkstra")
+    except Exception as e:
+        print(f"[ERROR] dijkstra: {str(e)[:50]}")
     
-    for module_name, functions in modules_to_test:
-        try:
-            module = __import__(module_name, fromlist=functions)
-            for func in functions:
-                if hasattr(module, func):
-                    print(f"âœ… {module_name}.{func}")
-                else:
-                    print(f"âŒ {module_name}.{func} (no encontrado)")
-        except Exception as e:
-            print(f"âŒ Error importando {module_name}: {str(e)[:50]}")
+    try:
+        from backend.core.calculos import calcular_pedido
+        print("[OK]  backend.core.calculos")
+    except Exception as e:
+        print(f"[ERROR] calculos: {str(e)[:50]}")
     
-    # ========== 5. VERIFICAR VARIABLES DE ENTORNO ==========
+    try:
+        from backend.API.main import app
+        print(f"[OK]  backend.API.main: {app.title}")
+    except Exception as e:
+        print(f"[ERROR] main.py: {str(e)[:50]}")
+    
+    # 5. VARIABLES ENTORNO
     print_section("5. VARIABLES DE ENTORNO", "-")
     
     env_file = current_dir / ".env"
@@ -111,48 +109,29 @@ def main():
         from dotenv import load_dotenv
         load_dotenv(dotenv_path=env_file)
         
-        env_vars = [
-            ("MAPQUEST_API_KEY", "API MapQuest"),
-            ("DB_HOST", "Host BD"),
-            ("DB_NAME", "Nombre BD"),
-            ("DB_USER", "Usuario BD"),
-        ]
+        key = os.getenv("MAPQUEST_API_KEY")
+        db = os.getenv("DB_NAME")
         
-        for var_name, description in env_vars:
-            value = os.getenv(var_name)
-            if value:
-                masked = value[:4] + "***" + value[-4:] if len(value) > 8 else "***"
-                print(f"âœ… {description:15} = {masked}")
-            else:
-                print(f"âŒ {description:15} NO DEFINIDA")
+        if key:
+            print(f"MAPQUEST_API_KEY: [OK] ({len(key)} caracteres)")
+        else:
+            print(f"MAPQUEST_API_KEY: [ERROR] NO DEFINIDA")
+        
+        if db:
+            print(f"DB_NAME: [OK] {db}")
+        else:
+            print(f"DB_NAME: [ERROR] NO DEFINIDA")
     else:
-        print("âš ï¸  Archivo .env no encontrado")
+        print("[ERROR] Archivo .env no encontrado")
     
-    # ========== 6. VERIFICAR CONEXIÃ“N BD ==========
-    print_section("6. CONEXIÃ“N BASE DE DATOS", "-")
-    
-    try:
-        from backend.API.dependencies import engine
-        with engine.connect() as conn:
-            from sqlalchemy import text
-            conn.execute(text("SELECT 1"))
-        print(f"âœ… BD conectada: {engine.url.database}")
-    except Exception as e:
-        print(f"âŒ Error BD: {str(e)[:80]}")
-    
-    # ========== 7. RESUMEN FINAL ==========
-    print_section("RESUMEN FINAL", "=")
-    print("ðŸŽ¯ SI TODOS LOS PUNTOS 1-6 MUESTRAN âœ…:")
-    print("   Â¡BACKEND COMPLETAMENTE FUNCIONAL!")
-    print("")
-    print("ðŸš€ COMANDO PARA INICIAR API:")
+    # 6. RESUMEN
+    print_section("RESUMEN", "=")
+    print("SI TODO OK, INICIA API CON:")
     print("   uvicorn backend.API.main:app --reload --port 8000")
     print("")
-    print("ðŸ”— DOCUMENTACIÃ“N:")
-    print("   http://localhost:8000/docs")
+    print("DOCUMENTACION: http://localhost:8000/docs")
     print("")
-    print("ðŸ› ï¸  ENDPOINT PRINCIPAL PARA PROBAR:")
-    print("   POST http://localhost:8000/ruta/calcular")
+    print("ENDPOINT PRINCIPAL: POST /ruta/calcular")
 
 if __name__ == "__main__":
     main()
