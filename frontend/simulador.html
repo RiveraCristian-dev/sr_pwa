@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Rutas UMB Cuautitlán</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <style>
+        /* Variables de colores consistentes con el login */
+        :root {
+            --azul-oscuro: #0a1128;
+            --azul-medio: #1c2e4a;
+            --azul-claro: #274c77;
+            --azul-muy-claro: #3a7ca5;
+            --verde: #2ecc71;
+            --blanco: #ffffff;
+            --gris-claro: #f5f7fa;
+            --sombra: rgba(10, 17, 40, 0.15);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-medio) 100%);
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            color: var(--blanco);
+        }
+        
+        .container-fluid {
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--azul-medio) 0%, var(--azul-claro) 100%);
+            color: var(--blanco);
+            padding: 15px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .header-content {
+            flex: 1;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header p {
+            margin: 5px 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--azul-muy-claro);
+            color: var(--blanco);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        
+        .back-button:hover {
+            background: var(--azul-muy-claro);
+            transform: translateX(-3px);
+        }
+        
+        .destination-selector {
+            background-color: rgba(28, 46, 74, 0.8);
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--azul-muy-claro);
+        }
+        
+        .destination-form {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: var(--blanco);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            border: 2px solid var(--azul-muy-claro);
+            padding: 12px 15px;
+            transition: all 0.3s;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--blanco);
+            font-size: 1rem;
+        }
+        
+        .form-control:focus {
+            border-color: var(--verde);
+            box-shadow: 0 0 0 0.25rem rgba(46, 204, 113, 0.25);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--azul-muy-claro) 0%, var(--verde) 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: var(--blanco);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+            background: linear-gradient(135deg, var(--verde) 0%, var(--azul-muy-claro) 100%);
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 350px;
+            background-color: rgba(28, 46, 74, 0.9);
+            border-right: 2px solid var(--azul-muy-claro);
+            padding: 20px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+        
+        .map-container {
+            flex: 1;
+            position: relative;
+            background: rgba(10, 17, 40, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .map-placeholder {
+            text-align: center;
+            padding: 40px;
+            max-width: 500px;
+        }
+        
+        .map-placeholder i {
+            font-size: 80px;
+            color: var(--azul-muy-claro);
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+        
+        .map-placeholder h3 {
+            color: var(--blanco);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .map-placeholder p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .route-summary {
+            background: linear-gradient(135deg, rgba(39, 76, 119, 0.8) 0%, rgba(28, 46, 74, 0.9) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 5px solid var(--verde);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .route-summary h5 {
+            color: var(--blanco);
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .route-summary p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .route-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            background-color: rgba(10, 17, 40, 0.4);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--verde);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .events-section {
+            margin-top: 25px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .section-header h5 {
+            color: var(--blanco);
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .event-filter {
+            display: flex;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid var(--azul-muy-claro);
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--blanco);
+            font-weight: 500;
+        }
+        
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--azul-muy-claro) 0%, var(--verde) 100%);
+            color: var(--blanco);
+            border-color: transparent;
+            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3);
+        }
+        
+        .filter-btn:hover:not(.active) {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .events-list {
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .events-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .events-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        
+        .events-list::-webkit-scrollbar-thumb {
+            background: var(--azul-muy-claro);
+            border-radius: 3px;
+        }
+        
+        .event-item {
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, rgba(39, 76, 119, 0.6) 0%, rgba(28, 46, 74, 0.8) 100%);
+            border-radius: 0 10px 10px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .event-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .event-item.traffic {
+            border-left-color: #ff6b6b;
+        }
+        
+        .event-item.construction {
+            border-left-color: #ffa726;
+        }
+        
+        .event-type {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .event-type.traffic {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2) 0%, rgba(255, 107, 107, 0.4) 100%);
+            color: #ff6b6b;
+        }
+        
+        .event-type.construction {
+            background: linear-gradient(135deg, rgba(255, 167, 38, 0.2) 0%, rgba(255, 167, 38, 0.4) 100%);
+            color: #ffa726;
+        }
+        
+        .event-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--blanco);
+            font-size: 1.05rem;
+        }
+        
+        .event-description {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .event-location {
+            font-size: 0.85rem;
+            color: var(--verde);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend {
+            background: linear-gradient(135deg, rgba(39, 76, 119, 0.8) 0%, rgba(28, 46, 74, 0.9) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .legend h6 {
+            color: var(--blanco);
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px 0;
+        }
+        
+        .legend-color {
+            width: 25px;
+            height: 25px;
+            border-radius: 6px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .legend-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .instructions-section {
+            margin-top: 25px;
+        }
+        
+        .instructions-section h5 {
+            color: var(--blanco);
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions-list {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .instruction-item {
+            padding: 15px;
+            border-left: 4px solid var(--verde);
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, rgba(39, 76, 119, 0.6) 0%, rgba(28, 46, 74, 0.8) 100%);
+            border-radius: 0 10px 10px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .instruction-step {
+            font-weight: 600;
+            color: var(--verde);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .instruction-text {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+        
+        .instruction-distance {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(28, 46, 74, 0.9) 0%, rgba(10, 17, 40, 0.9) 100%);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .spinner-border {
+            width: 4rem;
+            height: 4rem;
+            border-width: 0.3rem;
+            color: var(--verde);
+        }
+        
+        /* Estilos para el modal */
+        .modal-content {
+            background: linear-gradient(135deg, var(--azul-medio) 0%, var(--azul-oscuro) 100%);
+            border: 2px solid var(--azul-muy-claro);
+            border-radius: 15px;
+            color: var(--blanco);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid var(--azul-muy-claro);
+            padding: 20px;
+        }
+        
+        .modal-title {
+            color: var(--blanco);
+            font-weight: 600;
+        }
+        
+        .btn-close {
+            filter: invert(1) brightness(2);
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid var(--azul-muy-claro);
+            padding: 20px;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.2) 100%);
+            border: 2px solid var(--azul-muy-claro);
+            color: var(--blanco);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        /* Efectos decorativos similares al login */
+        .decorative-circle {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(46, 204, 113, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            right: -150px;
+        }
+        
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            left: -100px;
+            background: radial-gradient(circle, rgba(58, 124, 165, 0.1) 0%, transparent 70%);
+        }
+        
+        .decorative-line {
+            position: fixed;
+            background: linear-gradient(90deg, transparent, var(--azul-muy-claro), transparent);
+            z-index: 0;
+        }
+        
+        .line-1 {
+            width: 100%;
+            height: 2px;
+            top: 20%;
+            opacity: 0.3;
+        }
+        
+        .line-2 {
+            width: 100%;
+            height: 1px;
+            bottom: 30%;
+            opacity: 0.2;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .animation-controls {
+                flex-direction: column;
+                width: 90%;
+                bottom: 20px;
+            }
+            
+            .progress-container {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .animation-btn {
+                min-width: 100px;
+                padding: 10px 15px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-height: 50vh;
+                border-right: none;
+                border-bottom: 2px solid var(--azul-muy-claro);
+            }
+            
+            .map-container {
+                height: 50vh;
+            }
+            
+            .destination-form {
+                flex-direction: column;
+            }
+            
+            .form-group {
+                width: 100%;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                padding: 15px;
+            }
+            
+            .header-content {
+                width: 100%;
+            }
+            
+            .back-button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .animation-controls {
+                width: 95%;
+                padding: 15px;
+                flex-wrap: wrap;
+            }
+            
+            .animation-btn {
+                flex: 1;
+                min-width: auto;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .animation-controls {
+                flex-direction: column;
+            }
+            
+            .animation-btn {
+                width: 100%;
+            }
+            
+            .route-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .stat-item {
+                padding: 10px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .stat-item:last-child {
+                border-bottom: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Elementos decorativos (como en el login) -->
+    <div class="decorative-circle circle-1"></div>
+    <div class="decorative-circle circle-2"></div>
+    <div class="decorative-line line-1"></div>
+    <div class="decorative-line line-2"></div>
+    
+    <div class="container-fluid">
+        <div class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-route"></i> Sistema de Rutas UMB Cuautitlán</h1>
+                <p>Visualización de rutas hacia 8 municipios del Estado de México</p>
+            </div>
+            <a href="index.html" class="back-button">
+                <i class="fas fa-arrow-left"></i> Volver al Inicio
+            </a>
+        </div>
+        
+        <div class="destination-selector">
+            <div class="destination-form">
+                <div class="form-group">
+                    <label for="origin"><i class="fas fa-map-marker-alt"></i> Origen</label>
+                    <input type="text" class="form-control" id="origin" value="UMB Cuautitlán, Edo. México" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="destination"><i class="fas fa-flag-checkered"></i> Destino</label>
+                    <select class="form-control" id="destination">
+                        <option value="">Selecciona un destino</option>
+                        <option value="tultepec">1° Tultepec</option>
+                        <option value="melchor">2° Melchor Ocampo</option>
+                        <option value="tultitlan">3° Tultitlán</option>
+                        <option value="cuautitlan_izcalli">4° Cuautitlán Izcalli</option>
+                        <option value="tepozotlan">5° Tepotzotlán</option>
+                        <option value="teoloyucan">6° Teoloyucan</option>
+                        <option value="coacalco">7° Coacalco</option>
+                        <option value="cuautitlan">8° Cuautitlán</option>
+                    </select>
+                </div>
+                <div class="form-group d-flex align-items-end">
+                    <button class="btn btn-primary w-100" id="calculateRoute">
+                        <i class="fas fa-calculator"></i> Calcular Ruta
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="loading" id="loading">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Calculando ruta...</span>
+                    </div>
+                    <p class="mt-3">Calculando la mejor ruta...</p>
+                </div>
+                
+                <div id="routeInfo">
+                    <div class="route-summary">
+                        <h5><i class="fas fa-info-circle"></i> Resumen de la Ruta</h5>
+                        <p><strong>Origen:</strong> UMB Cuautitlán</p>
+                        <p><strong>Destino:</strong> <span id="destinoNombre">Selecciona un destino</span></p>
+                        <div class="route-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalSteps">0</div>
+                                <div class="stat-label">Pasos</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalEvents">0</div>
+                                <div class="stat-label">Eventos</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalDistance">0 km</div>
+                                <div class="stat-label">Distancia</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="events-section">
+                        <div class="section-header">
+                            <h5><i class="fas fa-exclamation-triangle"></i> Eventos en la Ruta</h5>
+                        </div>
+                        
+                        <div class="event-filter">
+                            <button class="filter-btn active" data-filter="all">Todos (0)</button>
+                            <button class="filter-btn" data-filter="traffic">Tráfico (0)</button>
+                            <button class="filter-btn" data-filter="construction">Obras (0)</button>
+                        </div>
+                        
+                        <div class="events-list" id="eventsList">
+                            <div class="text-center py-4" style="color: rgba(255, 255, 255, 0.7);">
+                                <i class="fas fa-route fa-2x mb-3" style="opacity: 0.5;"></i>
+                                <p>Selecciona un destino para ver los eventos en la ruta</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="legend">
+                        <h6><i class="fas fa-key"></i> Leyenda del Mapa</h6>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: linear-gradient(90deg, var(--azul-muy-claro), var(--verde));"></div>
+                            <div class="legend-label">Ruta sugerida</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: var(--verde); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-university" style="color: white; font-size: 12px;"></i>
+                            </div>
+                            <div class="legend-label">UMB Cuautitlán</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #ff6b6b; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-flag" style="color: white; font-size: 12px;"></i>
+                            </div>
+                            <div class="legend-label">Destino</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--verde); border-radius: 50%;">
+                                <i class="fas fa-car" style="color: white; font-size: 12px;"></i>
+                            </div>
+                            <div class="legend-label">Vehículo en movimiento</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: rgba(255, 107, 107, 0.2); border: 2px solid #ff6b6b; border-radius: 50%;">
+                                <i class="fas fa-car" style="color: #ff6b6b; font-size: 10px;"></i>
+                            </div>
+                            <div class="legend-label">Evento de Tráfico</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: rgba(255, 167, 38, 0.2); border: 2px solid #ffa726; border-radius: 50%;">
+                                <i class="fas fa-wrench" style="color: #ffa726; font-size: 10px;"></i>
+                            </div>
+                            <div class="legend-label">Obras / Construcción</div>
+                        </div>
+                    </div>
+                    
+                    <div class="instructions-section">
+                        <h5><i class="fas fa-directions"></i> Instrucciones Principales</h5>
+                        <div class="instructions-list" id="mainInstructions">
+                            <div class="text-center py-3" style="color: rgba(255, 255, 255, 0.7);">
+                                <i class="fas fa-info-circle fa-2x mb-2" style="opacity: 0.5;"></i>
+                                <p>La ruta se mostrará aquí después del cálculo</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary w-100 mt-3" id="viewAllInstructions">
+                            <i class="fas fa-directions"></i> Ver Todas las Instrucciones
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="map-container">
+                <div class="map-placeholder">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <h3>Área del Mapa</h3>
+                    <p>Este espacio está reservado para la integración del mapa. La funcionalidad del mapa ha sido removida como solicitado, manteniendo solo la estructura visual de la interfaz.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para mostrar todas las instrucciones -->
+    <div class="modal fade" id="instructionsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-directions me-2"></i>Instrucciones Detalladas de la Ruta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="route-info mb-4 p-3" style="background: rgba(255, 255, 255, 0.1); border-radius: 10px;">
+                        <p class="mb-1"><strong><i class="fas fa-map-marker-alt me-2"></i>Origen:</strong> UMB Cuautitlán</p>
+                        <p class="mb-1"><strong><i class="fas fa-flag-checkered me-2"></i>Destino:</strong> <span id="modalDestino"></span></p>
+                        <p class="mb-0"><strong><i class="fas fa-ruler-combined me-2"></i>Distancia total:</strong> <span id="modalDistance"></span></p>
+                    </div>
+                    <div class="instructions-list" id="modalInstructions" style="max-height: 400px; overflow-y: auto;">
+                        <!-- Las instrucciones se cargarán dinámicamente -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="printInstructions">
+                        <i class="fas fa-print me-2"></i>Imprimir Instrucciones
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Script mínimo para mantener la funcionalidad básica de la interfaz
+        $(document).ready(function() {
+            // Configurar evento del botón calcular
+            $('#calculateRoute').click(function() {
+                const destino = $('#destination').val();
+                
+                if (!destino) {
+                    alert('Por favor selecciona un destino');
+                    return;
+                }
+                
+                // Mostrar loading
+                $('#loading').show();
+                $('#routeInfo').hide();
+                
+                // Simular tiempo de cálculo
+                setTimeout(function() {
+                    // Ocultar loading y mostrar información
+                    $('#loading').hide();
+                    $('#routeInfo').show();
+                    
+                    // Aquí normalmente se cargaría la información de la ruta
+                    // Por ahora solo mostraremos un mensaje
+                    $('#destinoNombre').text($('#destination option:selected').text());
+                    $('#totalSteps').text('8');
+                    $('#totalEvents').text('3');
+                    $('#totalDistance').text('12.5 km');
+                    
+                    // Actualizar eventos de ejemplo
+                    $('.filter-btn[data-filter="all"]').text('Todos (3)');
+                    $('.filter-btn[data-filter="traffic"]').text('Tráfico (2)');
+                    $('.filter-btn[data-filter="construction"]').text('Obras (1)');
+                    
+                    // Mostrar eventos de ejemplo
+                    const eventsList = $('#eventsList');
+                    eventsList.empty();
+                    
+                    const eventosEjemplo = [
+                        { type: 'traffic', title: 'Tráfico Moderado', description: 'Congestión en la salida principal', location: 'Av. Principal' },
+                        { type: 'construction', title: 'Obras Viales', description: 'Reducción de carriles por obras', location: 'Blvd. Central' },
+                        { type: 'traffic', title: 'Semáforo Descompuesto', description: 'Intersección con tráfico lento', location: 'Cruce Av. Universidad' }
+                    ];
+                    
+                    eventosEjemplo.forEach(event => {
+                        const eventItem = `
+                            <div class="event-item ${event.type}">
+                                <div class="event-type ${event.type}">
+                                    ${event.type === 'traffic' ? 'Tráfico' : 'Obras'}
+                                </div>
+                                <div class="event-title">${event.title}</div>
+                                <div class="event-description">${event.description}</div>
+                                <div class="event-location">
+                                    <i class="fas fa-map-marker-alt"></i> ${event.location}
+                                </div>
+                            </div>
+                        `;
+                        eventsList.append(eventItem);
+                    });
+                    
+                    // Mostrar instrucciones de ejemplo
+                    const mainInstructions = $('#mainInstructions');
+                    mainInstructions.empty();
+                    
+                    const instruccionesEjemplo = [
+                        { step: 1, text: 'Salir de UMB Cuautitlán hacia Av. Universidad', distance: '250 m' },
+                        { step: 2, text: 'Girar a la derecha en Av. José López Portillo', distance: '3.2 km' },
+                        { step: 3, text: 'Continuar por Carretera Federal', distance: '5.8 km' },
+                        { step: 4, text: 'Tomar la salida hacia el destino', distance: '1.2 km' },
+                        { step: 5, text: 'Llegar al punto destino', distance: '2.1 km' }
+                    ];
+                    
+                    instruccionesEjemplo.forEach(instruction => {
+                        const instructionItem = `
+                            <div class="instruction-item">
+                                <div class="instruction-step">Paso ${instruction.step}</div>
+                                <div class="instruction-text">${instruction.text}</div>
+                                <div class="instruction-distance">
+                                    <i class="fas fa-ruler-combined"></i> Distancia: ${instruction.distance}
+                                </div>
+                            </div>
+                        `;
+                        mainInstructions.append(instructionItem);
+                    });
+                    
+                }, 1000);
+            });
+            
+            // Configurar filtros de eventos
+            $(document).on('click', '.filter-btn', function() {
+                $('.filter-btn').removeClass('active');
+                $(this).addClass('active');
+                // En una implementación completa, aquí se filtrarían los eventos
+            });
+            
+            // Configurar botón de ver todas las instrucciones
+            $('#viewAllInstructions').click(function() {
+                // Datos de ejemplo para el modal
+                $('#modalDestino').text($('#destination option:selected').text());
+                $('#modalDistance').text('12.5 km');
+                
+                const modalInstructions = $('#modalInstructions');
+                modalInstructions.empty();
+                
+                const instruccionesEjemplo = [
+                    { step: 1, text: 'Salir de UMB Cuautitlán hacia Av. Universidad', distance: '250 m' },
+                    { step: 2, text: 'Girar a la derecha en Av. José López Portillo', distance: '3.2 km' },
+                    { step: 3, text: 'Continuar por Carretera Federal', distance: '5.8 km' },
+                    { step: 4, text: 'Tomar la salida hacia el destino', distance: '1.2 km' },
+                    { step: 5, text: 'Llegar al punto destino', distance: '2.1 km' },
+                    { step: 6, text: 'Estacionarse en el área designada', distance: '150 m' },
+                    { step: 7, text: 'Finalizar el recorrido', distance: '0 m' }
+                ];
+                
+                instruccionesEjemplo.forEach(instruction => {
+                    const instructionItem = `
+                        <div class="instruction-item">
+                            <div class="instruction-step">Paso ${instruction.step}</div>
+                            <div class="instruction-text">${instruction.text}</div>
+                            <div class="instruction-distance">
+                                <i class="fas fa-ruler-combined"></i> Distancia: ${instruction.distance}
+                            </div>
+                        </div>
+                    `;
+                    modalInstructions.append(instructionItem);
+                });
+                
+                // Mostrar el modal
+                new bootstrap.Modal(document.getElementById('instructionsModal')).show();
+            });
+            
+            // Configurar botón de imprimir
+            $('#printInstructions').click(function() {
+                window.print();
+            });
+        });
+    </script>
+</body>
+</html>
