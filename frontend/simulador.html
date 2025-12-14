@@ -827,11 +827,13 @@
                 </div>
             </div>
             
-            <div class="map-container">
-                <div class="map-placeholder">
+            <div class="map-container" style="position: relative; width: 100%; height: 100%;">
+                <iframe id="mapaFrame" style="width: 100%; height: 100%; border: none; display: none;"></iframe>
+    
+                <div id="mapPlaceholder" class="map-placeholder">
                     <i class="fas fa-map-marked-alt"></i>
                     <h3>Área del Mapa</h3>
-                    <p>Este espacio está reservado para la integración del mapa. La funcionalidad del mapa ha sido removida como solicitado, manteniendo solo la estructura visual de la interfaz.</p>
+                    <p>Selecciona un destino y calcula la ruta para visualizar el mapa aquí.</p>
                 </div>
             </div>
         </div>
@@ -870,141 +872,188 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Script mínimo para mantener la funcionalidad básica de la interfaz
-        $(document).ready(function() {
-            // Configurar evento del botón calcular
-            $('#calculateRoute').click(function() {
-                const destino = $('#destination').val();
-                
-                if (!destino) {
-                    alert('Por favor selecciona un destino');
-                    return;
-                }
-                
-                // Mostrar loading
-                $('#loading').show();
-                $('#routeInfo').hide();
-                
-                // Simular tiempo de cálculo
-                setTimeout(function() {
-                    // Ocultar loading y mostrar información
-                    $('#loading').hide();
-                    $('#routeInfo').show();
-                    
-                    // Aquí normalmente se cargaría la información de la ruta
-                    // Por ahora solo mostraremos un mensaje
-                    $('#destinoNombre').text($('#destination option:selected').text());
-                    $('#totalSteps').text('8');
-                    $('#totalEvents').text('3');
-                    $('#totalDistance').text('12.5 km');
-                    
-                    // Actualizar eventos de ejemplo
-                    $('.filter-btn[data-filter="all"]').text('Todos (3)');
-                    $('.filter-btn[data-filter="traffic"]').text('Tráfico (2)');
-                    $('.filter-btn[data-filter="construction"]').text('Obras (1)');
-                    
-                    // Mostrar eventos de ejemplo
-                    const eventsList = $('#eventsList');
-                    eventsList.empty();
-                    
-                    const eventosEjemplo = [
-                        { type: 'traffic', title: 'Tráfico Moderado', description: 'Congestión en la salida principal', location: 'Av. Principal' },
-                        { type: 'construction', title: 'Obras Viales', description: 'Reducción de carriles por obras', location: 'Blvd. Central' },
-                        { type: 'traffic', title: 'Semáforo Descompuesto', description: 'Intersección con tráfico lento', location: 'Cruce Av. Universidad' }
-                    ];
-                    
-                    eventosEjemplo.forEach(event => {
-                        const eventItem = `
-                            <div class="event-item ${event.type}">
-                                <div class="event-type ${event.type}">
-                                    ${event.type === 'traffic' ? 'Tráfico' : 'Obras'}
-                                </div>
-                                <div class="event-title">${event.title}</div>
-                                <div class="event-description">${event.description}</div>
-                                <div class="event-location">
-                                    <i class="fas fa-map-marker-alt"></i> ${event.location}
-                                </div>
-                            </div>
-                        `;
-                        eventsList.append(eventItem);
-                    });
-                    
-                    // Mostrar instrucciones de ejemplo
-                    const mainInstructions = $('#mainInstructions');
-                    mainInstructions.empty();
-                    
-                    const instruccionesEjemplo = [
-                        { step: 1, text: 'Salir de UMB Cuautitlán hacia Av. Universidad', distance: '250 m' },
-                        { step: 2, text: 'Girar a la derecha en Av. José López Portillo', distance: '3.2 km' },
-                        { step: 3, text: 'Continuar por Carretera Federal', distance: '5.8 km' },
-                        { step: 4, text: 'Tomar la salida hacia el destino', distance: '1.2 km' },
-                        { step: 5, text: 'Llegar al punto destino', distance: '2.1 km' }
-                    ];
-                    
-                    instruccionesEjemplo.forEach(instruction => {
-                        const instructionItem = `
-                            <div class="instruction-item">
-                                <div class="instruction-step">Paso ${instruction.step}</div>
-                                <div class="instruction-text">${instruction.text}</div>
-                                <div class="instruction-distance">
-                                    <i class="fas fa-ruler-combined"></i> Distancia: ${instruction.distance}
-                                </div>
-                            </div>
-                        `;
-                        mainInstructions.append(instructionItem);
-                    });
-                    
-                }, 1000);
-            });
+    $(document).ready(function() {
+        // Configurar evento del botón calcular
+        $('#calculateRoute').click(function() {
+        const origen = $('#origin').val(); // UMB Cuautitlán...
+        const destinoVal = $('#destination').val();
+        const destinoTexto = $('#destination option:selected').text();
+        
+        if (!destinoVal) {
+            alert('Por favor selecciona un destino');
+            return;
+        }
+        
+        // Mapeo de valores del select a direcciones reales
+        const direcciones = {
+            'tultepec': 'Tultepec, Estado de Mexico',
+            'melchor': 'Melchor Ocampo, Estado de Mexico',
+            'tultitlan': 'Tultitlan, Estado de Mexico',
+            'cuautitlan_izcalli': 'Cuautitlan Izcalli, Estado de Mexico',
+            'tepozotlan': 'Tepotzotlan, Estado de Mexico',
+            'teoloyucan': 'Teoloyucan, Estado de Mexico',
+            'coacalco': 'Coacalco, Estado de Mexico',
+            'cuautitlan': 'Cuautitlan, Estado de Mexico'
+        };
+
+        const direccionDestino = direcciones[destinoVal] || destinoVal;
+
+        // Mostrar loading
+        $('#loading').show();
+        $('#routeInfo').hide();
+        $('#mapPlaceholder').show();
+        $('#mapaFrame').hide();
+        
+        // LLAMADA A LA API FASTAPI
+        fetch('http://localhost:8000/simulacion/render', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                origen: "Barrio de San Juan, 54800 Cuautitlán, Méx.", // Dirección más precisa para UMB
+                destino: direccionDestino
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Error en la API: " + response.status);
+            return response.text(); // Recibimos el HTML del mapa
+        })
+        .then(htmlMapa => {
+            // 1. Ocultar loading
+            $('#loading').hide();
+            $('#routeInfo').show();
             
-            // Configurar filtros de eventos
-            $(document).on('click', '.filter-btn', function() {
-                $('.filter-btn').removeClass('active');
-                $(this).addClass('active');
-                // En una implementación completa, aquí se filtrarían los eventos
-            });
+            // 2. Inyectar el mapa en el iframe
+            const frame = document.getElementById('mapaFrame');
+            $('#mapPlaceholder').hide();
+            $(frame).show();
             
-            // Configurar botón de ver todas las instrucciones
-            $('#viewAllInstructions').click(function() {
-                // Datos de ejemplo para el modal
-                $('#modalDestino').text($('#destination option:selected').text());
-                $('#modalDistance').text('12.5 km');
-                
-                const modalInstructions = $('#modalInstructions');
-                modalInstructions.empty();
-                
-                const instruccionesEjemplo = [
-                    { step: 1, text: 'Salir de UMB Cuautitlán hacia Av. Universidad', distance: '250 m' },
-                    { step: 2, text: 'Girar a la derecha en Av. José López Portillo', distance: '3.2 km' },
-                    { step: 3, text: 'Continuar por Carretera Federal', distance: '5.8 km' },
-                    { step: 4, text: 'Tomar la salida hacia el destino', distance: '1.2 km' },
-                    { step: 5, text: 'Llegar al punto destino', distance: '2.1 km' },
-                    { step: 6, text: 'Estacionarse en el área designada', distance: '150 m' },
-                    { step: 7, text: 'Finalizar el recorrido', distance: '0 m' }
-                ];
-                
-                instruccionesEjemplo.forEach(instruction => {
-                    const instructionItem = `
-                        <div class="instruction-item">
-                            <div class="instruction-step">Paso ${instruction.step}</div>
-                            <div class="instruction-text">${instruction.text}</div>
-                            <div class="instruction-distance">
-                                <i class="fas fa-ruler-combined"></i> Distancia: ${instruction.distance}
-                            </div>
+            // Escribir el HTML recibido dentro del iframe
+            const doc = frame.contentWindow.document;
+            doc.open();
+            doc.write(htmlMapa);
+            doc.close();
+
+            // 3. Actualizar datos de la interfaz con valores por defecto
+            $('#destinoNombre').text(destinoTexto);
+            $('#totalSteps').text('8');
+            $('#totalEvents').text('3');
+            $('#totalDistance').text('12.5 km');
+            
+            // 4. Actualizar eventos de ejemplo
+            $('.filter-btn[data-filter="all"]').text('Todos (3)');
+            $('.filter-btn[data-filter="traffic"]').text('Tráfico (2)');
+            $('.filter-btn[data-filter="construction"]').text('Obras (1)');
+            
+            // 5. Mostrar eventos de ejemplo
+            const eventsList = $('#eventsList');
+            eventsList.empty();
+            
+            const eventosEjemplo = [
+                { type: 'traffic', title: 'Tráfico Moderado', description: 'Congestión en la salida principal', location: 'Av. Principal' },
+                { type: 'construction', title: 'Obras Viales', description: 'Reducción de carriles por obras', location: 'Blvd. Central' },
+                { type: 'traffic', title: 'Semáforo Descompuesto', description: 'Intersección con tráfico lento', location: 'Cruce Av. Universidad' }
+            ];
+            
+            eventosEjemplo.forEach(event => {
+                const eventItem = `
+                    <div class="event-item ${event.type}">
+                        <div class="event-type ${event.type}">
+                            ${event.type === 'traffic' ? 'Tráfico' : 'Obras'}
                         </div>
-                    `;
-                    modalInstructions.append(instructionItem);
-                });
-                
-                // Mostrar el modal
-                new bootstrap.Modal(document.getElementById('instructionsModal')).show();
+                        <div class="event-title">${event.title}</div>
+                        <div class="event-description">${event.description}</div>
+                        <div class="event-location">
+                            <i class="fas fa-map-marker-alt"></i> ${event.location}
+                        </div>
+                    </div>
+                `;
+                eventsList.append(eventItem);
             });
             
-            // Configurar botón de imprimir
-            $('#printInstructions').click(function() {
-                window.print();
+            // 6. Mostrar instrucciones de ejemplo
+            const mainInstructions = $('#mainInstructions');
+            mainInstructions.empty();
+            
+            const instruccionesEjemplo = [
+                { step: 1, text: 'Salir de UMB Cuautitlán hacia Av. Universidad', distance: '250 m' },
+                { step: 2, text: 'Girar a la derecha en Av. José López Portillo', distance: '3.2 km' },
+                { step: 3, text: 'Continuar por Carretera Federal', distance: '5.8 km' },
+                { step: 4, text: 'Tomar la salida hacia el destino', distance: '1.2 km' },
+                { step: 5, text: 'Llegar al punto destino', distance: '2.1 km' }
+            ];
+            
+            instruccionesEjemplo.forEach(instruction => {
+                const instructionItem = `
+                    <div class="instruction-item">
+                        <div class="instruction-step">Paso ${instruction.step}</div>
+                        <div class="instruction-text">${instruction.text}</div>
+                        <div class="instruction-distance">
+                            <i class="fas fa-ruler-combined"></i> Distancia: ${instruction.distance}
+                        </div>
+                    </div>
+                `;
+                mainInstructions.append(instructionItem);
             });
+            
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            $('#loading').hide();
+            $('#routeInfo').show();
+            alert('Hubo un error al calcular la ruta: ' + error.message);
         });
+    });
+    
+    // Configurar filtros de eventos
+    $(document).on('click', '.filter-btn', function() {
+        $('.filter-btn').removeClass('active');
+        $(this).addClass('active');
+        // En una implementación completa, aquí se filtrarían los eventos
+    });
+    
+    // Configurar botón de ver todas las instrucciones
+    $('#viewAllInstructions').click(function() {
+        // Datos de ejemplo para el modal
+        $('#modalDestino').text($('#destination option:selected').text());
+        $('#modalDistance').text('12.5 km');
+        
+        const modalInstructions = $('#modalInstructions');
+        modalInstructions.empty();
+        
+        const instruccionesEjemplo = [
+            { step: 1, text: 'Salir de UMB Cuautitlán hacia Av. Universidad', distance: '250 m' },
+            { step: 2, text: 'Girar a la derecha en Av. José López Portillo', distance: '3.2 km' },
+            { step: 3, text: 'Continuar por Carretera Federal', distance: '5.8 km' },
+            { step: 4, text: 'Tomar la salida hacia el destino', distance: '1.2 km' },
+            { step: 5, text: 'Llegar al punto destino', distance: '2.1 km' },
+            { step: 6, text: 'Estacionarse en el área designada', distance: '150 m' },
+            { step: 7, text: 'Finalizar el recorrido', distance: '0 m' }
+        ];
+        
+        instruccionesEjemplo.forEach(instruction => {
+            const instructionItem = `
+                <div class="instruction-item">
+                    <div class="instruction-step">Paso ${instruction.step}</div>
+                    <div class="instruction-text">${instruction.text}</div>
+                    <div class="instruction-distance">
+                        <i class="fas fa-ruler-combined"></i> Distancia: ${instruction.distance}
+                    </div>
+                </div>
+            `;
+            modalInstructions.append(instructionItem);
+        });
+        
+        // Mostrar el modal
+        new bootstrap.Modal(document.getElementById('instructionsModal')).show();
+    });
+    
+    // Configurar botón de imprimir
+    $('#printInstructions').click(function() {
+        window.print();
+    });
+    });
     </script>
 </body>
 </html>

@@ -1,12 +1,13 @@
 ﻿from fastapi import APIRouter, HTTPException
+from fastapi.responses import HTMLResponse # Importante para devolver el mapa directo
 from pydantic import BaseModel
-from typing import List, Dict, Any
 import os
 from dotenv import load_dotenv
+import folium
 
-# Importar función REAL que tienes
+# Importamos las funciones del core
 from backend.core.simulacion import generar_mapa_visual
-from backend.core.dijkstra import obtener_datos_ruta, construir_grafo_logico
+from backend.core.dijkstra import obtener_ruta_multiparada, construir_grafo_logico
 
 router = APIRouter()
 load_dotenv()
@@ -14,43 +15,50 @@ load_dotenv()
 class SimulacionRequest(BaseModel):
     origen: str
     destino: str
-    nombre_mapa: str = "mapa_simulacion.html"
+    # Ya no necesitamos nombre_mapa porque no guardaremos archivo físico
 
-class SimulacionResponse(BaseModel):
-    mapa_generado: bool
-    archivo: str
-    mensaje: str
-
-@router.post("/", response_model=SimulacionResponse)
-def simular_ruta(request: SimulacionRequest):
-    """Genera un mapa de la ruta usando Folium"""
-    
-    # Obtener API Key
+@router.post("/render", response_class=HTMLResponse)
+def simular_ruta_render(request: SimulacionRequest):
+    """
+    Calcula la ruta y devuelve el HTML del mapa directamente al navegador.
+    """
     API_KEY = os.getenv("MAPQUEST_API_KEY", "0wSs0qcTStL21HNT4VhipGi7CDsjXnkw")
     
-    if not API_KEY or API_KEY == "TU_API_KEY_MAPQUEST_AQUI":
-        raise HTTPException(status_code=500, detail="Configura MAPQUEST_API_KEY en .env")
+    # CORRECCIÓN 1: Pasar lista de lugares, no strings sueltos
+    lugares = [request.origen, request.destino]
     
-    # Obtener ruta
-    maniobras, geometria, bbox = obtener_datos_ruta(API_KEY, request.origen, request.destino)
+    # Obtenemos datos de la ruta
+    maniobras, geometria, bbox, orden = obtener_datos_ruta(API_KEY, lugares)
     
     if not maniobras:
-        raise HTTPException(status_code=400, detail="No se pudo calcular la ruta")
+        raise HTTPException(status_code=400, detail="No se pudo calcular la ruta. Verifica las direcciones.")
     
-    # Construir grafo
+    # Construimos el grafo y obtenemos tráfico (si es necesario)
     grafo = construir_grafo_logico(maniobras)
     
-    # Generar mapa
-    try:
-        generar_mapa_visual(grafo, geometria, [], request.nombre_mapa)
-        return {
-            "mapa_generado": True,
-            "archivo": request.nombre_mapa,
-            "mensaje": f"Mapa generado: {request.nombre_mapa}"
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error generando mapa: {str(e)}")
+    # usando la lógica de tu simulacion.py pero devolviendo el objeto.
+    
+    # Recreación rápida de la lógica de visualización para devolver string
+    import folium
+    
+    # Centrar mapa (lógica simplificada de tu archivo)
+    sw = [18.80, -100.20]
+    ne = [20.20, -98.80]
+    centro = [(sw[0]+ne[0])/2, (sw[1]+ne[1])/2]
+    
+    m = folium.Map(location=centro, zoom_start=11, tiles='OpenStreetMap')
+    
+    # Dibujar ruta
+    folium.PolyLine(geometria, color="#0055FF", weight=5, opacity=0.7).add_to(m)
+    
+    # Marcadores (Inicio y Fin)
+    if orden:
+        # Inicio
+        folium.Marker(location=orden[0]['pos'], popup=f"Inicio: {orden[0]['dir']}", icon=folium.Icon(color='green', icon='home', prefix='fa')).add_to(m)
+        # Fin
+        folium.Marker(location=orden[-1]['pos'], popup=f"Destino: {orden[-1]['dir']}", icon=folium.Icon(color='red', icon='flag', prefix='fa')).add_to(m)
 
-@router.get("/test")
-def test_simulacion():
-    return {"status": "simulacion_router funcionando", "version": "1.0"}
+    m.fit_bounds([sw, ne])
+    
+    # Devolver el HTML como string
+    return m.get_root().render()

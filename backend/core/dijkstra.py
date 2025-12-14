@@ -101,5 +101,3 @@ def construir_grafo_logico(maniobras):
     
     return G
 
-# Alias para mantener compatibilidad
-obtener_datos_ruta = obtener_ruta_multiparada
