@@ -52,7 +52,7 @@ async def calcular_ruta_optimizada(
     
     # 2. Obtener ruta de MapQuest
     print(f"Calculando ruta: {request.origen} -> {request.destino}")
-    maniobras, geometria, bbox = obtener_datos_ruta(
+    maniobras, geometria, bbox = obtener_ruta_multiparada(
         MAPQUEST_API_KEY, 
         request.origen, 
         request.destino
