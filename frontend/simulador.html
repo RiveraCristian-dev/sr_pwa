@@ -229,32 +229,6 @@
             font-size: 0.95rem;
         }
         
-        .route-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            background-color: rgba(10, 17, 40, 0.4);
-            padding: 15px;
-            border-radius: 8px;
-        }
-        
-        .stat-item {
-            text-align: center;
-            flex: 1;
-        }
-        
-        .stat-value {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--verde);
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-        
         .events-section {
             margin-top: 25px;
         }
@@ -337,17 +311,16 @@
             transition: transform 0.3s, box-shadow 0.3s;
         }
         
+        /* Estilos modificados por la solicitud F */
+        .event-item {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
         .event-item:hover {
             transform: translateX(5px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .event-item.traffic {
-            border-left-color: #ff6b6b;
-        }
-        
-        .event-item.construction {
-            border-left-color: #ffa726;
+            background: linear-gradient(135deg, rgba(39, 76, 119, 0.8) 0%, rgba(28, 46, 74, 1) 100%) !important;
         }
         
         .event-type {
@@ -357,16 +330,6 @@
             font-size: 0.8rem;
             font-weight: 600;
             margin-bottom: 10px;
-        }
-        
-        .event-type.traffic {
-            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2) 0%, rgba(255, 107, 107, 0.4) 100%);
-            color: #ff6b6b;
-        }
-        
-        .event-type.construction {
-            background: linear-gradient(135deg, rgba(255, 167, 38, 0.2) 0%, rgba(255, 167, 38, 0.4) 100%);
-            color: #ffa726;
         }
         
         .event-title {
@@ -652,35 +615,118 @@
                 flex: 1;
                 min-width: auto;
             }
+            
+            .event-filter {
+                flex-wrap: wrap;
+            }
+
+            .filter-btn {
+                flex: 1 0 calc(33.333% - 10px);
+                margin-bottom: 5px;
+                font-size: 0.8rem;
+                padding: 8px 5px;
+            }
         }
         
+        /* ====================
+           ESTILOS PARA EVENTOS SIMPLIFICADOS (NUEVO)
+           ==================== */
+        
+        /* Estilos para el nuevo diseño de route-info */
+        .route-info {
+            background: rgba(10, 17, 40, 0.4);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .route-info p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .route-info p i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .route-info p strong {
+            color: var(--verde);
+            margin-right: 5px;
+            min-width: 80px;
+            display: inline-block;
+        }
+
+        .event-item.severidad-alta {
+            border-left: 4px solid #f44336 !important;
+        }
+
+        .event-item.severidad-media {
+            border-left: 4px solid #ff9800 !important;
+        }
+
+        .event-time, .event-distance, .event-impact {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .event-time i, .event-distance i, .event-impact i {
+            width: 15px;
+            text-align: center;
+        }
+
+        .event-severity {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* Colores para tipos de eventos */
+        .event-item.accident .event-type {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 107, 107, 0.4)) !important;
+            color: #ff6b6b !important;
+        }
+
+        .event-item.construction .event-type {
+            background: linear-gradient(135deg, rgba(255, 167, 38, 0.2), rgba(255, 167, 38, 0.4)) !important;
+            color: #ffa726 !important;
+        }
+
+        .event-item.congestion .event-type {
+            background: linear-gradient(135deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.4)) !important;
+            color: #f44336 !important;
+        }
+
+        .event-item.closure .event-type {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)) !important;
+            color: #000 !important;
+        }
+
+        .event-item.transit .event-type {
+            background: linear-gradient(135deg, rgba(63, 81, 181, 0.2), rgba(63, 81, 181, 0.4)) !important;
+            color: #3f51b5 !important;
+        }
+
+        /* Responsive adicional */
         @media (max-width: 576px) {
             .animation-controls {
                 flex-direction: column;
             }
-            
             .animation-btn {
                 width: 100%;
-            }
-            
-            .route-stats {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .stat-item {
-                padding: 10px 0;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            
-            .stat-item:last-child {
-                border-bottom: none;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Elementos decorativos (como en el login) -->
     <div class="decorative-circle circle-1"></div>
     <div class="decorative-circle circle-2"></div>
     <div class="decorative-line line-1"></div>
@@ -739,19 +785,11 @@
                         <h5><i class="fas fa-info-circle"></i> Resumen de la Ruta</h5>
                         <p><strong>Origen:</strong> UMB Cuautitlán</p>
                         <p><strong>Destino:</strong> <span id="destinoNombre">Selecciona un destino</span></p>
-                        <div class="route-stats">
-                            <div class="stat-item">
-                                <div class="stat-value" id="totalSteps">0</div>
-                                <div class="stat-label">Pasos</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value" id="totalEvents">0</div>
-                                <div class="stat-label">Eventos</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value" id="totalDistance">0 km</div>
-                                <div class="stat-label">Distancia</div>
-                            </div>
+                        
+                        <div class="route-info mt-3">
+                            <p><i class="fas fa-steps me-2"></i><strong>Pasos:</strong> <span id="totalSteps">0</span></p>
+                            <p><i class="fas fa-exclamation-triangle me-2"></i><strong>Eventos:</strong> <span id="totalEvents">0</span></p>
+                            <p><i class="fas fa-ruler-combined me-2"></i><strong>Distancia:</strong> <span id="totalDistance">0 km</span></p>
                         </div>
                     </div>
                     
@@ -761,9 +799,11 @@
                         </div>
                         
                         <div class="event-filter">
-                            <button class="filter-btn active" data-filter="all">Todos (0)</button>
-                            <button class="filter-btn" data-filter="traffic">Tráfico (0)</button>
-                            <button class="filter-btn" data-filter="construction">Obras (0)</button>
+                            <button class="filter-btn active" data-filter="all">Todos (<span id="count-all">0</span>)</button>
+                            <button class="filter-btn" data-filter="traffic">Tráfico (<span id="count-traffic">0</span>)</button>
+                            <button class="filter-btn" data-filter="construction">Obras (<span id="count-construction">0</span>)</button>
+                            <button class="filter-btn" data-filter="accident">Accidentes (<span id="count-accident">0</span>)</button>
+                            <button class="filter-btn" data-filter="closure">Cierres (<span id="count-closure">0</span>)</button>
                         </div>
                         
                         <div class="events-list" id="eventsList">
@@ -776,39 +816,52 @@
                     
                     <div class="legend">
                         <h6><i class="fas fa-key"></i> Leyenda del Mapa</h6>
+                        
                         <div class="legend-item">
                             <div class="legend-color" style="background: linear-gradient(90deg, var(--azul-muy-claro), var(--verde));"></div>
                             <div class="legend-label">Ruta sugerida</div>
                         </div>
+                        
                         <div class="legend-item">
                             <div class="legend-color" style="background-color: var(--verde); display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-university" style="color: white; font-size: 12px;"></i>
                             </div>
                             <div class="legend-label">UMB Cuautitlán</div>
                         </div>
+                        
                         <div class="legend-item">
                             <div class="legend-color" style="background-color: #ff6b6b; display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-flag" style="color: white; font-size: 12px;"></i>
                             </div>
                             <div class="legend-label">Destino</div>
                         </div>
+                        
                         <div class="legend-item">
-                            <div class="legend-color" style="background: var(--verde); border-radius: 50%;">
-                                <i class="fas fa-car" style="color: white; font-size: 12px;"></i>
+                            <div class="legend-color" style="background-color: #ff6b6b; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-car-crash" style="color: white; font-size: 10px;"></i>
                             </div>
-                            <div class="legend-label">Vehículo en movimiento</div>
+                            <div class="legend-label">Accidente</div>
                         </div>
+                        
                         <div class="legend-item">
-                            <div class="legend-color" style="background: rgba(255, 107, 107, 0.2); border: 2px solid #ff6b6b; border-radius: 50%;">
-                                <i class="fas fa-car" style="color: #ff6b6b; font-size: 10px;"></i>
+                            <div class="legend-color" style="background-color: #ffa726; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-wrench" style="color: white; font-size: 10px;"></i>
                             </div>
-                            <div class="legend-label">Evento de Tráfico</div>
+                            <div class="legend-label">Construcción</div>
                         </div>
+                        
                         <div class="legend-item">
-                            <div class="legend-color" style="background: rgba(255, 167, 38, 0.2); border: 2px solid #ffa726; border-radius: 50%;">
-                                <i class="fas fa-wrench" style="color: #ffa726; font-size: 10px;"></i>
+                            <div class="legend-color" style="background-color: #f44336; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-traffic-light" style="color: white; font-size: 10px;"></i>
                             </div>
-                            <div class="legend-label">Obras / Construcción</div>
+                            <div class="legend-label">Congestión</div>
+                        </div>
+                        
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #000000; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-road" style="color: white; font-size: 10px;"></i>
+                            </div>
+                            <div class="legend-label">Cierre</div>
                         </div>
                     </div>
                     
@@ -839,7 +892,6 @@
         </div>
     </div>
 
-    <!-- Modal para mostrar todas las instrucciones -->
     <div class="modal fade" id="instructionsModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -854,8 +906,7 @@
                         <p class="mb-0"><strong><i class="fas fa-ruler-combined me-2"></i>Distancia total:</strong> <span id="modalDistance"></span></p>
                     </div>
                     <div class="instructions-list" id="modalInstructions" style="max-height: 400px; overflow-y: auto;">
-                        <!-- Las instrucciones se cargarán dinámicamente -->
-                    </div>
+                        </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -867,15 +918,217 @@
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-    $(document).ready(function() {
-        // Configurar evento del botón calcular
-        $('#calculateRoute').click(function() {
-        const origen = $('#origin').val(); // UMB Cuautitlán...
+$(document).ready(function() {
+    // Variables globales
+    let eventosActuales = [];
+    let filtroActual = 'all';
+    
+    // Colores para tipos de eventos
+    const coloresEventos = {
+        'accident': '#ff6b6b',
+        'construction': '#ffa726',
+        'event': '#9c27b0',
+        'hazard': '#ff5722',
+        'congestion': '#f44336',
+        'transit': '#3f51b5',
+        'misc': '#78909c',
+        'news': '#26c6da',
+        'planned': '#66bb6a',
+        'closure': '#000000',
+        'weather': '#29b6f6',
+        'other': '#8d6e63'
+    };
+    
+    // Iconos para tipos de eventos
+    const iconosEventos = {
+        'accident': 'car-crash',
+        'construction': 'wrench',
+        'event': 'calendar',
+        'hazard': 'exclamation-triangle',
+        'congestion': 'traffic-light',
+        'transit': 'bus',
+        'misc': 'info-circle',
+        'news': 'newspaper',
+        'planned': 'clipboard-check',
+        'closure': 'road',
+        'weather': 'cloud-rain',
+        'other': 'question-circle'
+    };
+    
+    // Sección D: Actualizar JavaScript para eventos simplificados (SIN BOTONES)
+    function renderizarEvento(evento) {
+        const color = coloresEventos[evento.type] || '#8d6e63';
+        const icono = iconosEventos[evento.type] || 'exclamation-circle';
+        
+        // Determinar clase de severidad
+        let claseSeveridad = '';
+        if (evento.severidad >= 4) {
+            claseSeveridad = 'severidad-alta';
+        } else if (evento.severidad >= 3) {
+            claseSeveridad = 'severidad-media';
+        }
+        
+        return `
+            <div class="event-item ${evento.type} ${claseSeveridad}" data-type="${evento.type}" data-severity="${evento.severidad}" data-location="${evento.location}" style="cursor: pointer;">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="event-type" style="background: linear-gradient(135deg, ${color}33, ${color}66); color: ${color};">
+                        <i class="fas fa-${icono} me-1"></i> ${evento.tipo_texto}
+                    </div>
+                    <div class="event-severity" style="background: ${getColorSeveridad(evento.severidad)}; color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px;">
+                        Severidad: ${evento.severidad}
+                    </div>
+                </div>
+                <div class="event-title">${evento.title}</div>
+                <div class="event-description">${evento.description}</div>
+                <div class="event-location">
+                    <i class="fas fa-map-marker-alt"></i> ${evento.location}
+                </div>
+            </div>
+        `;
+    }
+
+    // Sección E: Función para cargar instrucciones desde datos tipo Dijkstra
+    function cargarInstruccionesDesdeDijkstra(instrucciones) {
+        const mainInstructions = $('#mainInstructions');
+        mainInstructions.empty();
+        
+        if (!instrucciones || instrucciones.length === 0) {
+            mainInstructions.append(`
+                <div class="text-center py-3" style="color: rgba(255, 255, 255, 0.7);">
+                    <i class="fas fa-info-circle fa-2x mb-2" style="opacity: 0.5;"></i>
+                    <p>No hay instrucciones disponibles</p>
+                </div>
+            `);
+            return;
+        }
+        
+        // Tomar solo las primeras 5 instrucciones para el panel principal
+        const instruccionesMostrar = instrucciones.slice(0, 5);
+        
+        instruccionesMostrar.forEach(inst => {
+            const instructionItem = `
+                <div class="instruction-item">
+                    <div class="instruction-step">Paso ${inst.orden}</div>
+                    <div class="instruction-text">${inst.texto}</div>
+                    <div class="instruction-distance">
+                        <i class="fas fa-ruler-combined"></i> Distancia: ${inst.distancia}
+                    </div>
+                </div>
+            `;
+            mainInstructions.append(instructionItem);
+        });
+    }
+
+    // Evento para hacer click en un evento y centrar el mapa (Parte de Sección D)
+    $(document).on('click', '.event-item', function() {
+        const location = $(this).data('location');
+        if (location) {
+            const [lat, lng] = location.split(',').map(coord => parseFloat(coord.trim()));
+            const frame = document.getElementById('mapaFrame');
+            if (frame && frame.contentWindow) {
+                try {
+                    // Llamar a la función zoomToLocation que está en el iframe
+                    frame.contentWindow.zoomToLocation(lat, lng);
+                    
+                    // También puedes hacer zoom en el marcador específico
+                    if (frame.contentWindow.map) {
+                        frame.contentWindow.map.setView([lat, lng], 15);
+                    }
+                } catch (e) {
+                    console.error('Error centrando mapa:', e);
+                }
+            }
+        }
+    });
+    
+    // Función para obtener color basado en severidad
+    function getColorSeveridad(severidad) {
+        if (severidad >= 5) return '#d32f2f'; // Crítico
+        if (severidad >= 4) return '#f44336'; // Alto
+        if (severidad >= 3) return '#ff9800'; // Medio
+        if (severidad >= 2) return '#ffc107'; // Bajo-medio
+        return '#4caf50'; // Bajo
+    }
+    
+    // Función para actualizar estadísticas
+    function actualizarEstadisticas(eventos) {
+        const total = eventos.length;
+        const porTipo = {};
+        
+        eventos.forEach(evento => {
+            // Contar por tipo
+            porTipo[evento.type] = (porTipo[evento.type] || 0) + 1;
+        });
+        
+        // Actualizar contadores de filtros
+        $('#count-all').text(total);
+        $('#count-traffic').text(porTipo.congestion || 0);
+        $('#count-construction').text(porTipo.construction || 0);
+        $('#count-accident').text(porTipo.accident || 0);
+        $('#count-closure').text(porTipo.closure || 0);
+        
+        return { total, porTipo };
+    }
+    
+    // Función para filtrar eventos
+    function filtrarEventos() {
+        let eventosFiltrados = eventosActuales;
+        
+        // Filtrar por tipo
+        if (filtroActual !== 'all') {
+            eventosFiltrados = eventosFiltrados.filter(evento => {
+                if (filtroActual === 'traffic') return evento.type === 'congestion';
+                if (filtroActual === 'construction') return evento.type === 'construction';
+                if (filtroActual === 'accident') return evento.type === 'accident';
+                if (filtroActual === 'closure') return evento.type === 'closure';
+                return evento.type === filtroActual;
+            });
+        }
+        
+        return eventosFiltrados;
+    }
+    
+    // Función para renderizar lista de eventos
+    function renderizarListaEventos() {
+        const eventosFiltrados = filtrarEventos();
+        const eventsList = $('#eventsList');
+        
+        // Actualizar estadísticas
+        actualizarEstadisticas(eventosFiltrados);
+        
+        // Limpiar lista
+        eventsList.empty();
+        
+        if (eventosFiltrados.length === 0) {
+            const mensaje = eventosActuales.length === 0 
+                ? 'Calcula una ruta para ver eventos de tráfico'
+                : 'No hay eventos que coincidan con los filtros';
+                
+            eventsList.append(`
+                <div class="text-center py-4" style="color: rgba(255, 255, 255, 0.7);">
+                    <i class="fas fa-search fa-2x mb-3" style="opacity: 0.5;"></i>
+                    <p>${mensaje}</p>
+                    ${eventosActuales.length > 0 ? '<button class="btn btn-sm mt-2" style="background: var(--azul-muy-claro); color: white;" id="resetFilters">Restablecer filtros</button>' : ''}
+                </div>
+            `);
+        } else {
+            // Ordenar eventos por severidad (más grave primero)
+            eventosFiltrados.sort((a, b) => b.severidad - a.severidad);
+            
+            // Renderizar cada evento
+            eventosFiltrados.forEach(evento => {
+                eventsList.append(renderizarEvento(evento));
+            });
+        }
+    }
+    
+    // Configurar evento del botón calcular
+    $('#calculateRoute').click(function() {
+        const origen = $('#origin').val();
         const destinoVal = $('#destination').val();
         const destinoTexto = $('#destination option:selected').text();
         
@@ -884,7 +1137,7 @@
             return;
         }
         
-        // Mapeo de valores del select a direcciones reales
+        // Mapeo de destinos
         const direcciones = {
             'tultepec': 'Tultepec, Estado de Mexico',
             'melchor': 'Melchor Ocampo, Estado de Mexico',
@@ -904,99 +1157,87 @@
         $('#mapPlaceholder').show();
         $('#mapaFrame').hide();
         
-        // LLAMADA A LA API FASTAPI
-        fetch('http://localhost:8000/simulacion/render', {
+        // 1. Primero obtener los datos de análisis de tráfico
+        fetch('http://localhost:8000/ruta/analisis-trafico', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                origen: "Barrio de San Juan, 54800 Cuautitlán, Méx.", // Dirección más precisa para UMB
-                destino: direccionDestino
+                origen: "Barrio de San Juan, 54800 Cuautitlán, Méx.",
+                destino: direccionDestino,
+                radio_km: 3  // Eventos dentro de 3 km de la ruta
             })
         })
         .then(response => {
-            if (!response.ok) throw new Error("Error en la API: " + response.status);
-            return response.text(); // Recibimos el HTML del mapa
+            if (!response.ok) throw new Error("Error obteniendo análisis de tráfico: " + response.status);
+            return response.json();
         })
-        .then(htmlMapa => {
-            // 1. Ocultar loading
+        .then(datosAnalisis => {
+            // Guardar eventos para uso global
+            eventosActuales = datosAnalisis.eventos.detalles || [];
+            
+            // Actualizar la interfaz con los datos obtenidos
+            $('#destinoNombre').text(destinoTexto);
+            
+            // Actualizar estadísticas simplificadas (Modificación A integrada)
+            if (datosAnalisis.ruta) {
+                $('#totalSteps').text('~' + Math.round(datosAnalisis.ruta.distancia_km / 2)); // Estimación simple
+                $('#totalEvents').text(datosAnalisis.eventos.cercanos || 0);
+                $('#totalDistance').text(datosAnalisis.ruta.distancia_km + ' km');
+            }
+            
+            // Renderizar eventos
+            renderizarListaEventos();
+            
+            // Mostrar recomendaciones si hay
+            if (datosAnalisis.recomendaciones && datosAnalisis.recomendaciones.length > 0) {
+                mostrarRecomendaciones(datosAnalisis.recomendaciones, datosAnalisis.resumen_riesgo);
+            }
+
+            // Integración Sección E: Cargar instrucciones si existen en la respuesta
+            // Nota: Se verifica si existen instrucciones en la respuesta del análisis (si el backend lo devuelve así)
+            // o si es necesario esperar a otra llamada. Asumimos que vienen aquí o en datosAnalisis.ruta.instrucciones
+            if (datosAnalisis.ruta && datosAnalisis.ruta.instrucciones && datosAnalisis.ruta.instrucciones.length > 0) {
+                cargarInstruccionesDesdeDijkstra(datosAnalisis.ruta.instrucciones);
+                // Guardar todas las instrucciones para el modal
+                window.todasInstrucciones = datosAnalisis.ruta.todas_instrucciones || datosAnalisis.ruta.instrucciones;
+            }
+            
+            // Ocultar loading y mostrar info
             $('#loading').hide();
             $('#routeInfo').show();
             
-            // 2. Inyectar el mapa en el iframe
+            // 2. Ahora cargar el mapa en el iframe
+            return fetch('http://localhost:8000/simulacion/render', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    origen: "Barrio de San Juan, 54800 Cuautitlán, Méx.",
+                    destino: direccionDestino
+                })
+            });
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Error cargando el mapa: " + response.status);
+            return response.text();
+        })
+        .then(htmlMapa => {
             const frame = document.getElementById('mapaFrame');
             $('#mapPlaceholder').hide();
             $(frame).show();
             
-            // Escribir el HTML recibido dentro del iframe
             const doc = frame.contentWindow.document;
             doc.open();
             doc.write(htmlMapa);
             doc.close();
-
-            // 3. Actualizar datos de la interfaz con valores por defecto
-            $('#destinoNombre').text(destinoTexto);
-            $('#totalSteps').text('8');
-            $('#totalEvents').text('3');
-            $('#totalDistance').text('12.5 km');
             
-            // 4. Actualizar eventos de ejemplo
-            $('.filter-btn[data-filter="all"]').text('Todos (3)');
-            $('.filter-btn[data-filter="traffic"]').text('Tráfico (2)');
-            $('.filter-btn[data-filter="construction"]').text('Obras (1)');
-            
-            // 5. Mostrar eventos de ejemplo
-            const eventsList = $('#eventsList');
-            eventsList.empty();
-            
-            const eventosEjemplo = [
-                { type: 'traffic', title: 'Tráfico Moderado', description: 'Congestión en la salida principal', location: 'Av. Principal' },
-                { type: 'construction', title: 'Obras Viales', description: 'Reducción de carriles por obras', location: 'Blvd. Central' },
-                { type: 'traffic', title: 'Semáforo Descompuesto', description: 'Intersección con tráfico lento', location: 'Cruce Av. Universidad' }
-            ];
-            
-            eventosEjemplo.forEach(event => {
-                const eventItem = `
-                    <div class="event-item ${event.type}">
-                        <div class="event-type ${event.type}">
-                            ${event.type === 'traffic' ? 'Tráfico' : 'Obras'}
-                        </div>
-                        <div class="event-title">${event.title}</div>
-                        <div class="event-description">${event.description}</div>
-                        <div class="event-location">
-                            <i class="fas fa-map-marker-alt"></i> ${event.location}
-                        </div>
-                    </div>
-                `;
-                eventsList.append(eventItem);
-            });
-            
-            // 6. Mostrar instrucciones de ejemplo
-            const mainInstructions = $('#mainInstructions');
-            mainInstructions.empty();
-            
-            const instruccionesEjemplo = [
-                { step: 1, text: 'Salir de UMB Cuautitlán hacia Av. Universidad', distance: '250 m' },
-                { step: 2, text: 'Girar a la derecha en Av. José López Portillo', distance: '3.2 km' },
-                { step: 3, text: 'Continuar por Carretera Federal', distance: '5.8 km' },
-                { step: 4, text: 'Tomar la salida hacia el destino', distance: '1.2 km' },
-                { step: 5, text: 'Llegar al punto destino', distance: '2.1 km' }
-            ];
-            
-            instruccionesEjemplo.forEach(instruction => {
-                const instructionItem = `
-                    <div class="instruction-item">
-                        <div class="instruction-step">Paso ${instruction.step}</div>
-                        <div class="instruction-text">${instruction.text}</div>
-                        <div class="instruction-distance">
-                            <i class="fas fa-ruler-combined"></i> Distancia: ${instruction.distance}
-                        </div>
-                    </div>
-                `;
-                mainInstructions.append(instructionItem);
-            });
-            
+            // Después de cargar el mapa, inyectar eventos adicionales
+            setTimeout(() => {
+                inyectarEventosEnMapa(eventosActuales);
+            }, 1500);
         })
         .catch(error => {
             console.error('Error:', error);
@@ -1006,54 +1247,158 @@
         });
     });
     
+    // Función para mostrar recomendaciones
+    function mostrarRecomendaciones(recomendaciones, nivelRiesgo) {
+        const colors = {
+            'Alto': '#f44336',
+            'Moderado': '#ff9800',
+            'Bajo': '#4caf50'
+        };
+        
+        const recomendacionesHTML = recomendaciones.map((rec, i) => 
+            `<div class="mb-2"><i class="fas fa-bullhorn me-2"></i>${rec}</div>`
+        ).join('');
+        
+        // Evitar duplicados si ya existe
+        $('.alert-recommendation').remove();
+
+        $('#routeInfo .route-summary').after(`
+            <div class="alert alert-recommendation mt-3" style="background: rgba(${nivelRiesgo === 'Alto' ? '244,67,54' : nivelRiesgo === 'Moderado' ? '255,152,0' : '76,175,80'}, 0.1); border-left: 4px solid ${colors[nivelRiesgo]}; color: white;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Nivel de Riesgo: <strong style="color: ${colors[nivelRiesgo]}">${nivelRiesgo}</strong></h6>
+                    <button class="btn btn-sm" id="closeRecommendations" style="color: white;">×</button>
+                </div>
+                <div class="mt-2">${recomendacionesHTML}</div>
+            </div>
+        `);
+    }
+    
+    // Función para inyectar eventos en el mapa
+    function inyectarEventosEnMapa(eventos) {
+        const frame = document.getElementById('mapaFrame');
+        if (!frame || !frame.contentWindow) return;
+        
+        try {
+            const script = `
+                <script>
+                // Añadir marcadores para cada evento
+                if (typeof L !== 'undefined') {
+                    ${eventos.map((evento, index) => {
+                        const [lat, lng] = evento.location.split(',').map(coord => parseFloat(coord.trim()));
+                        const color = coloresEventos[evento.type] || '#8d6e63';
+                        const icono = iconosEventos[evento.type] || 'exclamation-circle';
+                        
+                        return `
+                        // Marcador para evento ${index + 1}: ${evento.tipo_texto}
+                        var eventoIcon${index} = L.divIcon({
+                            html: '<div style="background: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"><i class="fas fa-${icono}" style="color: white; font-size: 12px;"></i></div>',
+                            className: 'custom-event-marker',
+                            iconSize: [24, 24],
+                            iconAnchor: [12, 12]
+                        });
+                        
+                        var marker${index} = L.marker([${lat}, ${lng}], { 
+                            icon: eventoIcon${index},
+                            title: "${evento.title}"
+                        }).addTo(map);
+                        
+                        marker${index}.bindPopup(\`
+                            <div style="font-family: Arial; max-width: 300px;">
+                                <div style="background: ${color}; color: white; padding: 8px; border-radius: 5px 5px 0 0; margin: -10px -10px 10px -10px;">
+                                    <strong><i class="fas fa-${icono}"></i> ${evento.tipo_texto}</strong>
+                                </div>
+                                <h5 style="margin: 10px 0;">${evento.title}</h5>
+                                <p style="margin-bottom: 10px;">${evento.description.replace(/'/g, "\\'")}</p>
+                                <div style="background: #f5f5f5; padding: 8px; border-radius: 4px; margin: 10px 0;">
+                                    <strong><i class="fas fa-map-marker-alt"></i> Ubicación:</strong> ${evento.location}<br>
+                                    <strong><i class="fas fa-shield-alt"></i> Severidad:</strong> ${evento.severidad}/5
+                                </div>
+                                <div style="text-align: center; margin-top: 10px;">
+                                    <button onclick="zoomToLocation(${lat}, ${lng})" style="background: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin: 0 5px;">
+                                        <i class="fas fa-search-location"></i> Zoom
+                                    </button>
+                                </div>
+                            </div>
+                        \`);
+                        `;
+                    }).join('\n')}
+                    
+                    // Función para hacer zoom a ubicación
+                    window.zoomToLocation = function(lat, lng) {
+                        map.setView([lat, lng], 15);
+                    };
+                }
+                <\/script>
+            `;
+            
+            const doc = frame.contentWindow.document;
+            const scriptElement = doc.createElement('div');
+            scriptElement.innerHTML = script;
+            doc.body.appendChild(scriptElement);
+            
+        } catch (e) {
+            console.error('Error inyectando eventos en mapa:', e);
+        }
+    }
+    
     // Configurar filtros de eventos
     $(document).on('click', '.filter-btn', function() {
+        const filtro = $(this).data('filter');
         $('.filter-btn').removeClass('active');
         $(this).addClass('active');
-        // En una implementación completa, aquí se filtrarían los eventos
+        filtroActual = filtro;
+        renderizarListaEventos();
     });
     
-    // Configurar botón de ver todas las instrucciones
+    // Configurar botón para cerrar recomendaciones
+    $(document).on('click', '#closeRecommendations', function() {
+        $(this).closest('.alert').remove();
+    });
+    
+    // Configurar botón para resetear filtros
+    $(document).on('click', '#resetFilters', function() {
+        filtroActual = 'all';
+        $('.filter-btn').removeClass('active');
+        $('.filter-btn[data-filter="all"]').addClass('active');
+        renderizarListaEventos();
+    });
+    
+    // Configurar el resto de botones (instrucciones, etc.)
     $('#viewAllInstructions').click(function() {
-        // Datos de ejemplo para el modal
-        $('#modalDestino').text($('#destination option:selected').text());
-        $('#modalDistance').text('12.5 km');
-        
+        // Lógica para mostrar modal con todas las instrucciones
         const modalInstructions = $('#modalInstructions');
         modalInstructions.empty();
         
-        const instruccionesEjemplo = [
-            { step: 1, text: 'Salir de UMB Cuautitlán hacia Av. Universidad', distance: '250 m' },
-            { step: 2, text: 'Girar a la derecha en Av. José López Portillo', distance: '3.2 km' },
-            { step: 3, text: 'Continuar por Carretera Federal', distance: '5.8 km' },
-            { step: 4, text: 'Tomar la salida hacia el destino', distance: '1.2 km' },
-            { step: 5, text: 'Llegar al punto destino', distance: '2.1 km' },
-            { step: 6, text: 'Estacionarse en el área designada', distance: '150 m' },
-            { step: 7, text: 'Finalizar el recorrido', distance: '0 m' }
-        ];
+        const instrucciones = window.todasInstrucciones || [];
         
-        instruccionesEjemplo.forEach(instruction => {
-            const instructionItem = `
-                <div class="instruction-item">
-                    <div class="instruction-step">Paso ${instruction.step}</div>
-                    <div class="instruction-text">${instruction.text}</div>
-                    <div class="instruction-distance">
-                        <i class="fas fa-ruler-combined"></i> Distancia: ${instruction.distance}
+        if (instrucciones.length === 0) {
+            modalInstructions.html('<p class="text-center text-white">No hay instrucciones disponibles.</p>');
+        } else {
+            instrucciones.forEach(inst => {
+                modalInstructions.append(`
+                    <div class="instruction-item">
+                        <div class="instruction-step">Paso ${inst.orden}</div>
+                        <div class="instruction-text">${inst.texto}</div>
+                        <div class="instruction-distance">
+                            <i class="fas fa-ruler-combined"></i> ${inst.distancia}
+                        </div>
                     </div>
-                </div>
-            `;
-            modalInstructions.append(instructionItem);
-        });
+                `);
+            });
+        }
         
-        // Mostrar el modal
-        new bootstrap.Modal(document.getElementById('instructionsModal')).show();
+        // Actualizar info del modal
+        $('#modalDestino').text($('#destination option:selected').text());
+        $('#modalDistance').text($('#totalDistance').text());
+        
+        const modal = new bootstrap.Modal(document.getElementById('instructionsModal'));
+        modal.show();
     });
     
-    // Configurar botón de imprimir
     $('#printInstructions').click(function() {
         window.print();
     });
-    });
-    </script>
+});
+</script>
 </body>
 </html>

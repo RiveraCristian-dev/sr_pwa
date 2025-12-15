@@ -3,20 +3,157 @@ import folium
 from . import dijkstra
 
 def traducir_detalles_trafico(texto_original):
-    if not texto_original: return "Sin detalles"
+    """Traduce descripciones de tráfico del inglés al español"""
+    if not texto_original or not isinstance(texto_original, str):
+        return "Sin detalles disponibles"
     
     diccionario = {
-        "Road construction": "Construcción", "Construction work": "Mantenimiento",
-        "Lane closed": "Carril cerrado", "Road closed": "Calle cerrada",
-        "Accident": "Accidente", "Congestion": "Congestión",
-        "Heavy traffic": "Tráfico pesado", "Slow traffic": "Tráfico lento",
-        "Hazard": "Peligro", "Obstruction": "Obstrucción",
-        "At ": "En ", "Between ": "Entre ", " near ": " cerca de ",
-        "approaching": "acercándose a"
+        # Tipos de eventos
+        "Road construction": "Construcción vial",
+        "Construction work": "Trabajos de construcción",
+        "Lane closed": "Carril cerrado",
+        "Road closed": "Vía cerrada",
+        "Accident": "Accidente",
+        "Congestion": "Congestión",
+        "Heavy traffic": "Tráfico pesado",
+        "Slow traffic": "Tráfico lento",
+        "Hazard": "Peligro en la vía",
+        "Obstruction": "Obstrucción",
+        "Event": "Evento especial",
+        "Mass Transit": "Tránsito masivo",
+        "Planned Event": "Evento programado",
+        "Road Closure": "Cierre de carretera",
+        "Weather": "Condiciones climáticas",
+        "Miscellaneous": "Incidente misceláneo",
+        "Other News": "Otras noticias",
+        
+        # Términos generales
+        "At ": "En ",
+        "Between ": "Entre ",
+        " near ": " cerca de ",
+        "approaching": "acercándose a",
+        "vehicles": "vehículos",
+        "blocked": "bloqueado",
+        "minor": "leve",
+        "moderate": "moderado",
+        "major": "grave",
+        "delay": "retraso",
+        "expected": "esperado",
+        "incident": "incidente",
+        "clear": "despejado",
+        "Detour": "Desvío",
+        "reported": "reportado",
+        "avoid": "evitar",
+        "area": "área",
+        "lane": "carril",
+        "lanes": "carriles",
+        "shoulder": "acotamiento",
+        "shoulders": "acotamientos",
+        "intersection": "intersección",
+        "highway": "carretera",
+        "freeway": "autopista",
+        "expressway": "vía expresa",
+        "roadway": "calzada",
+        "bridge": "puente",
+        "tunnel": "túnel",
+        "overpass": "paso elevado",
+        "underpass": "paso inferior",
+        "exit": "salida",
+        "entrance": "entrada",
+        "ramp": "rampa",
+        "merge": "incorporación",
+        "divergence": "bifurcación",
+        
+        # Términos de tránsito
+        "transit": "tránsito",
+        "bus": "autobús",
+        "train": "tren",
+        "rail": "ferrocarril",
+        "subway": "metro",
+        "station": "estación",
+        
+        # Términos climáticos
+        "rain": "lluvia",
+        "snow": "nieve",
+        "ice": "hielo",
+        "fog": "niebla",
+        "flood": "inundación",
+        "storm": "tormenta",
+        "wind": "viento",
+        "visibility": "visibilidad",
+        "flooding": "inundaciones",
+        
+        # Direcciones
+        "northbound": "sentido norte",
+        "southbound": "sentido sur",
+        "eastbound": "sentido este",
+        "westbound": "sentido oeste",
+        "north": "norte",
+        "south": "sur",
+        "east": "este",
+        "west": "oeste",
+        "left": "izquierda",
+        "right": "derecha",
+        "center": "centro",
+        
+        # Tiempo
+        "until": "hasta",
+        "from": "desde",
+        "to": "a",
+        "beginning": "comienzo",
+        "ending": "finalización",
+        "expected to last": "se espera que dure",
+        "duration": "duración",
+        "hours": "horas",
+        "minutes": "minutos",
+        "days": "días",
+        
+        # Gravedad/impacto
+        "severe": "severo",
+        "critical": "crítico",
+        "blocking": "bloqueando",
+        "affecting": "afectando",
+        "impacting": "impactando",
+        "causing": "causando",
+        "resulting in": "resultando en",
+        
+        # Términos de seguridad
+        "emergency": "emergencia",
+        "police": "policía",
+        "fire": "bomberos",
+        "medical": "médico",
+        "response": "respuesta",
+        "crew": "equipo",
+        "workers": "trabajadores",
     }
+    
     texto = texto_original
+    
+    # Primero reemplazar términos específicos manteniendo mayúsculas/minúsculas
     for en, es in diccionario.items():
-        texto = texto.replace(en, es).replace(en.lower(), es)
+        # Reemplazar manteniendo capitalización
+        if en in texto:
+            texto = texto.replace(en, es)
+        elif en.lower() in texto.lower():
+            # Encontrar la posición y mantener capitalización original
+            inicio = texto.lower().find(en.lower())
+            if inicio != -1:
+                # Reemplazar manteniendo el caso original
+                texto = texto[:inicio] + es + texto[inicio + len(en):]
+    
+    # Si no hubo traducciones significativas, intentar con enfoque más simple
+    if texto == texto_original:
+        # Reemplazo simple ignorando mayúsculas/minúsculas
+        for en, es in diccionario.items():
+            texto = texto.replace(en, es).replace(en.lower(), es.lower())
+    
+    # Limpiar espacios dobles
+    texto = ' '.join(texto.split())
+    
+    # Capitalizar primera letra
+    if texto and len(texto) > 0:
+        texto = texto[0].upper() + texto[1:]
+    
     return texto
 
 def generar_mapa_visual(G, ruta_geometria, incidentes, paradas_ordenadas, nombre_archivo="simulacion_logistica.html"):
