@@ -18,3 +18,7 @@ python scripts/quick_check.py
 # INICIARservidor local host
 
 uvicorn backend.API.main:app --reload --port 8000 / http://localhost:8000/docs
+
+# INICIAR BACKEND
+
+python scripts/start_backend.py
