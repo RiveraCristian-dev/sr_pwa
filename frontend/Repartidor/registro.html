@@ -17,6 +17,7 @@
             --gris-claro: #e8f4fc;
             --verde: #2ecc71;
             --rojo: #e74c3c;
+            --warning: #f39c12;
             --degrade-fondo: linear-gradient(135deg, var(--azul-fuerte) 0%, var(--azul-medio) 50%, var(--azul-fuerte) 100%);
             --degrade-boton: linear-gradient(135deg, var(--azul-medio), var(--azul-claro));
             --sombra: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -270,18 +271,15 @@
         .etiqueta-input[for="nombre"]::before { content: "👤"; }
         .etiqueta-input[for="email"]::before { content: "📧"; }
         .etiqueta-input[for="telefono"]::before { content: "📱"; }
-        .etiqueta-input[for="usuario"]::before { content: "🔑"; }
         .etiqueta-input[for="contrasena"]::before { content: "🔒"; }
         .etiqueta-input[for="confirmar"]::before { content: "🔒"; }
-        .etiqueta-input[for="rol"]::before { content: "🎭"; }
 
         .contenedor-input {
             position: relative;
             width: 100%;
         }
 
-        .contenedor-input input,
-        .contenedor-input select {
+        .contenedor-input input {
             width: 100%;
             padding: 16px 50px 16px 20px;
             background: rgba(17, 17, 17, 0.9);
@@ -293,13 +291,7 @@
             outline: none;
         }
 
-        .contenedor-input select {
-            appearance: none;
-            cursor: pointer;
-        }
-
-        .contenedor-input input:focus,
-        .contenedor-input select:focus {
+        .contenedor-input input:focus {
             border-color: var(--azul-claro);
             box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
             background: rgba(17, 17, 17, 1);
@@ -342,7 +334,7 @@
         }
 
         .boton-visibilidad::before {
-            content: "👁️";
+            content: "👁";
         }
 
         .fila-formulario {
@@ -625,8 +617,7 @@
                 padding: 25px 20px;
             }
             
-            .contenedor-input input,
-            .contenedor-input select {
+            .contenedor-input input {
                 padding: 14px 45px 14px 15px;
             }
             
@@ -686,40 +677,17 @@
                     </div>
                 </div>
                 
-                <div class="fila-formulario">
-                    <div class="grupo-formulario">
-                        <label class="etiqueta-input" for="telefono">Teléfono</label>
-                        <div class="contenedor-input">
-                            <input type="tel" id="telefono" name="telefono" 
-                                   placeholder="+52 55 1234 5678">
-                            <span class="icono-input"></span>
-                        </div>
-                    </div>
-                    
-                    <div class="grupo-formulario">
-                        <label class="etiqueta-input" for="rol">Tipo de Usuario</label>
-                        <div class="contenedor-input">
-                            <select id="rol" name="rol" required>
-                                <option value="">Selecciona un rol</option>
-                                <option value="cliente">Cliente</option>
-                                <option value="repartidor">Repartidor</option>
-                                <option value="admin">Administrador</option>
-                            </select>
-                            <span class="icono-input"></span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Credenciales -->
+                <!-- Solo teléfono, sin tipo de usuario -->
                 <div class="grupo-formulario">
-                    <label class="etiqueta-input" for="usuario">Nombre de Usuario</label>
+                    <label class="etiqueta-input" for="telefono">Teléfono</label>
                     <div class="contenedor-input">
-                        <input type="text" id="usuario" name="usuario" 
-                               placeholder="Ej: juan.perez" required>
+                        <input type="tel" id="telefono" name="telefono" 
+                               placeholder="+52 55 1234 5678">
                         <span class="icono-input"></span>
                     </div>
                 </div>
                 
+                <!-- Credenciales (solo contraseña) -->
                 <div class="fila-formulario">
                     <div class="grupo-formulario">
                         <label class="etiqueta-input" for="contrasena">Contraseña</label>
@@ -856,24 +824,16 @@
             // Cargar usuarios existentes
             let usuarios = JSON.parse(localStorage.getItem('usuariosRutaTec')) || {};
             
-            // Verificar si el usuario ya existe
-            if (usuarios[datos.usuario]) {
-                return { exito: false, mensaje: 'El nombre de usuario ya está en uso' };
+            // Usar el email como identificador
+            if (usuarios[datos.email]) {
+                return { exito: false, mensaje: 'El correo electrónico ya está registrado' };
             }
             
-            // Verificar si el email ya está registrado
-            for (let user in usuarios) {
-                if (usuarios[user].email === datos.email) {
-                    return { exito: false, mensaje: 'El correo electrónico ya está registrado' };
-                }
-            }
-            
-            // Agregar nuevo usuario
-            usuarios[datos.usuario] = {
+            // Agregar nuevo usuario usando el email como clave
+            usuarios[datos.email] = {
                 nombre: datos.nombre,
                 email: datos.email,
                 telefono: datos.telefono,
-                rol: datos.rol,
                 contrasena: datos.contrasena,
                 fechaRegistro: new Date().toISOString()
             };
@@ -881,7 +841,7 @@
             // Guardar en localStorage
             localStorage.setItem('usuariosRutaTec', JSON.stringify(usuarios));
             
-            return { exito: true, datos: usuarios[datos.usuario] };
+            return { exito: true, datos: usuarios[datos.email] };
         }
 
         // ===== EVENTOS =====
@@ -892,7 +852,7 @@
                 const input = document.getElementById(target);
                 const tipo = input.type === 'password' ? 'text' : 'password';
                 input.type = tipo;
-                this.innerHTML = tipo === 'password' ? '👁️' : '👁️‍🗨️';
+                this.innerHTML = tipo === 'password' ? '👁' : '👁‍🗨';
             });
         });
 
@@ -910,8 +870,6 @@
                 nombre: document.getElementById('nombre').value.trim(),
                 email: document.getElementById('email').value.trim(),
                 telefono: document.getElementById('telefono').value.trim(),
-                rol: document.getElementById('rol').value,
-                usuario: document.getElementById('usuario').value.trim(),
                 contrasena: document.getElementById('contrasena').value,
                 confirmar: document.getElementById('confirmar').value
             };
@@ -929,16 +887,6 @@
             
             if (datos.telefono && !validarTelefono(datos.telefono)) {
                 mostrarMensaje('Por favor ingresa un número de teléfono válido (mínimo 10 dígitos)', 'error');
-                return;
-            }
-            
-            if (!datos.rol) {
-                mostrarMensaje('Por favor selecciona un tipo de usuario', 'error');
-                return;
-            }
-            
-            if (!datos.usuario || datos.usuario.length < 3) {
-                mostrarMensaje('El nombre de usuario debe tener al menos 3 caracteres', 'error');
                 return;
             }
             
@@ -970,7 +918,7 @@
                     
                     // Redirigir después de 2 segundos
                     setTimeout(() => {
-                        window.location.href = 'index.html?registro=exitoso&usuario=' + encodeURIComponent(datos.usuario);
+                        window.location.href = 'Iniciar-secion.html?registro=exitoso&email=' + encodeURIComponent(datos.email);
                     }, 2000);
                 } else {
                     mostrarMensaje(resultado.mensaje, 'error');
@@ -993,9 +941,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('registro') === 'exitoso') {
-                const usuario = urlParams.get('usuario');
-                if (usuario) {
-                    mostrarMensaje(`¡Registro exitoso! Ahora puedes iniciar sesión con tu usuario: ${decodeURIComponent(usuario)}`, 'exito');
+                const email = urlParams.get('email');
+                if (email) {
+                    mostrarMensaje(`¡Registro exitoso! Ahora puedes iniciar sesión con tu email: ${decodeURIComponent(email)}`, 'exito');
                 }
             }
         });
