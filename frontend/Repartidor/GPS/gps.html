@@ -241,7 +241,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="gps-header">
         <div class="header-content">
             <i class="fas fa-map-marked-alt"></i>
@@ -263,9 +262,7 @@
         </div>
     </div>
     
-    <!-- Mapa -->
     <div class="map-container">
-        <!-- Loading -->
         <div class="loading-overlay" id="loadingOverlay">
             <div class="loading-spinner"></div>
             <h3 style="margin-bottom: 10px; color: var(--blanco);">Cargando mapa de ruta...</h3>
@@ -274,7 +271,6 @@
             </p>
         </div>
         
-        <!-- Error -->
         <div class="error-overlay" id="errorOverlay">
             <div class="error-icon">
                 <i class="fas fa-exclamation-triangle"></i>
@@ -291,11 +287,9 @@
             </button>
         </div>
         
-        <!-- Iframe para el mapa -->
         <iframe id="mapaFrame" style="display: none;"></iframe>
     </div>
     
-    <!-- Footer -->
     <div class="gps-footer">
         <div class="status-indicator">
             <div class="status-dot"></div>
@@ -338,7 +332,7 @@
                 .catch(() => false);
             }
             
-            // Función para cargar el mapa
+            // Función actualizada para cargar el mapa (Implementación solicitada)
             async function cargarMapa() {
                 // Mostrar loading
                 $('#loadingOverlay').show();
@@ -354,8 +348,7 @@
                 }
                 
                 try {
-                    // Intentar cargar la última ruta calculada
-                    // Esta información debería estar almacenada en localStorage por el simulador.html
+                    // Intentar cargar la última ruta calculada DESDE localStorage
                     const ultimaRuta = localStorage.getItem('ultimaRutaMulti');
                     
                     if (!ultimaRuta) {
@@ -372,7 +365,7 @@
                         return;
                     }
                     
-                    console.log('Cargando mapa con:', { origen, destinos: destinos.length });
+                    console.log('Cargando mapa desde localStorage:', { origen, destinos: destinos.length });
                     
                     // Hacer la petición para obtener el mapa HTML
                     const response = await fetch('http://localhost:8000/api/simulacion/render-multi', {
@@ -406,10 +399,10 @@
                     mapaCargado = true;
                     ultimaActualizacion = new Date();
                     
-                    console.log('✅ Mapa cargado exitosamente');
+                    console.log('✅ Mapa cargado exitosamente desde GPS');
                     
                 } catch (error) {
-                    console.error('Error cargando mapa:', error);
+                    console.error('Error cargando mapa en GPS:', error);
                     mostrarError(`Error al cargar el mapa: ${error.message}`);
                 }
             }

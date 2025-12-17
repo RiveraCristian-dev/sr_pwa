@@ -894,7 +894,6 @@
             </div>
         </div>
         
-        <!-- DESTINATION SELECTOR CON SCROLL VERTICAL -->
         <div class="destination-selector">
             <div class="destination-form">
                 <div class="form-group">
@@ -906,10 +905,14 @@
                 <div class="form-group">
                     <label for="destinations"><i class="fas fa-flag-checkered"></i> Destinos</label>
                     <div class="destinations-wrapper" id="destinationsContainer">
-                        <!-- Los destinos se agregarán dinámicamente aquí -->
                         <div class="destination-item">
+
                             <select class="form-control destination-select" data-index="0">
+
                                 <option value="">Selecciona un destino</option>
+                                <option value="Av Insurgentes, Fraccionamiento Las Americas, Las Américas, 55070 Ecatepec de Morelos, Méx." selected>
+            UES Ecatepec (valor por defecto)
+        </option>
                                 <optgroup label="REGIÓN NORTE">
                                     <option value="Km 2.5, Carretera al Ejido la Soledad, Ejido La Soledad, 50300 Villa de Acambay de Ruíz Castañeda, Méx.">UES Acambay</option>
                                     <option value="Angel Castillo López S/N, A Santiago Oxtempan, 50600 El Oro de Hidalgo, Méx.">UES El Oro</option>
@@ -991,14 +994,10 @@
                         </div>
                     </div>
                     
-                    <!-- PANEL DE ESTADÍSTICAS (se agregará dinámicamente) -->
-                    
                     <div class="events-section">
                         <div class="section-header">
                             <h5><i class="fas fa-exclamation-triangle"></i> Eventos en la Ruta</h5>
                         </div>
-                        
-                        <!-- NOTA: ELIMINAMOS LOS BOTONES DE FILTRO -->
                         
                         <div class="events-list" id="eventsList">
                             <div class="text-center py-4" style="color: rgba(255, 255, 255, 0.7);">
@@ -1239,6 +1238,11 @@
                     destinos.push(valor);
                 }
             });
+            console.log('🔍 Destinos seleccionados:', {
+            total: destinos.length,
+            valores: destinos,
+            selects: $('.destination-select').length
+            });
             return destinos;
         }
         
@@ -1252,6 +1256,10 @@
                     nombres.push(nombre);
                 }
             });
+            console.log('🔍 Nombres de destinos:', {
+            total: nombres.length,
+            nombres: nombres
+         });
             return nombres;
         }
         
@@ -1495,6 +1503,18 @@
             const destinos = getSelectedDestinations();
             const destinosNombres = getSelectedDestinationsNames();
 
+            console.log('🟡 Botón CALCULAR presionado');
+            console.log('📊 Datos capturados:', {
+                origen: origen,
+                destinos: destinos,
+                destinosCount: destinos.length,
+                destinosNombres: destinosNombres,
+                selectsEnPagina: $('.destination-select').length,
+                selectsConValor: $('.destination-select').filter(function() {
+                return $(this).val();
+            }).length
+            });
+
             if (destinos.length === 0) {
                 alert('Por favor selecciona al menos un destino');
                 return;
@@ -1576,6 +1596,18 @@
                 doc.write(htmlMapa);
                 doc.close();
                 
+                // **IMPORTANTE: Guardar ruta para GPS**
+                const rutaParaGPS = {
+                    origen: origen,
+                    destinos: destinos,
+                    destinosNombres: destinosNombres,
+                    fecha: new Date().toISOString(),
+                    distancia: $('#totalDistance').text().replace(' km', '')
+                };
+                
+                localStorage.setItem('ultimaRutaMulti', JSON.stringify(rutaParaGPS));
+                console.log('✅ Ruta guardada para GPS:', rutaParaGPS);
+                
                 // Esperar a que el mapa se cargue y extraer los datos
                 setTimeout(() => {
                     try {
@@ -1600,19 +1632,7 @@
                 $('#routeInfo').show();
                 alert('Hubo un error al calcular la ruta: ' + error.message);
             });
-
-        const rutaParaGPS = {
-            origen: origen,
-            destinos: destinos,
-            destinosNombres: destinosNombres,
-            fecha: new Date().toISOString(),
-            distancia: datosRuta.distancia_total_km || 0
-        };
-            
         });
-
-        localStorage.setItem('ultimaRutaMulti', JSON.stringify(rutaParaGPS));
-        console.log('Ruta guardada para GPS:', rutaParaGPS);
         
         // ====================
         // 6. EVENTOS PARA LOS BOTONES DE EVENTOS
@@ -1655,6 +1675,26 @@
                   `📝 Descripción:\n${descripcion}`);
         });
         
+        $(document).on('change', '.destination-select', function() {
+    const index = $(this).data('index');
+    const valor = $(this).val();
+    const texto = $(this).find('option:selected').text();
+    
+    console.log('📝 Select cambiado:', {
+        index: index,
+        valor: valor,
+        texto: texto,
+        tieneValor: !!valor
+    });
+});
+
+// También verifica el estado inicial
+console.log('🔄 Estado inicial de la página:');
+console.log('  - Selects encontrados:', $('.destination-select').length);
+$('.destination-select').each(function(index) {
+    console.log(`  Select ${index}: valor = "${$(this).val()}"`);
+});
+
         // ====================
         // 7. FUNCIONALIDAD PARA EL MODAL DE INSTRUCCIONES
         // ====================
