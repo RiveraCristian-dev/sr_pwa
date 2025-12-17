@@ -29,11 +29,7 @@ if not DATABASE_URL:
 # Configurar SQLAlchemy para PostgreSQL (optimizado para Neon)
 engine = create_engine(
     DATABASE_URL,
-    pool_size=10,           # Número máximo de conexiones en el pool
-    max_overflow=20,        # Conexiones extra si se necesitan
-    pool_pre_ping=True,     # Verifica conexiones antes de usarlas
-    pool_recycle=3600,      # Recicla conexiones cada hora (Neon tiene timeout)
-    echo=False              # Cambia a True para DEBUG (ver queries SQL)
+    echo=False  # Solo esto por ahora
 )
 
 # Crear fábrica de sesiones

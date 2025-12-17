@@ -6,17 +6,39 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime  # Importamos datetime
 import math  # Para la función haversine
-from pydantic import BaseModel
-from typing import List, Optional
 
-from ..dependencies import get_db
+# Eliminamos la importación de ..dependencies
+from backend.API.database import get_db
 from backend.API.models import Vehiculo, Pedido
 from backend.core.dijkstra import obtener_ruta_multiparada, obtener_incidencias_trafico, construir_grafo_logico
-from backend.core.calculos import calcular_pedido
+from backend.core.calculos import calcular_pedido, calcular_ruta_sustentable, verificar_capacidad_vehiculo
 from backend.core.simulacion import generar_mapa_visual, traducir_detalles_trafico
 
 router = APIRouter()
 load_dotenv()
+
+# --- FUNCIÓN get_db ALTERNATIVA ---
+# Ya que eliminaste el archivo dependencies.py, necesitamos proveer una alternativa
+def get_db():
+    """
+    Función alternativa para obtener sesión de base de datos.
+    Deberías implementar la lógica real para obtener tu sesión de base de datos aquí.
+    """
+    # Esto es un placeholder - necesitarás implementar la lógica real
+    # basada en cómo configuras tu base de datos
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    
+    # Configuración de ejemplo - ajusta según tu configuración
+    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
+    engine = create_engine(DATABASE_URL)
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 # --- MODELOS ---
 
