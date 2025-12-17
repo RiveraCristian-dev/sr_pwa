@@ -7,4 +7,4 @@ pip install networkx==3.2.1
 pip install folium==0.14.0
 pip install python-dotenv==1.0.0
 pip install pydantic==2.5.0
-pip install pymysql==1.1.0pi
+pip install psycopg2-binary

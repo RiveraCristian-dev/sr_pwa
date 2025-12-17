@@ -1,92 +1,112 @@
-from sqlalchemy import Column, Integer, String, Float, DECIMAL, TIMESTAMP, Enum, Text, JSON, ForeignKey
-from sqlalchemy.orm import relationship
-from .dependencies import Base
+from sqlalchemy import Column, Integer, String, Float, Numeric, TIMESTAMP, Boolean, Text, ForeignKey, JSON, CheckConstraint, Time
+from sqlalchemy.sql import func
+from sqlalchemy.dialects.postgresql import JSONB
+from .database import Base
 
 class Usuario(Base):
     __tablename__ = 'usuarios'
-    id_usuario = Column(Integer, primary_key=True, autoincrement=True)
-    nombre = Column(String(100), nullable=False)
+    
+    id = Column(Integer, primary_key=True, index=True)
+    nombre_completo = Column(String(150), nullable=False)
     email = Column(String(120), unique=True, nullable=False)
+    telefono = Column(String(20))
+    username = Column(String(50), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
-    rol = Column(Enum('admin', 'repartidor'), nullable=False)
-    fecha_registro = Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
+    rol = Column(String(20), nullable=False)  # 'admin' o 'repartidor'
+    activo = Column(Boolean, default=True)
+    fecha_registro = Column(TIMESTAMP(timezone=True), server_default=func.now())
+    ultimo_login = Column(TIMESTAMP(timezone=True))
+    
+    __table_args__ = (
+        CheckConstraint("rol IN ('admin', 'repartidor')", name='rol_check'),
+    )
 
 class Vehiculo(Base):
     __tablename__ = 'vehiculos'
-    id_vehiculo = Column(Integer, primary_key=True, autoincrement=True)
-    tipo = Column(Enum('gasolina', 'hibrido', 'electrico'), nullable=False)
-    nombre_modelo = Column(String(100), nullable=False)
-    consumo_gasolina = Column(Float)
-    consumo_electrico = Column(Float)
-    precio_gasolina = Column(Float)
-    precio_kwh = Column(Float)
-    capacidad_carga_kg = Column(Float)
-    capacidad_carga_m3 = Column(Float)
-    autonomia_km = Column(Float)
-    factor_emisiones_gasolina = Column(Float, default=2.31)
-    factor_emisiones_electrico = Column(Float, default=0.45)
-    rendimiento_gasolina = Column(Float)
-    rendimiento_electrico = Column(Float)
-    costo_mantenimiento_km = Column(Float)
-    valor_aproximado = Column(Float)
-    velocidad_promedio_kmh = Column(Float, default=25.0)
+    
+    id = Column(Integer, primary_key=True, index=True)
+    modelo = Column(String(100), nullable=False)
+    tipo = Column(String(20), nullable=False)  # 'gasolina', 'hibrido', 'electrico'
+    capacidad_maxima_paquetes = Column(Integer, nullable=False)
+    velocidad_promedio_kmh = Column(Numeric(5, 2), nullable=False)
+    hora_envio = Column(Time)
+    rendimiento_gasolina = Column(Numeric(8, 2))
+    rendimiento_electrico = Column(Numeric(8, 2))
+    precio_gasolina = Column(Numeric(8, 2))
+    precio_kwh = Column(Numeric(8, 2))
+    factor_emisiones_gasolina = Column(Numeric(8, 2), default=2.31)
+    factor_emisiones_electrico = Column(Numeric(8, 2), default=0.45)
+    activo = Column(Boolean, default=True)
+    fecha_creacion = Column(TIMESTAMP(timezone=True), server_default=func.now())
+    
+    __table_args__ = (
+        CheckConstraint("tipo IN ('gasolina', 'hibrido', 'electrico')", name='tipo_vehiculo_check'),
+        CheckConstraint("capacidad_maxima_paquetes > 0", name='capacidad_check'),
+    )
 
-class NodoMapa(Base):
-    __tablename__ = 'nodos_del_mapa'
-    id_nodo = Column(Integer, primary_key=True, autoincrement=True)
-    latitud = Column(DECIMAL(10, 8), nullable=False)
-    longitud = Column(DECIMAL(11, 8), nullable=False)
-    nombre = Column(String(100))
-    tipo = Column(Enum('almacen', 'cliente', 'interseccion', 'punto_interes'), nullable=False)
-    direccion = Column(Text)
-    fecha_creacion = Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
-
-class ConexionMapa(Base):
-    __tablename__ = 'conexiones_mapa'
-    id_conexion = Column(Integer, primary_key=True, autoincrement=True)
-    id_nodo_origen = Column(Integer, ForeignKey('nodos_del_mapa.id_nodo'), nullable=False)
-    id_nodo_destino = Column(Integer, ForeignKey('nodos_del_mapa.id_nodo'), nullable=False)
-    distancia_km = Column(DECIMAL(8, 3), nullable=False)
-    tiempo_min = Column(DECIMAL(8, 2), nullable=False)
-    tipo_via = Column(Enum('autopista', 'avenida', 'calle', 'atajo'), default='calle')
-    trafico_promedio = Column(DECIMAL(3, 2), default=0.0)
+class Asignacion(Base):
+    __tablename__ = 'asignaciones'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    id_repartidor = Column(Integer, ForeignKey('usuarios.id', ondelete='CASCADE'), nullable=False)
+    id_vehiculo = Column(Integer, ForeignKey('vehiculos.id', ondelete='CASCADE'), nullable=False)
+    numero_paquetes = Column(Integer, default=0)
+    ruta_municipio = Column(Text)
+    estado = Column(String(20), default='activa')
+    fecha_asignacion = Column(TIMESTAMP(timezone=True), server_default=func.now())
+    fecha_inicio = Column(TIMESTAMP(timezone=True))
+    fecha_fin = Column(TIMESTAMP(timezone=True))
+    
+    __table_args__ = (
+        CheckConstraint("estado IN ('activa', 'completada', 'cancelada')", name='estado_asignacion_check'),
+        CheckConstraint("numero_paquetes >= 0", name='paquetes_check'),
+    )
+    
+    # Relaciones
+    repartidor = relationship("Usuario", foreign_keys=[id_repartidor])
+    vehiculo = relationship("Vehiculo", foreign_keys=[id_vehiculo])
 
 class Pedido(Base):
     __tablename__ = 'pedidos'
-    id_pedido = Column(Integer, primary_key=True, autoincrement=True)
-    id_usuario_admin = Column(Integer, ForeignKey('usuarios.id_usuario'), nullable=False)
-    id_vehiculo = Column(Integer, ForeignKey('vehiculos.id_vehiculo'))
-    destino_lat = Column(DECIMAL(10, 8), nullable=False)
-    destino_lng = Column(DECIMAL(11, 8), nullable=False)
-    peso_kg = Column(DECIMAL(8, 2), nullable=False)
-    volumen_m3 = Column(DECIMAL(8, 4), nullable=False)
-    descripcion = Column(Text)
-    estado = Column(Enum('pendiente', 'asignado', 'en_ruta', 'entregado', 'cancelado'), default='pendiente')
-    fecha_creacion = Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
+    
+    id = Column(Integer, primary_key=True, index=True)
+    numero_pedido = Column(String(50), unique=True, nullable=False)
+    id_vehiculo = Column(Integer, ForeignKey('vehiculos.id', ondelete='CASCADE'), nullable=False)
+    capacidad_paquetes = Column(Integer)
+    destino_entrega = Column(Text, nullable=False)
+    estado = Column(String(20), default='pendiente')
+    fecha_creacion = Column(TIMESTAMP(timezone=True), server_default=func.now())
+    fecha_asignacion = Column(TIMESTAMP(timezone=True))
+    fecha_entrega_estimada = Column(TIMESTAMP(timezone=True))
+    fecha_entrega_real = Column(TIMESTAMP(timezone=True))
+    
+    __table_args__ = (
+        CheckConstraint("estado IN ('pendiente', 'procesando', 'en_ruta', 'entregado', 'cancelado')", name='estado_pedido_check'),
+    )
+    
+    vehiculo = relationship("Vehiculo", foreign_keys=[id_vehiculo])
 
-class Entrega(Base):
-    __tablename__ = 'entregas'
-    id_entrega = Column(Integer, primary_key=True, autoincrement=True)
-    id_pedido = Column(Integer, ForeignKey('pedidos.id_pedido'), nullable=False)
-    id_usuario_repartidor = Column(Integer, ForeignKey('usuarios.id_usuario'), nullable=False)
-    estado = Column(Enum('asignado', 'en_ruta', 'entregado'), default='asignado')
-    fecha_asignacion = Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
-    fecha_entrega = Column(TIMESTAMP)
-
-class RutaOptimizada(Base):
-    __tablename__ = 'rutas_optimizadas'
-    id_ruta = Column(Integer, primary_key=True, autoincrement=True)
-    id_pedido = Column(Integer, ForeignKey('pedidos.id_pedido'), nullable=False)
-    id_usuario = Column(Integer, ForeignKey('usuarios.id_usuario'), nullable=False)
-    id_vehiculo = Column(Integer, ForeignKey('vehiculos.id_vehiculo'), nullable=False)
-    origen_lat = Column(DECIMAL(10, 8), nullable=False)
-    origen_lng = Column(DECIMAL(11, 8), nullable=False)
-    ruta_calculada = Column(JSON)
-    distancia_km = Column(DECIMAL(8, 3), nullable=False)
-    tiempo_estimado_min = Column(DECIMAL(8, 2), nullable=False)
-    energia_usada_kwh = Column(DECIMAL(8, 2))
-    energia_usada_litros = Column(DECIMAL(8, 2))
-    costo_estimado = Column(DECIMAL(8, 2), nullable=False)
-    emisiones_co2_kg = Column(DECIMAL(8, 2))
-    modo = Column(Enum('simulacion', 'real'), nullable=False)
-    fecha_calculo = Column(TIMESTAMP, default='CURRENT_TIMESTAMP')
+class RutaAsignada(Base):
+    __tablename__ = 'rutas_asignadas'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    id_asignacion = Column(Integer, ForeignKey('asignaciones.id', ondelete='CASCADE'), nullable=False)
+    id_pedido = Column(Integer, ForeignKey('pedidos.id', ondelete='SET NULL'))
+    origen_direccion = Column(Text, nullable=False)
+    destino_direccion = Column(Text, nullable=False)
+    distancia_km = Column(Numeric(8, 2), nullable=False)
+    tiempo_min = Column(Numeric(8, 2), nullable=False)
+    ruta_mapquest = Column(JSONB, nullable=False)
+    vehiculo_tipo = Column(String(20), nullable=False)
+    consumo_data = Column(JSONB)
+    costo_total = Column(Numeric(10, 2))
+    emisiones_co2_kg = Column(Numeric(8, 2))
+    fecha_calculo = Column(TIMESTAMP(timezone=True), server_default=func.now())
+    activa = Column(Boolean, default=True)
+    
+    __table_args__ = (
+        CheckConstraint("vehiculo_tipo IN ('gasolina', 'hibrido', 'electrico')", name='tipo_ruta_check'),
+    )
+    
+    asignacion = relationship("Asignacion", foreign_keys=[id_asignacion])
+    pedido = relationship("Pedido", foreign_keys=[id_pedido])
