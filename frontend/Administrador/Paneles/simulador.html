@@ -104,7 +104,7 @@
         
         input[type="range"] {
             flex: 1;
-            -webkit-appearance: none;
+            /*-webkit-appearance: none;*/
             height: 6px;
             border-radius: 3px;
             background: rgba(255, 255, 255, 0.1);
@@ -1510,7 +1510,7 @@
             const lugares = [origen, ...destinos];
             
             // 1. Primero calcular la ruta multiparada
-            fetch('http://localhost:8000/ruta/ruta-multiparada', {
+            fetch('http://localhost:8000/api/ruta/ruta-multiparada', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1546,7 +1546,7 @@
                 $('#routeInfo').show();
                 
                 // 2. Ahora cargar el mapa en el iframe para múltiples destinos
-                return fetch('http://localhost:8000/simulacion/render-multi', {
+                return fetch('http://localhost:8000/api/simulacion/render-multi', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -375,7 +375,7 @@
                     console.log('Cargando mapa con:', { origen, destinos: destinos.length });
                     
                     // Hacer la petición para obtener el mapa HTML
-                    const response = await fetch('http://localhost:8000/simulacion/render-multi', {
+                    const response = await fetch('http://localhost:8000/api/simulacion/render-multi', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
