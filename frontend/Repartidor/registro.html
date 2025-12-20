@@ -701,7 +701,6 @@
                         <div class="contenedor-input">
                             <select id="rol" name="rol" required>
                                 <option value="">Selecciona un rol</option>
-                                <option value="cliente">Cliente</option>
                                 <option value="repartidor">Repartidor</option>
                                 <option value="admin">Administrador</option>
                             </select>
@@ -780,225 +779,226 @@
     <footer class="pie-pagina">
         <p>© 2025 RutaTec - Sistema de Optimización Logística. Todos los derechos reservados.</p>
     </footer>
-    
+
+
+<!-- ===== SCRIPT JS ===== -->
     <script>
-        // ===== ELEMENTOS DEL DOM =====
-        const formulario = document.getElementById('formularioRegistro');
-        const mensajeEstado = document.getElementById('mensajeEstado');
-        const botonRegistro = document.getElementById('botonRegistro');
-        const indicadorFuerza = document.getElementById('indicadorFuerza');
-        const barraFuerza = document.getElementById('barraFuerza');
-        const fuerzaTexto = document.getElementById('fuerzaTexto');
+        // ===== CONFIGURACIÓN API =====
+const API_URL = 'http://localhost:8000/api';
 
-        // ===== FUNCIONES DE UTILIDAD =====
-        function mostrarMensaje(texto, tipo) {
-            mensajeEstado.textContent = texto;
-            mensajeEstado.className = `mensaje-estado ${tipo}`;
-            mensajeEstado.style.display = 'flex';
-            
-            if (tipo === 'error') {
-                setTimeout(() => {
-                    mensajeEstado.style.display = 'none';
-                }, 5000);
-            }
-        }
+// ===== ELEMENTOS DEL DOM =====
+const formulario = document.getElementById('formularioRegistro');
+const mensajeEstado = document.getElementById('mensajeEstado');
+const botonRegistro = document.getElementById('botonRegistro');
+const indicadorFuerza = document.getElementById('indicadorFuerza');
+const barraFuerza = document.getElementById('barraFuerza');
+const fuerzaTexto = document.getElementById('fuerzaTexto');
 
-        function validarEmail(email) {
-            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return regex.test(email);
-        }
+// ===== FUNCIONES DE UTILIDAD =====
+function mostrarMensaje(texto, tipo) {
+    mensajeEstado.textContent = texto;
+    mensajeEstado.className = `mensaje-estado ${tipo}`;
+    mensajeEstado.style.display = 'flex';
+    
+    if (tipo === 'error') {
+        setTimeout(() => {
+            mensajeEstado.style.display = 'none';
+        }, 5000);
+    }
+}
 
-        function validarTelefono(telefono) {
-            const digitos = telefono.replace(/\D/g, '');
-            return digitos.length >= 10;
-        }
+function validarEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
 
-        function verificarFuerzaContrasena(contrasena) {
-            let fuerza = 0;
-            
-            // Longitud mínima
-            if (contrasena.length >= 8) fuerza += 20;
-            if (contrasena.length >= 12) fuerza += 10;
-            
-            // Contiene mayúsculas
-            if (/[A-Z]/.test(contrasena)) fuerza += 20;
-            
-            // Contiene minúsculas
-            if (/[a-z]/.test(contrasena)) fuerza += 20;
-            
-            // Contiene números
-            if (/[0-9]/.test(contrasena)) fuerza += 20;
-            
-            // Contiene caracteres especiales
-            if (/[^A-Za-z0-9]/.test(contrasena)) fuerza += 10;
-            
-            return Math.min(fuerza, 100);
-        }
+function validarTelefono(telefono) {
+    const digitos = telefono.replace(/\D/g, '');
+    return digitos.length >= 10;
+}
 
-        function actualizarIndicadorFuerza(contrasena) {
-            const fuerza = verificarFuerzaContrasena(contrasena);
-            
-            barraFuerza.style.width = `${fuerza}%`;
-            
-            if (fuerza < 40) {
-                barraFuerza.style.background = 'var(--rojo)';
-                fuerzaTexto.textContent = 'Fuerza: Débil';
-            } else if (fuerza < 70) {
-                barraFuerza.style.background = 'var(--warning)';
-                fuerzaTexto.textContent = 'Fuerza: Media';
-            } else {
-                barraFuerza.style.background = 'var(--verde)';
-                fuerzaTexto.textContent = 'Fuerza: Fuerte';
-            }
-        }
+function verificarFuerzaContrasena(contrasena) {
+    let fuerza = 0;
+    
+    if (contrasena.length >= 8) fuerza += 20;
+    if (contrasena.length >= 12) fuerza += 10;
+    if (/[A-Z]/.test(contrasena)) fuerza += 20;
+    if (/[a-z]/.test(contrasena)) fuerza += 20;
+    if (/[0-9]/.test(contrasena)) fuerza += 20;
+    if (/[^A-Za-z0-9]/.test(contrasena)) fuerza += 10;
+    
+    return Math.min(fuerza, 100);
+}
 
-        function registrarUsuario(datos) {
-            // Cargar usuarios existentes
-            let usuarios = JSON.parse(localStorage.getItem('usuariosRutaTec')) || {};
-            
-            // Verificar si el usuario ya existe
-            if (usuarios[datos.usuario]) {
-                return { exito: false, mensaje: 'El nombre de usuario ya está en uso' };
-            }
-            
-            // Verificar si el email ya está registrado
-            for (let user in usuarios) {
-                if (usuarios[user].email === datos.email) {
-                    return { exito: false, mensaje: 'El correo electrónico ya está registrado' };
-                }
-            }
-            
-            // Agregar nuevo usuario
-            usuarios[datos.usuario] = {
-                nombre: datos.nombre,
+function actualizarIndicadorFuerza(contrasena) {
+    const fuerza = verificarFuerzaContrasena(contrasena);
+    
+    barraFuerza.style.width = `${fuerza}%`;
+    
+    if (fuerza < 40) {
+        barraFuerza.style.background = '#e74c3c';
+        fuerzaTexto.textContent = 'Fuerza: Débil';
+    } else if (fuerza < 70) {
+        barraFuerza.style.background = '#f39c12';
+        fuerzaTexto.textContent = 'Fuerza: Media';
+    } else {
+        barraFuerza.style.background = '#2ecc71';
+        fuerzaTexto.textContent = 'Fuerza: Fuerte';
+    }
+}
+
+async function registrarUsuario(datos) {
+    try {
+        const response = await fetch(`${API_URL}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                nombre_completo: datos.nombre,
                 email: datos.email,
-                telefono: datos.telefono,
-                rol: datos.rol,
-                contrasena: datos.contrasena,
-                fechaRegistro: new Date().toISOString()
-            };
-            
-            // Guardar en localStorage
-            localStorage.setItem('usuariosRutaTec', JSON.stringify(usuarios));
-            
-            return { exito: true, datos: usuarios[datos.usuario] };
+                telefono: datos.telefono || null,
+                username: datos.usuario,
+                password: datos.contrasena,
+                rol: datos.rol
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.detail || 'Error en el registro');
         }
 
-        // ===== EVENTOS =====
-        // Visibilidad de contraseñas
-        document.querySelectorAll('.boton-visibilidad').forEach(boton => {
-            boton.addEventListener('click', function() {
-                const target = this.getAttribute('data-target');
-                const input = document.getElementById(target);
-                const tipo = input.type === 'password' ? 'text' : 'password';
-                input.type = tipo;
-                this.innerHTML = tipo === 'password' ? '👁️' : '👁️‍🗨️';
-            });
-        });
+        return { 
+            exito: true, 
+            datos: result
+        };
+        
+    } catch (error) {
+        console.error('Error al registrar:', error);
+        return { 
+            exito: false, 
+            mensaje: error.message 
+        };
+    }
+}
 
-        // Validar fuerza de contraseña en tiempo real
-        document.getElementById('contrasena').addEventListener('input', function(e) {
-            actualizarIndicadorFuerza(e.target.value);
-        });
+// ===== EVENTOS =====
+// Visibilidad de contraseñas
+document.querySelectorAll('.boton-visibilidad').forEach(boton => {
+    boton.addEventListener('click', function() {
+        const target = this.getAttribute('data-target');
+        const input = document.getElementById(target);
+        const tipo = input.type === 'password' ? 'text' : 'password';
+        input.type = tipo;
+        this.innerHTML = tipo === 'password' ? '👁️' : '👁️‍🗨️';
+    });
+});
 
-        // Envío del formulario
-        formulario.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Obtener valores del formulario
-            const datos = {
-                nombre: document.getElementById('nombre').value.trim(),
-                email: document.getElementById('email').value.trim(),
-                telefono: document.getElementById('telefono').value.trim(),
-                rol: document.getElementById('rol').value,
-                usuario: document.getElementById('usuario').value.trim(),
-                contrasena: document.getElementById('contrasena').value,
-                confirmar: document.getElementById('confirmar').value
-            };
-            
-            // Validaciones
-            if (!datos.nombre) {
-                mostrarMensaje('Por favor ingresa tu nombre completo', 'error');
-                return;
-            }
-            
-            if (!validarEmail(datos.email)) {
-                mostrarMensaje('Por favor ingresa un correo electrónico válido', 'error');
-                return;
-            }
-            
-            if (datos.telefono && !validarTelefono(datos.telefono)) {
-                mostrarMensaje('Por favor ingresa un número de teléfono válido (mínimo 10 dígitos)', 'error');
-                return;
-            }
-            
-            if (!datos.rol) {
-                mostrarMensaje('Por favor selecciona un tipo de usuario', 'error');
-                return;
-            }
-            
-            if (!datos.usuario || datos.usuario.length < 3) {
-                mostrarMensaje('El nombre de usuario debe tener al menos 3 caracteres', 'error');
-                return;
-            }
-            
-            if (datos.contrasena.length < 8) {
-                mostrarMensaje('La contraseña debe tener al menos 8 caracteres', 'error');
-                return;
-            }
-            
-            if (datos.contrasena !== datos.confirmar) {
-                mostrarMensaje('Las contraseñas no coinciden', 'error');
-                return;
-            }
-            
-            if (!document.getElementById('aceptarTerminos').checked) {
-                mostrarMensaje('Debes aceptar los términos y condiciones', 'error');
-                return;
-            }
-            
-            // Deshabilitar botón y mostrar carga
-            botonRegistro.disabled = true;
-            botonRegistro.classList.add('cargando');
-            
-            // Simular procesamiento
-            setTimeout(() => {
-                const resultado = registrarUsuario(datos);
-                
-                if (resultado.exito) {
-                    mostrarMensaje('¡Cuenta creada exitosamente! Redirigiendo al inicio de sesión...', 'exito');
-                    
-                    // Redirigir después de 2 segundos
-                    setTimeout(() => {
-                        window.location.href = 'index.html?registro=exitoso&usuario=' + encodeURIComponent(datos.usuario);
-                    }, 2000);
-                } else {
-                    mostrarMensaje(resultado.mensaje, 'error');
-                    botonRegistro.disabled = false;
-                    botonRegistro.classList.remove('cargando');
-                }
-            }, 1500);
-        });
+// Validar fuerza de contraseña en tiempo real
+document.getElementById('contrasena').addEventListener('input', function(e) {
+    actualizarIndicadorFuerza(e.target.value);
+});
 
-        // Mostrar términos y condiciones (demo)
-        function mostrarTerminos() {
-            alert('Términos y Condiciones de RutaTec\n\n1. El usuario se compromete a usar el sistema de manera responsable.\n2. La información proporcionada debe ser verídica.\n3. RutaTec se reserva el derecho de suspender cuentas que violen las políticas.\n\nEste es un ejemplo. En un sistema real, mostrarías un documento completo.');
-        }
+// Envío del formulario
+formulario.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Obtener valores del formulario
+    const datos = {
+        nombre: document.getElementById('nombre').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        rol: document.getElementById('rol').value,
+        usuario: document.getElementById('usuario').value.trim(),
+        contrasena: document.getElementById('contrasena').value,
+        confirmar: document.getElementById('confirmar').value
+    };
+    
+    // Validaciones
+    if (!datos.nombre) {
+        mostrarMensaje('Por favor ingresa tu nombre completo', 'error');
+        return;
+    }
+    
+    if (!validarEmail(datos.email)) {
+        mostrarMensaje('Por favor ingresa un correo electrónico válido', 'error');
+        return;
+    }
+    
+    if (datos.telefono && !validarTelefono(datos.telefono)) {
+        mostrarMensaje('Por favor ingresa un número de teléfono válido (mínimo 10 dígitos)', 'error');
+        return;
+    }
+    
+    if (!datos.rol) {
+        mostrarMensaje('Por favor selecciona un tipo de usuario', 'error');
+        return;
+    }
+    
+    if (!datos.usuario || datos.usuario.length < 3) {
+        mostrarMensaje('El nombre de usuario debe tener al menos 3 caracteres', 'error');
+        return;
+    }
+    
+    if (datos.contrasena.length < 8) {
+        mostrarMensaje('La contraseña debe tener al menos 8 caracteres', 'error');
+        return;
+    }
+    
+    if (datos.contrasena !== datos.confirmar) {
+        mostrarMensaje('Las contraseñas no coinciden', 'error');
+        return;
+    }
+    
+    if (!document.getElementById('aceptarTerminos').checked) {
+        mostrarMensaje('Debes aceptar los términos y condiciones', 'error');
+        return;
+    }
+    
+    // Deshabilitar botón y mostrar carga
+    botonRegistro.disabled = true;
+    botonRegistro.classList.add('cargando');
+    
+    // Llamar a la API
+    const resultado = await registrarUsuario(datos);
+    
+    if (resultado.exito) {
+        mostrarMensaje('¡Cuenta creada exitosamente! Redirigiendo al inicio de sesión...', 'exito');
+        
+        console.log('Usuario registrado:', resultado.datos);
+        
+        // Redirigir después de 2 segundos
+        setTimeout(() => {
+            window.location.href = 'Iniciar-secion.html?registro=exitoso';
+        }, 2000);
+    } else {
+        mostrarMensaje(resultado.mensaje, 'error');
+        botonRegistro.disabled = false;
+        botonRegistro.classList.remove('cargando');
+    }
+});
 
-        function mostrarPrivacidad() {
-            alert('Política de Privacidad de RutaTec\n\n1. Tus datos personales son protegidos según la ley.\n2. No compartimos tu información con terceros sin tu consentimiento.\n3. Puedes solicitar la eliminación de tus datos en cualquier momento.\n\nEste es un ejemplo. En un sistema real, mostrarías un documento completo.');
-        }
+// Mostrar términos y condiciones (demo)
+function mostrarTerminos() {
+    alert('Términos y Condiciones de RutaTec\n\n1. El usuario se compromete a usar el sistema de manera responsable.\n2. La información proporcionada debe ser verídica.\n3. RutaTec se reserva el derecho de suspender cuentas que violen las políticas.\n\nEste es un ejemplo. En un sistema real, mostrarías un documento completo.');
+}
 
-        // Verificar si viene de un registro exitoso
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('registro') === 'exitoso') {
-                const usuario = urlParams.get('usuario');
-                if (usuario) {
-                    mostrarMensaje(`¡Registro exitoso! Ahora puedes iniciar sesión con tu usuario: ${decodeURIComponent(usuario)}`, 'exito');
-                }
-            }
-        });
+function mostrarPrivacidad() {
+    alert('Política de Privacidad de RutaTec\n\n1. Tus datos personales son protegidos según la ley.\n2. No compartimos tu información con terceros sin tu consentimiento.\n3. Puedes solicitar la eliminación de tus datos en cualquier momento.\n\nEste es un ejemplo. En un sistema real, mostrarías un documento completo.');
+}
+
+// Verificar si viene de un registro exitoso
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('registro') === 'exitoso') {
+        mostrarMensaje('¡Bienvenido! Ahora puedes iniciar sesión con tus credenciales', 'exito');
+    }
+    
+    console.log('✅ Sistema de registro conectado a API:', API_URL);
+});
+    
     </script>
 </body>
 </html>

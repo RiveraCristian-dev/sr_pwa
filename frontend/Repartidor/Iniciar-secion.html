@@ -699,184 +699,232 @@
     </footer>
     
     <script>
-        // ===== ELEMENTOS DEL DOM =====
-        const formulario = document.getElementById('formularioLogin');
-        const usuarioInput = document.getElementById('usuario');
-        const contrasenaInput = document.getElementById('contrasena');
-        const botonVisibilidad = document.getElementById('botonVisibilidad');
-        const botonLogin = document.getElementById('botonLogin');
-        const mensajeEstado = document.getElementById('mensajeEstado');
-        const recordarSesion = document.getElementById('recordarSesion');
-        const logoRutaTec = document.getElementById('logoRutaTec');
+        // ===== CONFIGURACIÓN API =====
+const API_URL = 'http://localhost:8000/api';
 
-        // ===== DATOS DE USUARIOS (SIMULACIÓN) =====
-        // Cargar usuarios del localStorage o usar valores por defecto
-        let usuarios = JSON.parse(localStorage.getItem('usuariosRutaTec')) || {
-            'admin': { 
-                contrasena: 'Admin123!', 
-                nombre: 'Administrador', 
-                rol: 'admin',
-                email: 'admin@rutatec.com',
-                telefono: '+52 55 1234 5678'
-            }
-        };
+// ===== ELEMENTOS DEL DOM =====
+const formulario = document.getElementById('formularioLogin');
+const usuarioInput = document.getElementById('usuario');
+const contrasenaInput = document.getElementById('contrasena');
+const botonVisibilidad = document.getElementById('botonVisibilidad');
+const botonLogin = document.getElementById('botonLogin');
+const mensajeEstado = document.getElementById('mensajeEstado');
+const recordarSesion = document.getElementById('recordarSesion');
+const logoRutaTec = document.getElementById('logoRutaTec');
 
-        // ===== FUNCIONES DE UTILIDAD =====
-        function mostrarMensaje(texto, tipo) {
-            mensajeEstado.textContent = texto;
-            mensajeEstado.className = `mensaje-estado ${tipo}`;
-            mensajeEstado.style.display = 'flex';
-            
-            if (tipo === 'error') {
-                setTimeout(() => {
-                    mensajeEstado.style.display = 'none';
-                }, 5000);
-            }
-        }
+// ===== FUNCIONES DE UTILIDAD =====
+function mostrarMensaje(texto, tipo) {
+    mensajeEstado.textContent = texto;
+    mensajeEstado.className = `mensaje-estado ${tipo}`;
+    mensajeEstado.style.display = 'flex';
+    
+    if (tipo === 'error') {
+        setTimeout(() => {
+            mensajeEstado.style.display = 'none';
+        }, 5000);
+    }
+}
 
-        function verificarCredenciales(usuario, contrasena) {
-            if (!usuarios[usuario]) {
-                return { valido: false, mensaje: 'Usuario no encontrado' };
-            }
-            
-            if (usuarios[usuario].contrasena !== contrasena) {
-                return { valido: false, mensaje: 'Contraseña incorrecta' };
-            }
-            
-            return { 
-                valido: true, 
-                datos: usuarios[usuario] 
-            };
-        }
-
-        function crearSesion(usuario, datos) {
-            const sesion = {
-                usuario: usuario,
-                nombre: datos.nombre,
-                rol: datos.rol,
-                email: datos.email,
-                timestamp: Date.now(),
-                recordar: recordarSesion.checked
-            };
-            
-            localStorage.setItem('sesionRutaTec', JSON.stringify(sesion));
-            
-            if (recordarSesion.checked) {
-                localStorage.setItem('usuarioRecordado', usuario);
-            } else {
-                localStorage.removeItem('usuarioRecordado');
-            }
-        }
-
-        // ===== FUNCIÓN MODIFICADA: REDIRECCIÓN DE REPARTIDOR =====
-        function simularRedireccion() {
-            const pantallaCarga = document.createElement('div');
-            pantallaCarga.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: var(--degrade-fondo);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                z-index: 1000;
-                animation: aparecer 0.5s ease-out;
-            `;
-            
-            // CONTENIDO MODIFICADO: Mensaje de "Bienvenido Repartidor"
-            pantallaCarga.innerHTML = `
-                <div class="logo-rutatec" style="margin-bottom: 30px; animation: latido 2s infinite;"></div>
-                <h2 style="color: var(--blanco); margin-bottom: 20px; text-align: center;">
-                    <span style="display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: var(--blanco); border-radius: 50%; animation: spin 1s linear infinite;"></span> 
-                    Bienvenido Repartidor
-                </h2>
-                <div style="margin-top: 30px; width: 300px; height: 6px; background: rgba(30,30,30,0.7); border-radius: 3px; overflow: hidden;">
-                    <div id="barraCarga" style="height: 100%; background: linear-gradient(90deg, var(--azul-claro), var(--verde)); width: 0%; transition: width 0.3s ease;"></div>
-                </div>
-            `;
-            
-            document.body.appendChild(pantallaCarga);
-            
-            // Simular progreso de carga
-            let progreso = 0;
-            const intervalo = setInterval(() => {
-                progreso += Math.random() * 20;
-                const barraCarga = document.getElementById('barraCarga');
-                if (barraCarga) {
-                    barraCarga.style.width = `${Math.min(progreso, 100)}%`;
-                }
-                
-                if (progreso >= 100) {
-                    clearInterval(intervalo);
-                    setTimeout(() => {
-                        // REDIRECCIÓN MODIFICADA: Enlace a Ruta_repartidor.html
-                        window.location.href = './GPS/Ruta_repartidor.html';
-                    }, 500);
-                }
-            }, 200);
-        }
-
-        // ===== EVENTOS =====
-        botonVisibilidad.addEventListener('click', function() {
-            const tipo = contrasenaInput.type === 'password' ? 'text' : 'password';
-            contrasenaInput.type = tipo;
-            this.innerHTML = tipo === 'password' ? '👁️' : '👁️‍🗨️';
+async function loginConAPI(email, password) {
+    try {
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
         });
 
-        formulario.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const usuario = usuarioInput.value.trim();
-            const contrasena = contrasenaInput.value.trim();
-            
-            if (!usuario || !contrasena) {
-                mostrarMensaje('Por favor, completa todos los campos', 'error');
-                return;
-            }
-            
-            const resultado = verificarCredenciales(usuario, contrasena);
-            
-            if (!resultado.valido) {
-                mostrarMensaje(resultado.mensaje, 'error');
-                formulario.style.animation = 'none';
-                setTimeout(() => {
-                    formulario.style.animation = 'shake 0.5s ease-in-out';
-                }, 10);
-                setTimeout(() => {
-                    formulario.style.animation = '';
-                }, 500);
-                return;
-            }
-            
-            botonLogin.disabled = true;
-            botonLogin.classList.add('cargando');
-            
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || 'Error en el login');
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error al conectar con la API:', error);
+        throw error;
+    }
+}
+
+function crearSesion(userData) {
+    // Guardar en localStorage
+    localStorage.setItem('token', userData.access_token);
+    localStorage.setItem('user_id', userData.user_id);
+    localStorage.setItem('rol', userData.rol);
+    localStorage.setItem('nombre_completo', userData.nombre_completo);
+    localStorage.setItem('email', userData.email);
+    localStorage.setItem('username', userData.username);
+    
+    // Recordar sesión si está marcado
+    if (recordarSesion.checked) {
+        localStorage.setItem('recordar_sesion', 'true');
+        localStorage.setItem('ultimo_email', userData.email);
+    } else {
+        localStorage.removeItem('recordar_sesion');
+        localStorage.removeItem('ultimo_email');
+    }
+}
+
+function simularRedireccion(nombreUsuario) {
+    const pantallaCarga = document.createElement('div');
+    pantallaCarga.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0c1b33 0%, #1a3a5f 50%, #0c1b33 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        animation: aparecer 0.5s ease-out;
+    `;
+    
+    pantallaCarga.innerHTML = `
+        <div style="
+            width: 130px;
+            height: 130px;
+            background: linear-gradient(135deg, #1a3a5f, #3498db);
+            border-radius: 50%;
+            margin-bottom: 30px;
+            animation: latido 2s infinite;
+            background-image: url('../img/logo.jpeg');
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        "></div>
+        <h2 style="color: #ffffff; margin-bottom: 10px; text-align: center; font-size: 2rem;">
+            ¡Bienvenido, ${nombreUsuario}!
+        </h2>
+        <p style="color: #bbdefb; margin-bottom: 30px; font-size: 1.1rem;">Cargando tu panel de rutas...</p>
+        <div style="
+            display: inline-block; 
+            width: 40px; 
+            height: 40px; 
+            border: 4px solid rgba(255,255,255,0.3); 
+            border-top-color: #3498db; 
+            border-radius: 50%; 
+            animation: spin 1s linear infinite;
+        "></div>
+        <div style="margin-top: 30px; width: 300px; height: 6px; background: rgba(30,30,30,0.7); border-radius: 3px; overflow: hidden;">
+            <div id="barraCarga" style="height: 100%; background: linear-gradient(90deg, #3498db, #2ecc71); width: 0%; transition: width 0.3s ease;"></div>
+        </div>
+    `;
+    
+    document.body.appendChild(pantallaCarga);
+    
+    // Simular progreso de carga
+    let progreso = 0;
+    const intervalo = setInterval(() => {
+        progreso += Math.random() * 20;
+        const barraCarga = document.getElementById('barraCarga');
+        if (barraCarga) {
+            barraCarga.style.width = `${Math.min(progreso, 100)}%`;
+        }
+        
+        if (progreso >= 100) {
+            clearInterval(intervalo);
             setTimeout(() => {
-                crearSesion(usuario, resultado.datos);
-                simularRedireccion();
-            }, 1000);
-        });
+                window.location.href = './GPS/Ruta_repartidor.html';
+            }, 500);
+        }
+    }, 200);
+}
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const usuarioRecordado = localStorage.getItem('usuarioRecordado');
-            if (usuarioRecordado) {
-                usuarioInput.value = usuarioRecordado;
-                recordarSesion.checked = true;
-            }
-            
-            const sesionGuardada = localStorage.getItem('sesionRutaTec');
-            if (sesionGuardada) {
-                const sesion = JSON.parse(sesionGuardada);
-                if (sesion.recordar && (Date.now() - sesion.timestamp) < 86400000) {
-                    usuarioInput.value = sesion.usuario;
-                    recordarSesion.checked = true;
-                    mostrarMensaje(`Sesión activa encontrada para ${sesion.nombre}`, 'exito');
-                }
-            }
-        });
+// ===== EVENTOS =====
+botonVisibilidad.addEventListener('click', function() {
+    const tipo = contrasenaInput.type === 'password' ? 'text' : 'password';
+    contrasenaInput.type = tipo;
+    this.innerHTML = tipo === 'password' ? '👁️' : '👁️‍🗨️';
+});
+
+formulario.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const emailOUsername = usuarioInput.value.trim();
+    const contrasena = contrasenaInput.value.trim();
+    
+    if (!emailOUsername || !contrasena) {
+        mostrarMensaje('Por favor, completa todos los campos', 'error');
+        return;
+    }
+    
+    // Deshabilitar botón
+    botonLogin.disabled = true;
+    botonLogin.classList.add('cargando');
+    
+    try {
+        // Llamar a la API (el campo acepta email o username)
+        const userData = await loginConAPI(emailOUsername, contrasena);
+        
+        // Verificar que sea repartidor (permitir admin también para testing)
+        if (userData.rol !== 'repartidor' && userData.rol !== 'admin') {
+            throw new Error('Acceso denegado: Solo repartidores pueden acceder aquí');
+        }
+        
+        // Crear sesión
+        crearSesion(userData);
+        
+        // Mostrar mensaje de éxito
+        mostrarMensaje(`¡Bienvenido, ${userData.nombre_completo}!`, 'exito');
+        
+        console.log('Login exitoso:', userData);
+        
+        // Redirigir con animación
+        setTimeout(() => {
+            simularRedireccion(userData.nombre_completo.split(' ')[0]);
+        }, 1000);
+        
+    } catch (error) {
+        // Error en el login
+        mostrarMensaje(error.message, 'error');
+        
+        // Efecto shake
+        formulario.style.animation = 'none';
+        setTimeout(() => {
+            formulario.style.animation = 'shake 0.5s ease-in-out';
+        }, 10);
+        setTimeout(() => {
+            formulario.style.animation = '';
+        }, 500);
+        
+        // Rehabilitar botón
+        botonLogin.disabled = false;
+        botonLogin.classList.remove('cargando');
+    }
+});
+
+// ===== INICIALIZACIÓN =====
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificar si viene de registro exitoso
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('registro') === 'exitoso') {
+        mostrarMensaje('¡Cuenta creada exitosamente! Ahora puedes iniciar sesión', 'exito');
+    }
+    
+    // Cargar último email si está recordado
+    const ultimoEmail = localStorage.getItem('ultimo_email');
+    const recordarActivo = localStorage.getItem('recordar_sesion');
+    
+    if (recordarActivo === 'true' && ultimoEmail) {
+        usuarioInput.value = ultimoEmail;
+        recordarSesion.checked = true;
+        mostrarMensaje('Sesión recordada. Ingresa tu contraseña', 'exito');
+    }
+    
+    console.log('✅ Sistema de login conectado a API:', API_URL);
+    console.log('📝 Usuarios de prueba:');
+    console.log('   - juan@rutatec.com / hashed_password_456');
+    console.log('   - maria@rutatec.com / hashed_password_789');
+});
+    
     </script>
 </body>
 </html>

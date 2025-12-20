@@ -825,223 +825,313 @@
     </div>
 
     <script>
-        // ===== CONFIGURACIÓN =====
-        const SALARIO_HORA = 80; // MXN por hora
-        const PRECIO_GASOLINA = 24; // MXN por litro
-        const PRECIO_ELECTRICIDAD = 2.5; // MXN por kWh
-        
-        const VEHICULO_MODELOS = {
-            Gasolina: "Chevrolet Aveo 2024",
-            Híbrido: "Mazda 2 Hybrid",
-            Eléctrico: "BYD Eléctrico"
-        };
-        
-        const VEHICULO_CONSUMOS = {
-            Gasolina: 18, // km por litro
-            Eléctrico: 6 // km por kWh
-        };
+        // ===== CONFIGURACIÓN API =====
+const API_URL = 'http://localhost:8000/api';
 
-        // ===== FUNCIONES UTILITARIAS =====
-        function showNotification(message, type = 'success', duration = 4000) {
-            const notification = document.getElementById('notification');
-            const messageElement = document.getElementById('notification-message');
-            
-            notification.className = `notification ${type} show`;
-            notification.style.display = 'block';
-            messageElement.textContent = message;
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 500);
-            }, duration);
-        }
+// ===== CONSTANTES =====
+const SALARIO_HORA = 80; // MXN por hora
 
-        function updateSessionTime() {
-            const now = new Date();
-            const sessionStart = new Date(now.getTime() - 45 * 60000);
-            const sessionDuration = Math.floor((now - sessionStart) / 60000);
-            const hours = Math.floor(sessionDuration / 60);
-            const minutes = sessionDuration % 60;
-            
-            document.getElementById('session-time').textContent = 
-                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-        }
+// ===== FUNCIONES UTILITARIAS =====
+function showNotification(message, type = 'success', duration = 4000) {
+    const notification = document.getElementById('notification');
+    const messageElement = document.getElementById('notification-message');
+    
+    notification.className = `notification ${type} show`;
+    notification.style.display = 'block';
+    messageElement.textContent = message;
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 500);
+    }, duration);
+}
 
-        function calcularCostoGasolina(distancia) {
-            const consumo = distancia / VEHICULO_CONSUMOS.Gasolina;
-            const costo = consumo * PRECIO_GASOLINA;
-            return {
-                costo: costo,
-                detalle: `Gasolina consumida: ${consumo.toFixed(2)} L`,
-                consumo: consumo
-            };
-        }
+function updateSessionTime() {
+    const now = new Date();
+    const sessionStart = new Date(now.getTime() - 45 * 60000);
+    const sessionDuration = Math.floor((now - sessionStart) / 60000);
+    const hours = Math.floor(sessionDuration / 60);
+    const minutes = sessionDuration % 60;
+    
+    document.getElementById('session-time').textContent = 
+        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+}
 
-        function calcularCostoHibrido(distancia) {
-            let costo = 0;
-            let detalle = "";
-            
-            if (distancia <= 50) {
-                // Modo eléctrico
-                const kwh = distancia / 6;
-                costo = kwh * PRECIO_ELECTRICIDAD;
-                detalle = "Trayecto completo en modo eléctrico";
-            } else {
-                // 50km eléctricos + resto en gasolina
-                const distanciaGasolina = distancia - 50;
-                const kwh = 50 / 6;
-                const consumoGasolina = distanciaGasolina / 26; // 26 km/L en modo híbrido
-                
-                costo = (kwh * PRECIO_ELECTRICIDAD) + (consumoGasolina * PRECIO_GASOLINA);
-                detalle = `50 km eléctricos + ${consumoGasolina.toFixed(2)} L de gasolina`;
-            }
-            
-            return { costo, detalle };
-        }
+function formatearMoneda(cantidad) {
+    return `$${cantidad.toFixed(2)} MXN`;
+}
 
-        function calcularCostoElectrico(distancia) {
-            const kwh = distancia / VEHICULO_CONSUMOS.Eléctrico;
-            const costo = kwh * PRECIO_ELECTRICIDAD;
-            return {
-                costo: costo,
-                detalle: `Energía eléctrica utilizada: ${kwh.toFixed(2)} kWh`,
-                consumo: kwh
-            };
-        }
-
-        function formatearMoneda(cantidad) {
-            return `$${cantidad.toFixed(2)} MXN`;
-        }
-
-        function generarReporte() {
-            // Obtener valores del formulario
-            const vehiculo = document.getElementById("vehiculo").value;
-            const velocidad = parseFloat(document.getElementById("velocidad").value);
-            const distancia = parseFloat(document.getElementById("distancia").value);
+function cargarVehiculosDisponibles() {
+    fetch(`${API_URL}/vehiculos/vehiculos?disponibles_solo=false`)
+        .then(response => response.json())
+        .then(vehiculos => {
+            const select = document.getElementById('vehiculo');
             
-            // Validar campos
-            if (!vehiculo) {
-                showNotification("Por favor, selecciona un tipo de vehículo", "error");
-                document.getElementById("vehiculo").focus();
-                return;
-            }
+            // Limpiar opciones actuales (excepto la primera)
+            select.innerHTML = '<option value="">Selecciona un tipo de vehículo</option>';
             
-            if (!velocidad || velocidad < 10 || velocidad > 120) {
-                showNotification("Ingresa una velocidad válida (10-120 km/h)", "error");
-                document.getElementById("velocidad").focus();
-                return;
-            }
+            // Agrupar por tipo
+            const tiposUnicos = [...new Set(vehiculos.map(v => v.tipo))];
             
-            if (!distancia || distancia < 1 || distancia > 1000) {
-                showNotification("Ingresa una distancia válida (1-1000 km)", "error");
-                document.getElementById("distancia").focus();
-                return;
-            }
-            
-            // Calcular tiempo
-            const tiempoHoras = distancia / velocidad;
-            const tiempoMinutos = Math.round(tiempoHoras * 60);
-            
-            // Calcular ETA
-            const ahora = new Date();
-            const llegada = new Date(ahora.getTime() + tiempoMinutos * 60000);
-            const eta = llegada.toLocaleTimeString("es-MX", { 
-                hour: "2-digit", 
-                minute: "2-digit",
-                hour12: true 
+            tiposUnicos.forEach(tipo => {
+                const option = document.createElement('option');
+                option.value = tipo;
+                option.textContent = tipo.charAt(0).toUpperCase() + tipo.slice(1);
+                select.appendChild(option);
             });
             
-            // Calcular sueldo del chofer
-            const sueldoChofer = tiempoHoras * SALARIO_HORA;
-            
-            // Calcular costos según tipo de vehículo
-            let costoEnergia = 0;
-            let detalleEnergia = "";
-            let modelo = VEHICULO_MODELOS[vehiculo];
-            
-            switch(vehiculo) {
-                case "Gasolina":
-                    const resultadoGasolina = calcularCostoGasolina(distancia);
-                    costoEnergia = resultadoGasolina.costo;
-                    detalleEnergia = resultadoGasolina.detalle;
-                    break;
-                    
-                case "Híbrido":
-                    const resultadoHibrido = calcularCostoHibrido(distancia);
-                    costoEnergia = resultadoHibrido.costo;
-                    detalleEnergia = resultadoHibrido.detalle;
-                    break;
-                    
-                case "Eléctrico":
-                    const resultadoElectrico = calcularCostoElectrico(distancia);
-                    costoEnergia = resultadoElectrico.costo;
-                    detalleEnergia = resultadoElectrico.detalle;
-                    break;
-            }
-            
-            // Calcular costo total
-            const costoTotal = costoEnergia + sueldoChofer;
-            
-            // Actualizar la interfaz
-            document.getElementById("rModelo").textContent = modelo;
-            document.getElementById("rVelocidad").textContent = `${velocidad} km/h`;
-            document.getElementById("rDistancia").textContent = `${distancia} km`;
-            document.getElementById("rDuracion").textContent = `${tiempoMinutos} minutos (${tiempoHoras.toFixed(1)} horas)`;
-            document.getElementById("rETA").textContent = eta;
-            document.getElementById("rDetalleEnergia").textContent = detalleEnergia;
-            document.getElementById("rCostoEnergia").textContent = formatearMoneda(costoEnergia);
-            document.getElementById("rSueldoChofer").textContent = formatearMoneda(sueldoChofer);
-            document.getElementById("rCostoTotal").textContent = `Costo total: ${formatearMoneda(costoTotal)}`;
-            
-            // Mostrar resultados
-            document.getElementById("resultado").style.display = "block";
-            
-            // Mostrar notificación de éxito
-            showNotification(`Reporte generado exitosamente. Costo total: ${formatearMoneda(costoTotal)}`);
-        }
-
-        // ===== INICIALIZACIÓN =====
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('📊 Sistema de reportes logísticos inicializado');
-            
-            // Actualizar tiempo de sesión cada minuto
-            setInterval(updateSessionTime, 60000);
-            updateSessionTime();
-            
-            // Configurar cierre de notificaciones
-            document.querySelector('.close-notification').addEventListener('click', function() {
-                document.getElementById('notification').classList.remove('show');
-                setTimeout(() => {
-                    document.getElementById('notification').style.display = 'none';
-                }, 500);
-            });
-            
-            // Permitir generar reporte con Enter
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    generarReporte();
-                }
-                
-                if (e.key === 'Escape') {
-                    const notification = document.getElementById('notification');
-                    notification.classList.remove('show');
-                    setTimeout(() => {
-                        notification.style.display = 'none';
-                    }, 500);
-                }
-            });
-            
-            // Animaciones iniciales
-            const elementsToAnimate = ['.report-card', '.dashboard-footer'];
-            elementsToAnimate.forEach((selector, index) => {
-                const element = document.querySelector(selector);
-                if (element) {
-                    element.style.animationDelay = `${0.2 + (index * 0.2)}s`;
-                }
-            });
+            console.log(`✅ ${tiposUnicos.length} tipos de vehículos cargados`);
+        })
+        .catch(error => {
+            console.error('Error al cargar vehículos:', error);
+            // Fallback: usar opciones predefinidas
+            const select = document.getElementById('vehiculo');
+            select.innerHTML = `
+                <option value="">Selecciona un tipo de vehículo</option>
+                <option value="gasolina">Gasolina</option>
+                <option value="hibrido">Híbrido</option>
+                <option value="electrico">Eléctrico</option>
+            `;
         });
+}
+
+async function generarReporte() {
+    // Obtener valores del formulario
+    const tipoVehiculo = document.getElementById("vehiculo").value;
+    const velocidad = parseFloat(document.getElementById("velocidad").value);
+    const distancia = parseFloat(document.getElementById("distancia").value);
+    
+    // Validar campos
+    if (!tipoVehiculo) {
+        showNotification("Por favor, selecciona un tipo de vehículo", "error");
+        document.getElementById("vehiculo").focus();
+        return;
+    }
+    
+    if (!velocidad || velocidad < 10 || velocidad > 120) {
+        showNotification("Ingresa una velocidad válida (10-120 km/h)", "error");
+        document.getElementById("velocidad").focus();
+        return;
+    }
+    
+    if (!distancia || distancia < 1 || distancia > 1000) {
+        showNotification("Ingresa una distancia válida (1-1000 km)", "error");
+        document.getElementById("distancia").focus();
+        return;
+    }
+    
+    // Mostrar indicador de carga
+    const btnGenerar = document.querySelector('.primary-btn');
+    const btnTextOriginal = btnGenerar.innerHTML;
+    btnGenerar.disabled = true;
+    btnGenerar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando reporte...';
+    
+    try {
+        // Llamar al endpoint de reportes
+        const response = await fetch(`${API_URL}/reportes/generar-simple`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tipo_vehiculo: tipoVehiculo,
+                velocidad_promedio_kmh: velocidad,
+                distancia_km: distancia
+            })
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Error al generar reporte');
+        }
+        
+        const datos = await response.json();
+        
+        // Actualizar la interfaz con los datos recibidos
+        document.getElementById("rModelo").textContent = datos.vehiculo_modelo;
+        document.getElementById("rVelocidad").textContent = `${datos.velocidad_kmh} km/h`;
+        document.getElementById("rDistancia").textContent = `${datos.distancia_km} km`;
+        document.getElementById("rDuracion").textContent = datos.tiempo_formateado;
+        document.getElementById("rETA").textContent = datos.eta;
+        document.getElementById("rDetalleEnergia").textContent = datos.consumo_detalle;
+        document.getElementById("rCostoEnergia").textContent = formatearMoneda(datos.costo_energia);
+        document.getElementById("rSueldoChofer").textContent = formatearMoneda(datos.sueldo_chofer);
+        document.getElementById("rCostoTotal").textContent = `Costo total: ${formatearMoneda(datos.costo_total)}`;
+        
+        // Agregar información de emisiones (si está disponible)
+        if (datos.emisiones_co2_kg) {
+            const emisionesRow = `
+                <div class="result-row">
+                    <div class="result-label">
+                        <i class="fas fa-leaf"></i>
+                        <span>Emisiones CO₂</span>
+                    </div>
+                    <div class="result-value">${datos.emisiones_co2_kg.toFixed(2)} kg</div>
+                </div>
+            `;
+            
+            // Insertar antes de la sección ETA
+            const etaSection = document.querySelector('.eta-section');
+            if (etaSection && !document.getElementById('emisionesRow')) {
+                const div = document.createElement('div');
+                div.id = 'emisionesRow';
+                div.innerHTML = emisionesRow;
+                etaSection.parentNode.insertBefore(div.firstElementChild, etaSection);
+            }
+        }
+        
+        // Mostrar resultados con animación
+        const resultCard = document.getElementById("resultado");
+        resultCard.style.display = "block";
+        
+        // Scroll suave hacia los resultados
+        setTimeout(() => {
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+        
+        // Mostrar notificación de éxito
+        showNotification(`✅ Reporte generado exitosamente. Costo total: ${formatearMoneda(datos.costo_total)}`);
+        
+    } catch (error) {
+        console.error('Error al generar reporte:', error);
+        showNotification(error.message || 'Error al generar el reporte', 'error');
+    } finally {
+        // Restaurar botón
+        btnGenerar.disabled = false;
+        btnGenerar.innerHTML = btnTextOriginal;
+    }
+}
+
+// ===== FUNCIÓN PARA CARGAR DASHBOARD (OPCIONAL) =====
+async function cargarEstadisticas() {
+    try {
+        const response = await fetch(`${API_URL}/reportes/dashboard`);
+        
+        if (response.ok) {
+            const stats = await response.json();
+            console.log('📊 Estadísticas del dashboard:', stats);
+            
+            // Aquí podrías mostrar las estadísticas en algún lugar de la interfaz
+            // Por ejemplo, en el footer o en un widget adicional
+        }
+    } catch (error) {
+        console.warn('No se pudieron cargar las estadísticas del dashboard');
+    }
+}
+
+// ===== FUNCIÓN PARA GENERAR REPORTE DESDE PEDIDO ESPECÍFICO =====
+async function generarReporteDesdePedido(idPedido, tipoVehiculo, velocidad, distancia) {
+    try {
+        const response = await fetch(`${API_URL}/reportes/generar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tipo_vehiculo: tipoVehiculo,
+                velocidad_promedio_kmh: velocidad,
+                distancia_km: distancia,
+                id_pedido: idPedido
+            })
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Error al generar reporte');
+        }
+        
+        const datos = await response.json();
+        return datos;
+        
+    } catch (error) {
+        console.error('Error al generar reporte desde pedido:', error);
+        throw error;
+    }
+}
+
+// ===== INICIALIZACIÓN =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📊 Sistema de reportes logísticos inicializado');
+    
+    // Cargar vehículos disponibles
+    cargarVehiculosDisponibles();
+    
+    // Cargar estadísticas del dashboard (opcional)
+    cargarEstadisticas();
+    
+    // Actualizar tiempo de sesión cada minuto
+    setInterval(updateSessionTime, 60000);
+    updateSessionTime();
+    
+    // Configurar cierre de notificaciones
+    const closeNotificationBtn = document.querySelector('.close-notification');
+    if (closeNotificationBtn) {
+        closeNotificationBtn.addEventListener('click', function() {
+            document.getElementById('notification').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('notification').style.display = 'none';
+            }, 500);
+        });
+    }
+    
+    // Permitir generar reporte con Enter
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const resultado = document.getElementById('resultado');
+            // Solo generar si no está mostrando resultados o si está en un campo del formulario
+            if (resultado.style.display !== 'block' || 
+                ['vehiculo', 'velocidad', 'distancia'].includes(e.target.id)) {
+                generarReporte();
+            }
+        }
+        
+        if (e.key === 'Escape') {
+            const notification = document.getElementById('notification');
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 500);
+        }
+    });
+    
+    // Validación en tiempo real de los campos numéricos
+    document.getElementById('velocidad').addEventListener('input', function() {
+        const valor = parseFloat(this.value);
+        if (valor < 10 || valor > 120) {
+            this.style.borderColor = '#e74c3c';
+        } else {
+            this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+        }
+    });
+    
+    document.getElementById('distancia').addEventListener('input', function() {
+        const valor = parseFloat(this.value);
+        if (valor < 1 || valor > 1000) {
+            this.style.borderColor = '#e74c3c';
+        } else {
+            this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+        }
+    });
+    
+    // Animaciones iniciales
+    const elementsToAnimate = ['.report-card', '.dashboard-footer'];
+    elementsToAnimate.forEach((selector, index) => {
+        const element = document.querySelector(selector);
+        if (element) {
+            element.style.animationDelay = `${0.2 + (index * 0.2)}s`;
+        }
+    });
+    
+    console.log('✅ Sistema listo para generar reportes');
+});
+
+// ===== EXPORTAR FUNCIONES GLOBALES =====
+// Para que puedan ser llamadas desde el HTML con onclick
+window.generarReporte = generarReporte;
+window.generarReporteDesdePedido = generarReporteDesdePedido;
+    
     </script>
 </body>
 </html>

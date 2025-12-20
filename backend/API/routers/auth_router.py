@@ -18,7 +18,7 @@ load_dotenv()
 # =========================
 
 class LoginRequest(BaseModel):
-    email: str
+    email: str  # Puede ser email O username
     password: str
 
 class RegisterRequest(BaseModel):
@@ -71,35 +71,40 @@ def create_access_token(data: dict):
 def login(request: LoginRequest, db: Session = Depends(get_db)):
     """
     Login de usuario (admin o repartidor)
+    - Acepta email O username
     - Verifica credenciales
     - Genera token JWT
     - Actualiza último login
     """
     try:
-        # Buscar usuario activo por email
+        # MODIFICADO: Buscar por email O username
         query = text("""
             SELECT id, nombre_completo, email, username, telefono, 
                    password_hash, rol, activo
             FROM usuarios 
-            WHERE email = :email AND activo = TRUE
+            WHERE (email = :identifier OR username = :identifier) 
+            AND activo = TRUE
         """)
         
-        result = db.execute(query, {"email": request.email})
+        result = db.execute(query, {"identifier": request.email})
         user = result.fetchone()
         
         if not user:
+            print(f"❌ Usuario no encontrado: {request.email}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Credenciales incorrectas o usuario inactivo"
             )
         
-        # ⚠️ ADVERTENCIA: En producción usa bcrypt o similar
-        # Esto es solo para desarrollo/demo
+        # Verificar contraseña
         if user.password_hash != request.password:
+            print(f"❌ Contraseña incorrecta para: {request.email}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Credenciales incorrectas"
             )
+        
+        print(f"✅ Login exitoso: {user.email} - Rol: {user.rol}")
         
         # Actualizar último login
         update_query = text("""
@@ -133,6 +138,7 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
     except HTTPException:
         raise
     except Exception as e:
+        print(f"❌ Error en login: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error en el servidor: {str(e)}"
@@ -146,11 +152,14 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
     - Crea usuario con rol especificado
     """
     try:
+        print(f"📝 Intento de registro: {request.email} - Usuario: {request.username}")
+        
         # Verificar si email ya existe
         check_email = text("SELECT id FROM usuarios WHERE email = :email")
         email_exists = db.execute(check_email, {"email": request.email}).fetchone()
         
         if email_exists:
+            print(f"⚠️  Email ya existe: {request.email}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="El email ya está registrado"
@@ -161,6 +170,7 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
         username_exists = db.execute(check_username, {"username": request.username}).fetchone()
         
         if username_exists:
+            print(f"⚠️  Username ya existe: {request.username}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="El nombre de usuario ya está en uso"
@@ -194,6 +204,8 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
         new_user = result.fetchone()
         db.commit()
         
+        print(f"✅ Usuario registrado exitosamente: {new_user.email}")
+        
         return UserResponse(
             id=new_user.id,
             nombre_completo=new_user.nombre_completo,
@@ -209,6 +221,7 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
         raise
     except Exception as e:
         db.rollback()
+        print(f"❌ Error en registro: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al registrar usuario: {str(e)}"
