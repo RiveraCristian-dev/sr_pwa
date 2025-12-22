@@ -831,19 +831,20 @@
             </div>
             
             <div class="form-group">
-                <label for="id_repartidor">
+                <label for="repartidorId">
                     <i class="fas fa-id-card"></i>
                     ID del Repartidor
                 </label>
-                <input type="number" id="id_repartidor" class="form-control" 
+                <input type="number" id="repartidorId" class="form-control" 
                        placeholder="Ingresa tu número de identificación" min="1">
             </div>
-            
-            <button class="primary-btn" onclick="buscarRuta()">
+
+            <button class="primary-btn" id="btnConsultarRuta">
                 <i class="fas fa-search-location"></i>
                 Consultar Mi Ruta
             </button>
         </div>
+        <div id="rutaInfo" style="display: none;"></div>
 
         <!-- Panel de Ruta (se muestra al consultar) -->
         <div class="route-panel" id="routePanel">
@@ -1006,429 +1007,364 @@
     </div>
 
     <script>
-        // ===== DATOS SIMULADOS (Normalmente vendrían de la BD) =====
-        const asignaciones = [
-            {
-                id_repartidor: 101,
-                nombre: "Juan Carlos Pérez Martínez",
-                contacto: "331-123-4567",
-                vehiculo: "Chevrolet Aveo 2024",
-                tipo: "Gasolina",
-                capacidad: "18 paquetes",
-                ruta: "Zona Centro → Norte",
-                zona: "Centro y Norte",
-                paquetes: 15,
-                hora_salida: "08:30 AM",
-                gasolina: 500,
-                energia: null,
-                estado: "Pendiente",
-                fecha_asignacion: "2024-01-15",
-                destinos: [
-                    {
-                        orden: 1,
-                        direccion: "Av. Juárez #123, Centro",
-                        cliente: "Tech Solutions SA de CV",
-                        paquetes: 3,
-                        notas: "Entregar en recepción, preguntar por Laura"
-                    },
-                    {
-                        orden: 2,
-                        direccion: "Calle Reforma #456, Col. Moderna",
-                        cliente: "Distribuidora Comercial",
-                        paquetes: 5,
-                        notas: "Horario: 9 AM - 6 PM, pagar contra entrega"
-                    },
-                    {
-                        orden: 3,
-                        direccion: "Blvd. López Mateos #789, Zona Norte",
-                        cliente: "Almacenes del Norte",
-                        paquetes: 7,
-                        notas: "Entregar en muelle 3, llamar al 331-987-6543"
-                    }
-                ],
-                instrucciones: [
-                    "Verificar todos los paquetes antes de salir",
-                    "Mantener comunicación con el centro de control",
-                    "Reportar cualquier incidencia inmediatamente",
-                    "Tomar fotos de las entregas como comprobante",
-                    "No dejar paquetes sin firma del destinatario",
-                    "Mantener el vehículo con combustible suficiente"
-                ]
-            },
-            {
-                id_repartidor: 102,
-                nombre: "María Fernanda López García",
-                contacto: "333-234-5678",
-                vehiculo: "Toyota Prius Hybrid 2023",
-                tipo: "Híbrido",
-                capacidad: "12 paquetes",
-                ruta: "Zona Sur → Este",
-                zona: "Sur y Este",
-                paquetes: 10,
-                hora_salida: "09:00 AM",
-                gasolina: 300,
-                energia: 150,
-                estado: "En Progreso",
-                fecha_asignacion: "2024-01-15",
-                destinos: [
-                    {
-                        orden: 1,
-                        direccion: "Av. Patria #321, Col. Del Valle",
-                        cliente: "Importadora del Sur",
-                        paquetes: 4,
-                        notas: "Documentos importantes, entrega personal obligatoria"
-                    },
-                    {
-                        orden: 2,
-                        direccion: "Calle Morelos #654, Col. Jardines",
-                        cliente: "Restaurante La Tradición",
-                        paquetes: 3,
-                        notas: "Productos perecederos, mantener refrigerados"
-                    },
-                    {
-                        orden: 3,
-                        direccion: "Periférico Sur #987, Zona Industrial",
-                        cliente: "Fábrica de Componentes",
-                        paquetes: 3,
-                        notas: "Entregar en almacén, horario extendido hasta 7 PM"
-                    }
-                ],
-                instrucciones: [
-                    "Priorizar entrega de productos perecederos",
-                    "Verificar temperatura de refrigeración cada hora",
-                    "Usar modo eléctrico en zona urbana",
-                    "Reportar tiempos de entrega cada destino",
-                    "Confirmar recepción con fotografía",
-                    "Cargar vehículo si batería baja al 30%"
-                ]
-            },
-            {
-                id_repartidor: 103,
-                nombre: "Carlos Alberto Ruiz Hernández",
-                contacto: "332-345-6789",
-                vehiculo: "BYD Electric Van 2024",
-                tipo: "Eléctrico",
-                capacidad: "25 paquetes",
-                ruta: "Ruta Express Metropolitana",
-                zona: "Metropolitana",
-                paquetes: 22,
-                hora_salida: "07:45 AM",
-                gasolina: null,
-                energia: 320,
-                estado: "Completada",
-                fecha_asignacion: "2024-01-14",
-                destinos: [
-                    {
-                        orden: 1,
-                        direccion: "Plaza del Sol Local #45, Centro",
-                        cliente: "Tienda Departamental",
-                        paquetes: 8,
-                        notas: "Mercancía frágil, manejar con cuidado"
-                    },
-                    {
-                        orden: 2,
-                        direccion: "Galerías Guadalajara Local #12",
-                        cliente: "Boutique de Moda",
-                        paquetes: 5,
-                        notas: "Ropa de temporada, mantener en bolsas"
-                    },
-                    {
-                        orden: 3,
-                        direccion: "Andares Local #78, Zapopan",
-                        cliente: "Joyería Luxury",
-                        paquetes: 2,
-                        notas: "VALIOSO - Entrega con seguridad y firma obligatoria"
-                    },
-                    {
-                        orden: 4,
-                        direccion: "Plaza Patria #33, Col. Americana",
-                        cliente: "Cafetería Gourmet",
-                        paquetes: 7,
-                        notas: "Granos de café, mantener seco"
-                    }
-                ],
-                instrucciones: [
-                    "Carga completa requerida antes de salir",
-                    "Priorizar entrega de artículos valiosos",
-                    "Manejar con extremo cuidado mercancía frágil",
-                    "Usar rutas preferentes eléctricas",
-                    "Cargar en estaciones autorizadas",
-                    "Reportar estado de batería cada 2 horas"
-                ]
-            }
-        ];
+        // ============================================
+// SCRIPT CORREGIDO PARA Ruta_repartidor.html
+// ============================================
 
-        // ===== FUNCIONES UTILITARIAS =====
-        function showNotification(message, type = 'success', duration = 4000) {
-            const notification = document.getElementById('notification');
-            const messageElement = document.getElementById('notification-message');
-            
-            notification.className = `notification ${type} show`;
-            notification.style.display = 'block';
-            messageElement.textContent = message;
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 500);
-            }, duration);
-        }
+const API_URL = 'http://localhost:8000/api';
+let rutaActual = null;
+let repartidorId = null;
 
-        function updateTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('es-MX', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: true
-            });
-            document.getElementById('current-time').textContent = timeString;
-        }
-
-        function cargarDestinos(destinos) {
-            const lista = document.getElementById('destinosList');
-            lista.innerHTML = '';
-            
-            destinos.forEach(destino => {
-                const li = document.createElement('li');
-                li.className = 'destino-item';
-                li.innerHTML = `
-                    <div class="destino-number">${destino.orden}</div>
-                    <div class="destino-content">
-                        <div class="destino-descripcion">${destino.direccion}</div>
-                        <div class="destino-notas">
-                            <strong>Cliente:</strong> ${destino.cliente} | 
-                            <strong>Paquetes:</strong> ${destino.paquetes} | 
-                            <strong>Notas:</strong> ${destino.notas}
-                        </div>
-                    </div>
-                `;
-                lista.appendChild(li);
-            });
-        }
-
-        function cargarInstrucciones(instrucciones) {
-            const lista = document.getElementById('instructionsList');
-            lista.innerHTML = '';
-            
-            instrucciones.forEach((instruccion, index) => {
-                const li = document.createElement('li');
-                li.className = 'instruction-item';
-                li.innerHTML = `
-                    <i class="fas fa-chevron-right"></i>
-                    <span class="instruction-text">${instruccion}</span>
-                `;
-                lista.appendChild(li);
-            });
-        }
-
-        function formatearMoneda(cantidad) {
-            return cantidad !== null ? `$${cantidad.toFixed(2)} MXN` : 'N/A';
-        }
-
-        function buscarRuta() {
-            const idInput = document.getElementById('id_repartidor');
-            const id = parseInt(idInput.value);
-            
-            if (!id || id <= 0) {
-                showNotification('Por favor, ingresa un ID de repartidor válido', 'error');
-                idInput.focus();
-                return;
-            }
-            
-            const asignacion = asignaciones.find(a => a.id_repartidor === id);
-            
-            if (!asignacion) {
-                showNotification('No se encontró una ruta asignada para este repartidor', 'error');
-                return;
-            }
-            
-            // Mostrar información principal
-            document.getElementById('routeTitle').textContent = asignacion.ruta;
-            document.getElementById('infoNombre').textContent = asignacion.nombre;
-            document.getElementById('infoId').textContent = asignacion.id_repartidor;
-            document.getElementById('infoContacto').textContent = asignacion.contacto;
-            document.getElementById('infoVehiculo').textContent = asignacion.vehiculo;
-            document.getElementById('infoTipo').textContent = asignacion.tipo;
-            document.getElementById('infoCapacidad').textContent = asignacion.capacidad;
-            document.getElementById('infoPaquetes').textContent = `${asignacion.paquetes} paquetes`;
-            document.getElementById('infoZona').textContent = asignacion.zona;
-            document.getElementById('infoHora').textContent = asignacion.hora_salida;
-            
-            // Actualizar la sección de costos
-            const infoCardCostos = document.querySelector('.info-card:nth-child(3)');
-            if (infoCardCostos) {
-                const costoHTML = `
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-gas-pump"></i>
-                            <span>Gasolina</span>
-                        </div>
-                        <div class="info-value">${formatearMoneda(asignacion.gasolina)}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-bolt"></i>
-                            <span>Energía</span>
-                        </div>
-                        <div class="info-value">${formatearMoneda(asignacion.energia)}</div>
-                    </div>
-                `;
-                // Agregar después del elemento de paquetes
-                const paquetesItem = infoCardCostos.querySelector('.info-item:first-child');
-                paquetesItem.insertAdjacentHTML('afterend', costoHTML);
-            }
-            
-            // Cargar destinos e instrucciones
-            cargarDestinos(asignacion.destinos);
-            cargarInstrucciones(asignacion.instrucciones);
-            
-            // Mostrar panel de ruta
-            document.getElementById('routePanel').classList.add('active');
-            
-            // Scroll suave al panel
-            document.getElementById('routePanel').scrollIntoView({ behavior: 'smooth' });
-            
-            // Mostrar notificación de éxito
-            showNotification(`Ruta encontrada para ${asignacion.nombre}. Buen viaje!`, 'success');
-            
-            // Registrar consulta en consola
-            console.log(`🔍 Ruta consultada - Repartidor: ${asignacion.nombre} (ID: ${id})`);
-            console.log('📦 Detalles:', {
-                ruta: asignacion.ruta,
-                paquetes: asignacion.paquetes,
-                vehiculo: asignacion.vehiculo,
-                estado: asignacion.estado
-            });
-        }
-
-        // ===== FUNCIONES DE ACCIÓN =====
-        function marcarIniciada() {
-            const id = parseInt(document.getElementById('id_repartidor').value);
-            const asignacion = asignaciones.find(a => a.id_repartidor === id);
-            
-            if (asignacion) {
-                asignacion.estado = 'En Progreso';
-                document.querySelector('.status-badge').innerHTML = `
-                    <i class="fas fa-sync-alt"></i>
-                    En Progreso
-                `;
-                showNotification('Ruta marcada como iniciada. ¡Buen viaje!', 'success');
-                console.log(`🚀 Ruta iniciada - Repartidor ID: ${id}`);
-            }
-        }
-
-        function verMapa() {
-            // 1. Verificar que FastAPI esté corriendo
-            fetch('http://localhost:8000/health')
-            .then(response => {
-            if (!response.ok) {
-                throw new Error('Servidor no disponible');
-            }
-            return response.json();
-            })
-            .then(data => {
-            console.log('✅ Servidor FastAPI activo:', data);
-            
-            // 2. Verificar que haya una ruta calculada en localStorage
-            const ultimaRuta = localStorage.getItem('ultimaRutaMulti');
-            
-            if (!ultimaRuta) {
-                showNotification('No hay una ruta calculada. Por favor, calcula una ruta desde el panel de administración.', 'error');
-                return;
-            }
-            
-            try {
-                const rutaData = JSON.parse(ultimaRuta);
-                if (!rutaData.destinos || rutaData.destinos.length === 0) {
-                    showNotification('La ruta almacenada no tiene destinos válidos.', 'error');
-                    return;
-                }
-                
-                // 3. Redirigir al GPS
-                window.location.href = 'GPS/gps.html';
-                
-            } catch (error) {
-                showNotification('Error al leer los datos de la ruta almacenada.', 'error');
-                console.error('Error parseando ultimaRuta:', error);
-            }
-        })
-        .catch(error => {
-            console.error('❌ Error conectando con el servidor:', error);
-            showNotification('No se pudo conectar con el servidor de rutas. Asegúrate de que el backend esté ejecutándose (localhost:8000).', 'error');
-        });
-}
-
-function generarReporte() {
-    const id = parseInt(document.getElementById('id_repartidor').value);
-    const asignacion = asignaciones.find(a => a.id_repartidor === id);
+// ========================================
+// FUNCIONES UTILITARIAS
+// ========================================
+function mostrarNotificacion(mensaje, tipo = 'success') {
+    console.log(`[${tipo.toUpperCase()}] ${mensaje}`);
     
-    if (asignacion) {
-        // Simular generación de reporte
-        const reporte = {
-            repartidor: asignacion.nombre,
-            id: asignacion.id_repartidor,
-            fecha: new Date().toLocaleDateString('es-MX'),
-            ruta: asignacion.ruta,
-            paquetes: asignacion.paquetes,
-            vehiculo: asignacion.vehiculo,
-            estado: asignacion.estado,
-            destinos: asignacion.destinos.length,
-            hora_consulta: new Date().toLocaleTimeString('es-MX')
-        };
+    const notif = document.getElementById('notification');
+    if (notif) {
+        const notifMessage = document.getElementById('notification-message');
+        if (notifMessage) {
+            notifMessage.innerHTML = mensaje;
+        } else {
+            notif.innerHTML = mensaje;
+        }
+        notif.className = `notification notification-${tipo} show`;
         
-        console.log('📄 Reporte generado:', reporte);
-        
-        // Crear enlace de descarga
-        const dataStr = JSON.stringify(reporte, null, 2);
-        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-        const link = document.createElement('a');
-        link.setAttribute('href', dataUri);
-        link.setAttribute('download', `reporte_ruta_${id}_${new Date().getTime()}.json`);
-        link.click();
-        
-        showNotification('Reporte descargado correctamente', 'success');
+        setTimeout(() => {
+            notif.classList.remove('show');
+        }, 5000);
+    } else {
+        alert(mensaje);
     }
 }
 
-        // ===== INICIALIZACIÓN =====
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚚 Sistema de rutas para repartidores inicializado');
-            console.log(`📊 ${asignaciones.length} repartidores registrados en el sistema`);
-            
-            // Actualizar hora cada segundo
-            setInterval(updateTime, 1000);
-            updateTime();
-            
-            // Configurar cierre de notificaciones
-            document.querySelector('.close-notification').addEventListener('click', function() {
-                const notification = document.getElementById('notification');
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 500);
-            });
-            
-            // Permitir búsqueda con Enter
-            document.getElementById('id_repartidor').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    buscarRuta();
-                }
-            });
-            
-            // Notificación de bienvenida
-            setTimeout(() => {
-                showNotification('Sistema de rutas listo. Ingresa tu ID para consultar tu ruta.', 'success', 3000);
-            }, 1000);
-            
-            // Sugerir IDs disponibles (solo para demostración)
-            const idInput = document.getElementById('id_repartidor');
-            idInput.addEventListener('focus', function() {
-                const sugerencias = asignaciones.map(a => a.id_repartidor).join(', ');
-                this.setAttribute('title', `IDs disponibles: ${sugerencias}`);
-            });
+function mostrarCargando(mostrar = true) {
+    const btnConsultar = document.getElementById('btnConsultarRuta');
+    
+    if (btnConsultar) {
+        if (mostrar) {
+            btnConsultar.disabled = true;
+            btnConsultar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Consultando ruta...';
+        } else {
+            btnConsultar.disabled = false;
+            btnConsultar.innerHTML = '<i class="fas fa-search-location"></i> Consultar Mi Ruta';
+        }
+    }
+}
+
+function formatearTiempo(minutos) {
+    const horas = Math.floor(minutos / 60);
+    const mins = Math.round(minutos % 60);
+    return horas > 0 ? `${horas}h ${mins}min` : `${mins} min`;
+}
+
+function formatearMoneda(cantidad) {
+    return `$${parseFloat(cantidad).toFixed(2)} MXN`;
+}
+
+function getTipoBadge(tipo) {
+    const badges = {
+        'gasolina': '<span style="background: #e74c3c; color: white; padding: 5px 12px; border-radius: 5px; font-size: 0.9em;"><i class="fas fa-gas-pump"></i> Gasolina</span>',
+        'electrico': '<span style="background: #2ecc71; color: white; padding: 5px 12px; border-radius: 5px; font-size: 0.9em;"><i class="fas fa-charging-station"></i> Eléctrico</span>',
+        'hibrido': '<span style="background: #f39c12; color: white; padding: 5px 12px; border-radius: 5px; font-size: 0.9em;"><i class="fas fa-leaf"></i> Híbrido</span>'
+    };
+    return badges[tipo] || tipo;
+}
+
+// ========================================
+// FUNCIÓN PRINCIPAL: CONSULTAR RUTA
+// ========================================
+async function consultarRuta() {
+    const idInput = document.getElementById('repartidorId');
+    repartidorId = parseInt(idInput.value);
+    
+    if (!repartidorId || repartidorId <= 0) {
+        mostrarNotificacion('⚠️ Por favor, ingresa tu ID de repartidor', 'warning');
+        idInput.focus();
+        return;
+    }
+    
+    mostrarCargando(true);
+    
+    try {
+        console.log(`🔍 Consultando ruta para repartidor ID: ${repartidorId}`);
+        
+        const response = await fetch(`${API_URL}/rutas/repartidor/${repartidorId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
         });
+        
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('No se encontró ruta asignada para este ID. Contacta al administrador.');
+            }
+            const error = await response.json();
+            throw new Error(error.detail || 'Error al consultar la ruta');
+        }
+        
+        rutaActual = await response.json();
+        console.log('✅ Ruta obtenida:', rutaActual);
+        
+        // Verificar si tiene ruta calculada
+        if (!rutaActual.tiene_ruta) {
+            mostrarNotificacion(
+                '⚠️ Tienes una asignación pero aún no se ha calculado la ruta. Contacta al administrador.',
+                'warning'
+            );
+            mostrarInfoParcial(rutaActual);
+            return;
+        }
+        
+        // Guardar en localStorage
+        localStorage.setItem('rutaRepartidor', JSON.stringify(rutaActual));
+        
+        // Mostrar información completa
+        mostrarInformacionRuta(rutaActual);
+        
+        mostrarNotificacion('✅ Ruta cargada exitosamente', 'success');
+        
+    } catch (error) {
+        console.error('❌ Error al consultar ruta:', error);
+        mostrarNotificacion(`❌ ${error.message}`, 'error');
+        
+        // Ocultar panel si estaba visible
+        const routePanel = document.getElementById('routePanel');
+        if (routePanel) {
+            routePanel.style.display = 'none';
+        }
+    } finally {
+        mostrarCargando(false);
+    }
+}
+
+// ========================================
+// MOSTRAR INFORMACIÓN COMPLETA
+// ========================================
+function mostrarInformacionRuta(datos) {
+    // Actualizar título
+    const routeTitle = document.getElementById('routeTitle');
+    if (routeTitle) {
+        routeTitle.textContent = datos.repartidor.nombre;
+    }
+    
+    // Información del repartidor
+    document.getElementById('infoNombre').textContent = datos.repartidor.nombre;
+    document.getElementById('infoId').textContent = datos.repartidor.id;
+    document.getElementById('infoContacto').textContent = datos.repartidor.telefono || 'No especificado';
+    
+    // Información del vehículo
+    document.getElementById('infoVehiculo').textContent = datos.asignacion.vehiculo_modelo;
+    document.getElementById('infoTipo').innerHTML = getTipoBadge(datos.asignacion.vehiculo_tipo);
+    document.getElementById('infoCapacidad').textContent = `${datos.asignacion.capacidad} paquetes`;
+    
+    // Información del envío
+    document.getElementById('infoPaquetes').textContent = `${datos.asignacion.numero_paquetes} paquetes`;
+    document.getElementById('infoZona').textContent = datos.asignacion.ruta_municipio || 'No especificado';
+    document.getElementById('infoHora').textContent = datos.asignacion.hora_envio;
+    
+    // Destinos
+    const destinosList = document.getElementById('destinosList');
+    if (destinosList) {
+        destinosList.innerHTML = `
+            <li>
+                <div class="destino-marker destino-inicio">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="destino-info">
+                    <strong>Origen</strong>
+                    <p>${datos.ruta.origen}</p>
+                </div>
+            </li>
+            <li>
+                <div class="destino-marker destino-fin">
+                    <i class="fas fa-flag-checkered"></i>
+                </div>
+                <div class="destino-info">
+                    <strong>Destino Final</strong>
+                    <p>${datos.ruta.destino}</p>
+                    <div class="destino-stats">
+                        <span><i class="fas fa-road"></i> ${datos.ruta.distancia_km} km</span>
+                        <span><i class="fas fa-clock"></i> ${formatearTiempo(datos.ruta.tiempo_min)}</span>
+                        <span><i class="fas fa-dollar-sign"></i> ${formatearMoneda(datos.ruta.costo_total)}</span>
+                    </div>
+                </div>
+            </li>
+        `;
+    }
+    
+    // Instrucciones
+    const instructionsList = document.getElementById('instructionsList');
+    if (instructionsList) {
+        instructionsList.innerHTML = `
+            <li><i class="fas fa-check"></i> Verifica que todos los paquetes estén en el vehículo antes de partir</li>
+            <li><i class="fas fa-check"></i> Revisa el combustible/batería del vehículo</li>
+            <li><i class="fas fa-check"></i> Lleva tu identificación y documentos del vehículo</li>
+            <li><i class="fas fa-check"></i> Sigue la ruta indicada en el mapa GPS</li>
+            <li><i class="fas fa-check"></i> Confirma cada entrega con el cliente</li>
+            <li><i class="fas fa-check"></i> Reporta cualquier incidencia al administrador</li>
+        `;
+    }
+    
+    // Mostrar panel
+    const routePanel = document.getElementById('routePanel');
+    if (routePanel) {
+        routePanel.style.display = 'block';
+        
+        // Scroll suave
+        setTimeout(() => {
+            routePanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+    }
+}
+
+// ========================================
+// MOSTRAR INFO PARCIAL (SIN RUTA)
+// ========================================
+function mostrarInfoParcial(datos) {
+    const routeTitle = document.getElementById('routeTitle');
+    if (routeTitle) {
+        routeTitle.textContent = datos.repartidor.nombre + ' (Sin ruta calculada)';
+    }
+    
+    document.getElementById('infoNombre').textContent = datos.repartidor.nombre;
+    document.getElementById('infoId').textContent = datos.repartidor.id;
+    document.getElementById('infoContacto').textContent = datos.repartidor.telefono || 'No especificado';
+    
+    document.getElementById('infoVehiculo').textContent = datos.asignacion.vehiculo_modelo;
+    document.getElementById('infoTipo').innerHTML = getTipoBadge(datos.asignacion.vehiculo_tipo);
+    document.getElementById('infoCapacidad').textContent = `${datos.asignacion.capacidad} paquetes`;
+    
+    document.getElementById('infoPaquetes').textContent = `${datos.asignacion.numero_paquetes} paquetes`;
+    document.getElementById('infoZona').textContent = datos.asignacion.ruta_municipio || 'No especificado';
+    document.getElementById('infoHora').textContent = datos.asignacion.hora_envio;
+    
+    // Ocultar secciones que requieren ruta
+    const routeDetails = document.querySelector('.route-details');
+    const routeActions = document.querySelector('.route-actions');
+    
+    if (routeDetails) routeDetails.style.display = 'none';
+    if (routeActions) routeActions.style.display = 'none';
+    
+    const routePanel = document.getElementById('routePanel');
+    if (routePanel) {
+        routePanel.style.display = 'block';
+    }
+}
+
+// ========================================
+// VER MAPA GPS
+// ========================================
+function verMapa() {
+    if (!rutaActual || !rutaActual.tiene_ruta) {
+        mostrarNotificacion('❌ No hay ruta calculada para mostrar', 'error');
+        return;
+    }
+    
+    // Guardar en localStorage
+    localStorage.setItem('rutaRepartidor', JSON.stringify(rutaActual));
+    console.log('✅ Ruta guardada en localStorage, redirigiendo a GPS...');
+    
+    // Redirigir a gps.html
+    window.location.href = 'gps.html';
+}
+
+// ========================================
+// MARCAR RUTA INICIADA
+// ========================================
+function marcarIniciada() {
+    if (!rutaActual) {
+        mostrarNotificacion('❌ Primero consulta tu ruta', 'error');
+        return;
+    }
+    
+    if (confirm('¿Confirmas que vas a iniciar la ruta?')) {
+        mostrarNotificacion('✅ Ruta marcada como iniciada. ¡Buena suerte!', 'success');
+        // Aquí podrías hacer un POST al backend para registrar el inicio
+    }
+}
+
+// ========================================
+// GENERAR REPORTE
+// ========================================
+function generarReporte() {
+    if (!rutaActual) {
+        mostrarNotificacion('❌ Primero consulta tu ruta', 'error');
+        return;
+    }
+    
+    mostrarNotificacion('⚠️ Función en desarrollo: Generar reporte PDF', 'warning');
+}
+
+// ========================================
+// VERIFICAR CONEXIÓN BACKEND
+// ========================================
+async function verificarConexion() {
+    try {
+        const response = await fetch(`${API_URL.replace('/api', '')}/health`, {
+            method: 'GET',
+            mode: 'cors'
+        });
+        
+        if (response.ok) {
+            console.log('✅ Conexión con backend establecida');
+            return true;
+        }
+    } catch (error) {
+        console.warn('⚠️ No se pudo conectar con el backend');
+        return false;
+    }
+}
+
+// ========================================
+// INICIALIZACIÓN
+// ========================================
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📱 Sistema de consulta de rutas inicializado');
+    
+    // Verificar conexión
+    verificarConexion();
+    
+    // Configurar botón consultar
+    const btnConsultar = document.getElementById('btnConsultarRuta');
+    if (btnConsultar) {
+        btnConsultar.addEventListener('click', consultarRuta);
+    }
+    
+    // Permitir Enter en el input
+    const inputId = document.getElementById('repartidorId');
+    if (inputId) {
+        inputId.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                consultarRuta();
+            }
+        });
+        inputId.focus();
+    }
+    
+    // Cerrar notificación
+    const closeNotif = document.querySelector('.close-notification');
+    if (closeNotif) {
+        closeNotif.addEventListener('click', function() {
+            const notif = document.getElementById('notification');
+            if (notif) {
+                notif.classList.remove('show');
+            }
+        });
+    }
+    
+    console.log('✅ Sistema listo');
+});
+
+// Exportar funciones globales
+window.consultarRuta = consultarRuta;
+window.verMapa = verMapa;
+window.marcarIniciada = marcarIniciada;
+window.generarReporte = generarReporte;
+   
     </script>
 </body>
 </html>

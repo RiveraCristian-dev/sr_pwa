@@ -307,160 +307,281 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
     <script>
         $(document).ready(function() {
-            let mapaCargado = false;
-            let ultimaActualizacion = new Date();
+    const API_URL = 'http://localhost:8000/api';
+    let mapaCargado = false;
+    let ultimaActualizacion = new Date();
+    let rutaActual = null;
+    
+    // ========================================
+    // FUNCIÓN PARA ACTUALIZAR EL TIEMPO
+    // ========================================
+    function actualizarTiempo() {
+        const ahora = new Date();
+        const hora = ahora.getHours().toString().padStart(2, '0');
+        const minuto = ahora.getMinutes().toString().padStart(2, '0');
+        const segundo = ahora.getSeconds().toString().padStart(2, '0');
+        $('#lastUpdated').text(`${hora}:${minuto}:${segundo}`);
+    }
+    
+    // ========================================
+    // VERIFICAR CONEXIÓN CON BACKEND
+    // ========================================
+    function verificarConexionBackend() {
+        return fetch(`${API_URL.replace('/api', '')}/health`, {
+            method: 'GET',
+            mode: 'cors',
+            headers: { 'Accept': 'application/json' }
+        })
+        .then(response => response.ok)
+        .catch(() => false);
+    }
+    
+    // ========================================
+    // FUNCIÓN PRINCIPAL: CARGAR MAPA DESDE BACKEND
+    // ========================================
+    async function cargarMapa() {
+        // Mostrar loading
+        $('#loadingOverlay').show();
+        $('#errorOverlay').hide();
+        $('#mapaFrame').hide();
+        
+        console.log('🗺️ Iniciando carga de mapa GPS...');
+        
+        try {
+            // 1. OBTENER RUTA DESDE LOCALSTORAGE
+            const rutaGuardada = localStorage.getItem('rutaRepartidor');
             
-            // Función para actualizar el tiempo
-            function actualizarTiempo() {
-                const ahora = new Date();
-                const hora = ahora.getHours().toString().padStart(2, '0');
-                const minuto = ahora.getMinutes().toString().padStart(2, '0');
-                const segundo = ahora.getSeconds().toString().padStart(2, '0');
-                $('#lastUpdated').text(`${hora}:${minuto}:${segundo}`);
+            if (!rutaGuardada) {
+                mostrarError(
+                    'No se encontró información de ruta.<br>' +
+                    'Por favor, regresa al panel y consulta tu ruta primero.<br><br>' +
+                    '<a href="Ruta_repartidor.html" class="btn btn-primary">Volver al Panel</a>'
+                );
+                return;
             }
             
-            // Función para verificar conexión con el backend
-            function verificarConexionBackend() {
-                return fetch('http://localhost:8000/health', {
-                    method: 'GET',
-                    mode: 'cors',
-                    headers: { 'Accept': 'application/json' }
+            rutaActual = JSON.parse(rutaGuardada);
+            console.log('✅ Ruta recuperada:', rutaActual);
+            
+            // 2. VALIDAR QUE TENGA DATOS DE GEOMETRÍA
+            if (!rutaActual.ruta || !rutaActual.ruta.geometria || rutaActual.ruta.geometria.length === 0) {
+                mostrarError(
+                    'La ruta no contiene datos de geometría válidos.<br>' +
+                    'Intenta recalcular la ruta desde el panel.'
+                );
+                return;
+            }
+            
+            // 3. EXTRAER DATOS PARA EL MAPA
+            const origen = rutaActual.ruta.origen;
+            const destino = rutaActual.ruta.destino;
+            const geometria = rutaActual.ruta.geometria;
+            const maniobras = rutaActual.ruta.maniobras || [];
+            const eventos = rutaActual.ruta.eventos_trafico || [];
+            
+            console.log(`📍 Ruta: ${origen} → ${destino}`);
+            console.log(`📏 Distancia: ${rutaActual.ruta.distancia_km} km`);
+            console.log(`⏱️ Tiempo: ${rutaActual.ruta.tiempo_min} min`);
+            console.log(`⚠️ Eventos de tráfico: ${eventos.length}`);
+            
+            // 4. ACTUALIZAR INFORMACIÓN EN EL HEADER
+            actualizarInfoHeader(rutaActual);
+            
+            // 5. GENERAR MAPA CON FOLIUM VÍA BACKEND
+            const response = await fetch(`${API_URL}/simulacion/render-mapa-ruta`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'text/html'
+                },
+                body: JSON.stringify({
+                    origen: origen,
+                    destino: destino,
+                    geometria: geometria,
+                    maniobras: maniobras,
+                    eventos: eventos,
+                    metadata: {
+                        repartidor: rutaActual.repartidor.nombre,
+                        vehiculo: rutaActual.asignacion.vehiculo_modelo,
+                        distancia: rutaActual.ruta.distancia_km,
+                        tiempo: rutaActual.ruta.tiempo_min
+                    }
                 })
-                .then(response => response.ok)
-                .catch(() => false);
-            }
-            
-            // Función actualizada para cargar el mapa (Implementación solicitada)
-            async function cargarMapa() {
-                // Mostrar loading
-                $('#loadingOverlay').show();
-                $('#errorOverlay').hide();
-                $('#mapaFrame').hide();
-                
-                // Verificar conexión con backend
-                const conexionOk = await verificarConexionBackend();
-                
-                if (!conexionOk) {
-                    mostrarError('No se pudo conectar con el servidor de rutas. Asegúrate de que el backend esté ejecutándose en localhost:8000');
-                    return;
-                }
-                
-                try {
-                    // Intentar cargar la última ruta calculada DESDE localStorage
-                    const ultimaRuta = localStorage.getItem('ultimaRutaMulti');
-                    
-                    if (!ultimaRuta) {
-                        mostrarError('No hay una ruta calculada disponible. Por favor, calcula una ruta desde el panel de administración.');
-                        return;
-                    }
-                    
-                    const rutaData = JSON.parse(ultimaRuta);
-                    const origen = rutaData.origen || "Manzana 005, Loma Bonita, 54879 Cuautitlán, Méx.";
-                    const destinos = rutaData.destinos || [];
-                    
-                    if (destinos.length === 0) {
-                        mostrarError('No se encontraron destinos en la ruta almacenada. Calcula una nueva ruta.');
-                        return;
-                    }
-                    
-                    console.log('Cargando mapa desde localStorage:', { origen, destinos: destinos.length });
-                    
-                    // Hacer la petición para obtener el mapa HTML
-                    const response = await fetch('http://localhost:8000/api/simulacion/render-multi', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'text/html'
-                        },
-                        body: JSON.stringify({
-                            origen: origen,
-                            destinos: destinos
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`Error HTTP: ${response.status}`);
-                    }
-                    
-                    const htmlMapa = await response.text();
-                    
-                    // Insertar el HTML en el iframe
-                    const frame = document.getElementById('mapaFrame');
-                    const doc = frame.contentWindow.document;
-                    doc.open();
-                    doc.write(htmlMapa);
-                    doc.close();
-                    
-                    // Ocultar loading y mostrar mapa
-                    $('#loadingOverlay').hide();
-                    $('#mapaFrame').show();
-                    mapaCargado = true;
-                    ultimaActualizacion = new Date();
-                    
-                    console.log('✅ Mapa cargado exitosamente desde GPS');
-                    
-                } catch (error) {
-                    console.error('Error cargando mapa en GPS:', error);
-                    mostrarError(`Error al cargar el mapa: ${error.message}`);
-                }
-            }
-            
-            // Función para mostrar error
-            function mostrarError(mensaje) {
-                $('#loadingOverlay').hide();
-                $('#errorMessage').html(mensaje.replace(/\n/g, '<br>'));
-                $('#errorOverlay').show();
-                mapaCargado = false;
-            }
-            
-            // Función para simular ubicación GPS (en producción usarías la API de geolocalización)
-            function actualizarUbicacion() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        function(position) {
-                            const lat = position.coords.latitude.toFixed(6);
-                            const lng = position.coords.longitude.toFixed(6);
-                            $('#currentLocation').text(`📍 ${lat}, ${lng}`);
-                        },
-                        function(error) {
-                            $('#currentLocation').text('📍 Ubicación no disponible');
-                        }
-                    );
-                } else {
-                    $('#currentLocation').text('📍 GPS no soportado');
-                }
-            }
-            
-            // Event Listeners
-            $('#refreshMap').click(function() {
-                if (mapaCargado) {
-                    ultimaActualizacion = new Date();
-                }
-                cargarMapa();
             });
             
-            $('#retryButton').click(cargarMapa);
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
             
-            // Inicializar
-            actualizarTiempo();
-            setInterval(actualizarTiempo, 1000);
+            const htmlMapa = await response.text();
             
-            // Actualizar ubicación cada 30 segundos
-            actualizarUbicacion();
-            setInterval(actualizarUbicacion, 30000);
+            // 6. INSERTAR HTML EN EL IFRAME
+            const frame = document.getElementById('mapaFrame');
+            const doc = frame.contentWindow.document;
+            doc.open();
+            doc.write(htmlMapa);
+            doc.close();
             
-            // Cargar mapa al inicio
-            cargarMapa();
+            // 7. MOSTRAR MAPA
+            $('#loadingOverlay').hide();
+            $('#mapaFrame').show();
+            mapaCargado = true;
+            ultimaActualizacion = new Date();
             
-            // Escuchar mensajes desde el iframe (si el mapa necesita comunicarse)
-            window.addEventListener('message', function(event) {
-                if (event.data && event.data.type === 'MAP_LOADED') {
-                    console.log('Mapa reportado como cargado');
+            console.log('✅ Mapa cargado exitosamente');
+            
+        } catch (error) {
+            console.error('❌ Error cargando mapa:', error);
+            
+            // FALLBACK: Si no existe el endpoint de renderizado, usar método alternativo
+            if (error.message.includes('404')) {
+                console.log('⚠️ Endpoint de renderizado no disponible, usando método alternativo...');
+                await cargarMapaAlternativo();
+            } else {
+                mostrarError(
+                    `Error al cargar el mapa: ${error.message}<br><br>` +
+                    'Verifica que el backend esté ejecutándose correctamente.'
+                );
+            }
+        }
+    }
+    
+    // ========================================
+    // MÉTODO ALTERNATIVO: USAR MAPQUEST DIRECTAMENTE
+    // ========================================
+    async function cargarMapaAlternativo() {
+        try {
+            if (!rutaActual) {
+                throw new Error('No hay datos de ruta disponibles');
+            }
+            
+            console.log('🔄 Cargando mapa con método alternativo...');
+            
+            // Crear HTML básico del mapa con Leaflet
+            const geometria = rutaActual.ruta.geometria;
+            const eventos = rutaActual.ruta.eventos_trafico || [];
+            
+            // Convertir geometría a formato [lat, lng]
+            const coordenadas = [];
+            for (let i = 0; i < geometria.length; i += 2) {
+                coordenadas.push([geometria[i], geometria[i + 1]]);
+            }
+            
+            // Calcular centro del mapa
+            const latitudes = coordenadas.map(c => c[0]);
+            const longitudes = coordenadas.map(c => c[1]);
+            const centroLat = (Math.min(...latitudes) + Math.max(...latitudes)) / 2;
+            const centroLng = (Math.min(...longitudes) + Math.max(...longitudes)) / 2;
+            
+            // Insertar en iframe
+            const frame = document.getElementById('mapaFrame');
+            const doc = frame.contentWindow.document;
+            doc.open();
+            doc.write(htmlMapa);
+            doc.close();
+            
+            // Mostrar mapa
+            $('#loadingOverlay').hide();
+            $('#mapaFrame').show();
+            mapaCargado = true;
+            
+            console.log('✅ Mapa alternativo cargado exitosamente');
+            
+        } catch (error) {
+            console.error('❌ Error en método alternativo:', error);
+            mostrarError(`No se pudo cargar el mapa: ${error.message}`);
+        }
+    }
+    
+    // ========================================
+    // ACTUALIZAR INFO DEL HEADER
+    // ========================================
+    function actualizarInfoHeader(datos) {
+        // Actualizar título si existe
+        const titulo = document.querySelector('.header-content h1');
+        if (titulo) {
+            titulo.textContent = `Ruta de ${datos.repartidor.nombre}`;
+        }
+        
+        // Actualizar ubicación
+        $('#currentLocation').text(`📍 ${datos.ruta.origen.substring(0, 50)}...`);
+    }
+    
+    // ========================================
+    // MOSTRAR ERROR
+    // ========================================
+    function mostrarError(mensaje) {
+        $('#loadingOverlay').hide();
+        $('#errorMessage').html(mensaje);
+        $('#errorOverlay').css('display', 'flex');
+        mapaCargado = false;
+    }
+    
+    // ========================================
+    // ACTUALIZAR UBICACIÓN GPS
+    // ========================================
+    function actualizarUbicacion() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude.toFixed(6);
+                    const lng = position.coords.longitude.toFixed(6);
+                    $('#currentLocation').text(`📍 ${lat}, ${lng}`);
+                },
+                function(error) {
+                    $('#currentLocation').text('📍 Ubicación no disponible');
                 }
-            });
-        });
+            );
+        } else {
+            $('#currentLocation').text('📍 GPS no soportado');
+        }
+    }
+    
+    // ========================================
+    // EVENT LISTENERS
+    // ========================================
+    
+    // Botón actualizar mapa
+    $('#refreshMap').click(function() {
+        console.log('🔄 Recargando mapa...');
+        cargarMapa();
+    });
+    
+    // Botón reintentar
+    $('#retryButton').click(function() {
+        cargarMapa();
+    });
+    
+    // ========================================
+    // INICIALIZACIÓN
+    // ========================================
+    
+    console.log('🗺️ Sistema GPS inicializado');
+    
+    // Actualizar tiempo cada segundo
+    actualizarTiempo();
+    setInterval(actualizarTiempo, 1000);
+    
+    // Actualizar ubicación cada 30 segundos
+    actualizarUbicacion();
+    setInterval(actualizarUbicacion, 30000);
+    
+    // Cargar mapa al inicio
+    cargarMapa();
+    
+    // Escuchar mensajes desde el iframe
+    window.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'MAP_LOADED') {
+            console.log('✅ Mapa reportó carga exitosa');
+        }
+    });
+});
+
     </script>
+   
+   
 </body>
 </html>
