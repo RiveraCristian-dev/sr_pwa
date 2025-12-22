@@ -279,8 +279,39 @@
                     </div>
                     
                     <div class="form-group">
-                        <label><i class="fas fa-map-marked-alt"></i> Ruta/Municipio</label>
-                        <input type="text" id="rutaMunicipio" placeholder="Ej: Centro, Guadalajara">
+                        <label><i class="fas fa-university"></i> Universidad Destino *</label>
+                        <select id="destinoUniversidad" required>
+                            <option value="">Seleccionar destino</option>
+                            <option value="UMB Acambay">UMB Acambay</option>
+                            <option value="UMB El oro">UMB El oro</option>
+                            <option value="UMB Temascalciongo">UMB Temascalciongo</option>
+                            <option value="UMB Jilotepec">UMB Jilotepec</option>
+                            <option value="UMB Morelos">UMB Morelos</option>
+                            <option value="UMB Ixtlahuaca">UMB Ixtlahuaca</option>
+                            <option value="UMB San Jose del Rincon">UMB San Jose del Rincon</option>
+                            <option value="UMB Jiquipilco ">UMB Jiquipilco</option>
+                            <option value="UMB Villa Vivtoria">UMB Villa Vivtoria</option>
+                            <option value="UMB Atenco">UMB Atenco</option>
+                            <option value="UMB Chalco">UMB Chalco</option>
+                            <option value="UMB Ixtapaluca">UMB Ixtapaluca</option>
+                            <option value="UMB La Paz">UMB La Paz</option>
+                            <option value="UMB Huixquilucan">UMB Huixquilucan</option>
+                            <option value="UMB Lerma">UMB Lerma</option>
+                            <option value="UMB Temoaya">UMB Temoaya</option>
+                            <option value="UMB Tenango del Valle">UMB Tenango del Valle</option>
+                            <option value="UMB Xalatlaco">UMB Xalatlaco</option>
+                            <option value="UMB Ecatepec">UMB Ecatepec</option>
+                            <option value="UMB Tecámac">UMB Tecámac</option>
+                            <option value="UMB Tepotzotlán">UMB Tepotzotlán</option>
+                            <option value="UMB Tultitlán">UMB Tultitlán</option>
+                            <option value="UMB Tultepec">UMB Tultepec</option>
+                            <option value="UMB Villa">UMB Villa</option>
+                            <option value="UMB Almoloya de Alquisiras">UMB Almoloya de Alquisiras</option>
+                            <option value="UMB Coatepec Harinas">UMB Coatepec Harinas</option>
+                            <option value="UMB Sultepec">UMB Sultepec</option>
+                            <option value="UMB Tejupilco">UMB Tejupilco</option>
+                            <option value="UMB Tlatlaya">UMB Tlatlaya</option>  
+                        </select>
                     </div>
                     
                     <button type="submit" class="btn btn-primary" id="btnAsignar">
@@ -544,7 +575,7 @@ document.getElementById('formVehiculo').addEventListener('submit', async functio
     }
 });
 
-// ===== FORMULARIO: ASIGNAR VEHÃCULO =====
+// ===== FORMULARIO: ASIGNAR VEHICULO =====
 document.getElementById('formAsignacion').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -552,12 +583,20 @@ document.getElementById('formAsignacion').addEventListener('submit', async funct
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Asignando...';
     
+    const destinoSelect = document.getElementById('destinoUniversidad');
+    if (!destinoSelect.value) {
+        mostrarNotificacion('Seleccione una universidad destino', 'error');
+        return;
+    }
     const datos = {
-        id_repartidor: parseInt(document.getElementById('repartidorId').value),
-        id_vehiculo: parseInt(document.getElementById('vehiculoId').value),
+        repartidor_id: parseInt(document.getElementById('repartidorId').value),
+        vehiculo_id: parseInt(document.getElementById('vehiculoId').value),
         numero_paquetes: parseInt(document.getElementById('numeroPaquetes').value),
-        ruta_municipio: document.getElementById('rutaMunicipio').value || null
+        destino_universidad: destinoSelect.value,
+        calcular_ruta: true // Flag para que el backend calcule la ruta
     };
+        
+    
     
     try {
         const response = await fetch(`${API_URL}/vehiculos/asignaciones`, {
