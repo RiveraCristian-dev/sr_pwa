@@ -181,6 +181,17 @@
 <body>
     <div class="container">
         <header>
+    <div>
+        <h1><i class="fas fa-truck"></i> Gestión de Flota</h1>
+        <p>Administra vehículos y asignaciones</p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <!-- NUEVO BOTÓN -->
+        <a href="gestion-rutas.html" class="btn-back" style="background: #2ecc71;">
+            <i class="fas fa-route"></i> Gestionar Rutas
+        </a>
+       
+    </div>
             <div>
                 <h1><i class="fas fa-truck"></i> Gestión de Flota</h1>
                 <p>Administra vehículos y asignaciones</p>
@@ -361,7 +372,7 @@
     <div id="notification" class="notification"></div>
 
     <script>
-        // ===== CONFIGURACIÃ"N API =====
+        // ===== CONFIGURACIÓN API =====
 const API_URL = 'http://localhost:8000/api';
 
 // ===== FUNCIONES UTILITARIAS =====
@@ -376,7 +387,7 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
     }, 3000);
 }
 
-// ===== MOSTRAR/OCULTAR CAMPOS SEGÃN TIPO DE VEHÃCULO =====
+// ===== MOSTRAR/OCULTAR CAMPOS SEGÚN TIPO DE VEHÍCULO =====
 document.getElementById('tipo').addEventListener('change', function() {
     const tipo = this.value;
     const camposGasolina = document.getElementById('camposGasolina');
@@ -400,7 +411,6 @@ document.getElementById('tipo').addEventListener('change', function() {
         document.getElementById('rendimientoElectrico').required = true;
     } 
     else if (tipo === 'hibrido') {
-        // Híbrido necesita AMBOS
         camposGasolina.style.display = 'block';
         camposElectrico.style.display = 'block';
         document.getElementById('rendimientoGasolina').required = true;
@@ -429,7 +439,7 @@ async function cargarRepartidores() {
     }
 }
 
-// ===== CARGAR VEHÃCULOS DISPONIBLES =====
+// ===== CARGAR VEHÍCULOS DISPONIBLES =====
 async function cargarVehiculosDisponibles() {
     try {
         const response = await fetch(`${API_URL}/vehiculos/vehiculos?disponibles_solo=true`);
@@ -450,7 +460,7 @@ async function cargarVehiculosDisponibles() {
     }
 }
 
-// ===== CARGAR TABLA DE VEHÃCULOS =====
+// ===== CARGAR TABLA DE VEHÍCULOS =====
 async function cargarTablaVehiculos() {
     try {
         const response = await fetch(`${API_URL}/vehiculos/vehiculos`);
@@ -507,7 +517,7 @@ async function cargarAsignacionesActivas() {
     }
 }
 
-// ===== FORMULARIO: REGISTRAR VEHÃCULO (ACTUALIZADO) =====
+// ===== FORMULARIO: REGISTRAR VEHÍCULO =====
 document.getElementById('formVehiculo').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -536,7 +546,6 @@ document.getElementById('formVehiculo').addEventListener('submit', async functio
         datos.precio_kwh = parseFloat(document.getElementById('precioKwh').value) || 2.50;
     } 
     else if (tipo === 'hibrido') {
-        // Híbrido necesita AMBOS
         datos.rendimiento_gasolina = parseFloat(document.getElementById('rendimientoGasolina').value);
         datos.precio_gasolina = parseFloat(document.getElementById('precioGasolina').value) || 22.50;
         datos.rendimiento_electrico = parseFloat(document.getElementById('rendimientoElectrico').value);
@@ -559,11 +568,9 @@ document.getElementById('formVehiculo').addEventListener('submit', async functio
         mostrarNotificacion(`✅ Vehículo ${datos.modelo} registrado exitosamente (ID: ${resultado.id})`);
         this.reset();
         
-        // Ocultar campos dinámicos después del reset
         document.getElementById('camposGasolina').style.display = 'none';
         document.getElementById('camposElectrico').style.display = 'none';
         
-        // Recargar listas
         cargarTablaVehiculos();
         cargarVehiculosDisponibles();
     } catch (error) {
@@ -575,7 +582,7 @@ document.getElementById('formVehiculo').addEventListener('submit', async functio
     }
 });
 
-// ===== FORMULARIO: ASIGNAR VEHICULO =====
+// ===== FORMULARIO: ASIGNAR VEHICULO (CORREGIDO) =====
 document.getElementById('formAsignacion').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -586,17 +593,20 @@ document.getElementById('formAsignacion').addEventListener('submit', async funct
     const destinoSelect = document.getElementById('destinoUniversidad');
     if (!destinoSelect.value) {
         mostrarNotificacion('Seleccione una universidad destino', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-link"></i> Asignar Vehículo';
         return;
     }
-    const datos = {
-        repartidor_id: parseInt(document.getElementById('repartidorId').value),
-        vehiculo_id: parseInt(document.getElementById('vehiculoId').value),
-        numero_paquetes: parseInt(document.getElementById('numeroPaquetes').value),
-        destino_universidad: destinoSelect.value,
-        calcular_ruta: true // Flag para que el backend calcule la ruta
-    };
-        
     
+    // ✅ CORREGIDO: Nombres de campos coinciden con el backend
+    const datos = {
+        id_repartidor: parseInt(document.getElementById('repartidorId').value),
+        id_vehiculo: parseInt(document.getElementById('vehiculoId').value),
+        numero_paquetes: parseInt(document.getElementById('numeroPaquetes').value),
+        ruta_municipio: destinoSelect.value  // ✅ Cambiado de "destino_universidad" a "ruta_municipio"
+    };
+    
+    console.log('📤 Enviando datos de asignación:', datos);
     
     try {
         const response = await fetch(`${API_URL}/vehiculos/asignaciones`, {
@@ -607,16 +617,22 @@ document.getElementById('formAsignacion').addEventListener('submit', async funct
         
         if (!response.ok) {
             const error = await response.json();
+            console.error('❌ Error del backend:', error);
             throw new Error(error.detail || 'Error al asignar');
         }
         
         const result = await response.json();
+        console.log('✅ Respuesta del backend:', result);
+        
         mostrarNotificacion(`✅ Vehículo asignado a ${result.repartidor_nombre}`);
         this.reset();
+        
+        // Recargar todas las listas
         cargarTablaVehiculos();
         cargarVehiculosDisponibles();
         cargarAsignacionesActivas();
     } catch (error) {
+        console.error('❌ Error completo:', error);
         mostrarNotificacion(error.message, 'error');
     } finally {
         btn.disabled = false;
@@ -624,7 +640,7 @@ document.getElementById('formAsignacion').addEventListener('submit', async funct
     }
 });
 
-// ===== LIBERAR ASIGNACIÃ"N =====
+// ===== LIBERAR ASIGNACIÓN =====
 document.getElementById('btnLiberar').addEventListener('click', async function() {
     const asignacionId = parseInt(document.getElementById('asignacionActiva').value);
     
@@ -654,7 +670,7 @@ document.getElementById('btnLiberar').addEventListener('click', async function()
     }
 });
 
-// ===== INICIALIZACIÃ"N =====
+// ===== INICIALIZACIÓN =====
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚚 Gestión de Flota inicializada');
     
@@ -664,7 +680,9 @@ document.addEventListener('DOMContentLoaded', function() {
     cargarTablaVehiculos();
     cargarAsignacionesActivas();
 });
-    
+
     </script>
+
+    
 </body>
 </html>
