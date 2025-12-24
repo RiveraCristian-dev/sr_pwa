@@ -55,7 +55,7 @@ except Exception as e:
 
 # Registrar routers
 app.include_router(auth_router.router, prefix="/api/auth", tags=["Autenticación"])
-app.include_router(ruta_router.router, prefix="/api/ruta", tags=["Rutas y Tráfico"])
+app.include_router(ruta_router.router, prefix="/api/rutas", tags=["Rutas y Tráfico"])
 app.include_router(simulacion_router.router, prefix="/api/simulacion", tags=["Simulación"])
 app.include_router(pedidos_router.router, prefix="/api/pedidos", tags=["Pedidos"])
 app.include_router(vehiculos_router.router, prefix="/api/vehiculos", tags=["Gestión de Flota"])

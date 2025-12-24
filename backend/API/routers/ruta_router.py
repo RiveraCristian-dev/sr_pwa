@@ -745,7 +745,9 @@ def calcular_ruta_multiparada(request: RutaMultiparadaRequest):
         
         # Generar mapa
         grafo = construir_grafo_logico(maniobras)
-        generar_mapa_visual(grafo, geometria, incidentes, orden, "ruta_multiparada.html")
+        mapa_path = os.path.join(os.getcwd(),"frontend", "Administrador", "Paneles", "ruta_multiparada.html")
+        generar_mapa_visual(grafo, geometria, incidentes, orden, mapa_path)
+        print(f"Mapa generado en: {mapa_path}")
         
         return {
             "paradas": len(request.lugares),
