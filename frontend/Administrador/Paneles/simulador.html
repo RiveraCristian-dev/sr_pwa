@@ -1127,6 +1127,18 @@
     
     <script>
     $(document).ready(function() {
+        function LimpiarSimulacion(){
+            console.log(" Limpiando datos de simulaciones anteriores...");
+            // Limpiar el iframe
+            $('#mapaFrame').attr('src', 'about:blanck');
+            // Limpiar los resultados de texto
+            $('distaciaTotal, #tiempoestimado, #costoEstimado').text('--');
+            // Ocultar el contenedor del mapa hasta que se este uno nuevo
+            $('mapaContainer').hide();
+            // Limpiar instrucciones si las hay
+            $('instrucionesDetalle').empty();
+        }
+        LimpiarSimulacion
         // Variables globales
         let eventosActuales = [];
         let instruccionesActuales = [];
@@ -1499,19 +1511,31 @@
             });
         }
         
-        // ====================
-        // 5. MODIFICAR LA FUNCIÓN DE CALCULAR RUTA
-        // ====================
-        $('#calculateRoute').click(async function() {
+// ====================
+// 5. MODIFICAR LA FUNCIÓN DE CALCULAR RUTA
+// ====================
+$('#calculateRoute').click(async function() {
     // 1. Obtener datos
     const origen = "Manzana 005, Loma Bonita, 54879 Cuautitlán, Méx.";
     const destinos = getSelectedDestinations();
+    // Limpieza antes de empezar
+    if (typeof LimpiarSimulacion === 'function') {
+        LimpiarSimulacion();
+    }
     
     if (destinos.length === 0) {
         alert('Por favor selecciona al menos un destino');
         return;
     }
-    
+    const destinosLimpios = destinos.map(d => {
+        let limpio = d.replace(/S\/N|s\/n|Domicilio Conocido|Km\.\s?\d+/g, '').trim();
+
+        if (!limpio.toLowerCase().includes("méxico")) {
+            limpio += ", Estado de México, México";
+        }
+        return limpio;
+    }) ;
+
     // 2. Referencias seguras
     const $loading = $('#loading');
     const $placeholder = $('#mapPlaceholder');
@@ -1521,14 +1545,15 @@
     $loading.show();
     console.log("🚀 Enviando a backend...");
 
-    try {
+    try { // 3. llamar al seervidor 
         const response = await fetch('http://127.0.0.1:8000/api/rutas/ruta-multiparada', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                lugares: [origen, ...destinos], 
-                optimizar: true 
+            body: JSON.stringify({
+                lugares: [origen, ...destinosLimpios],
+                optimizar: true,
             })
+                
         });
 
         if (!response.ok) throw new Error(`Error servidor: ${response.status}`);
@@ -1536,40 +1561,41 @@
         const resultado = await response.json();
         console.log("✅ Backend respondió correctamente");
 
-        // 3. Pequeña pausa para asegurar que el archivo existe en disco
-        await new Promise(resolve => setTimeout(resolve, 800));
+        // 4. Pequeña pausa para asegurar que el archivo existe en disco
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        const urlFinal = "ruta_multiparada.html?t=" + new Date().getTime();
 
-        // 4. MOSTRAR MAPA (Sin rutas complicadas)
+        // 5. MOSTRAR MAPA (Sin rutas complicadas)
+        frameElement.onload = function(){
+            $loading.hide();
+            console.log(" El navegador termino de renderizar el mapa");
+
+        };
+        frameElement.src = urlFinal;
         $placeholder.hide();
         $frame.show(); // Quitamos el display:none
         
-        // Forzamos el src con un parámetro de tiempo para evitar caché
-        const urlFinal = "ruta_multiparada.html?t=" + new Date().getTime();
-        frameElement.src = urlFinal;
-        
-        console.log("🗺️ Cargando en Iframe: " + urlFinal);
 
-        // 5. Actualizar interfaz
+        // 6. Actualizar interfaz
         $('#routeInfo').show();
         $('#totalDistance').text((resultado.distancia_total_km || 0) + ' km');
         $('#totalStops').text(destinos.length);
 
     } catch (err) {
-        console.error("❌ ERROR DETECTADO:", err);
-        
-        // INTENTO DE EMERGENCIA: Si el fetch falló pero el mapa se creó (como dice tu terminal)
+        console.error('ERROR DETECTADO:', err);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
         $placeholder.hide();
         $frame.show();
-        frameElement.src = "ruta_multiparada.html?t=" + new Date().getTime();
-        
-        console.log("⚠️ Se intentó carga de emergencia tras error");
+        const urlEmergencia = "ruta_multiparada.html?t=" + new Date().getTime();
+        frameElement.src = urlEmergencia;
+        console.log(" Intento de recuperacion cargando: " + urlEmergencia);
+
+        alert("Hubo un problema al calcular la ruta, se intentra cargar el ultimo mapa generado.");
     } finally {
         $loading.hide();
     }
 });
-      
-     
-       // Función para calcular la ruta
         
         // ====================
         // 6. EVENTOS PARA LOS BOTONES DE EVENTOS

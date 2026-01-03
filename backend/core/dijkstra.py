@@ -26,9 +26,10 @@ def obtener_ruta_multiparada(api_key, lista_lugares, optimizar=True):
         data = response.json()
         
         if data["info"]["statuscode"] != 0:
-            print(f"Error API: {data['info']['messages']}")
-            return [], [], None, []
-        
+            error_msg = data['info']['messages']
+            print(f" Error de MapQuest: {error_msg} ")
+            raise Exception(f"MapQuest no pudo trazar la ruta: {error_msg}")
+            
         todas_maniobras = []
         todos_puntos_shape = []
         
