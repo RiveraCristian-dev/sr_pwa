@@ -17,6 +17,7 @@
             --gris-claro: #e8f4fc;
             --verde: #2ecc71;
             --rojo: #e74c3c;
+            --warning: #f39c12;
             --degrade-fondo: linear-gradient(135deg, var(--azul-fuerte) 0%, var(--azul-medio) 50%, var(--azul-fuerte) 100%);
             --degrade-boton: linear-gradient(135deg, var(--azul-medio), var(--azul-claro));
             --sombra: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -270,18 +271,15 @@
         .etiqueta-input[for="nombre"]::before { content: "👤"; }
         .etiqueta-input[for="email"]::before { content: "📧"; }
         .etiqueta-input[for="telefono"]::before { content: "📱"; }
-        .etiqueta-input[for="usuario"]::before { content: "🔑"; }
         .etiqueta-input[for="contrasena"]::before { content: "🔒"; }
         .etiqueta-input[for="confirmar"]::before { content: "🔒"; }
-        .etiqueta-input[for="rol"]::before { content: "🎭"; }
 
         .contenedor-input {
             position: relative;
             width: 100%;
         }
 
-        .contenedor-input input,
-        .contenedor-input select {
+        .contenedor-input input {
             width: 100%;
             padding: 16px 50px 16px 20px;
             background: rgba(17, 17, 17, 0.9);
@@ -293,13 +291,7 @@
             outline: none;
         }
 
-        .contenedor-input select {
-            appearance: none;
-            cursor: pointer;
-        }
-
-        .contenedor-input input:focus,
-        .contenedor-input select:focus {
+        .contenedor-input input:focus {
             border-color: var(--azul-claro);
             box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
             background: rgba(17, 17, 17, 1);
@@ -342,7 +334,7 @@
         }
 
         .boton-visibilidad::before {
-            content: "👁️";
+            content: "👁";
         }
 
         .fila-formulario {
@@ -625,8 +617,7 @@
                 padding: 25px 20px;
             }
             
-            .contenedor-input input,
-            .contenedor-input select {
+            .contenedor-input input {
                 padding: 14px 45px 14px 15px;
             }
             
@@ -711,14 +702,15 @@
                 
                 <!-- Credenciales -->
                 <div class="grupo-formulario">
-                    <label class="etiqueta-input" for="usuario">Nombre de Usuario</label>
+                    <label class="etiqueta-input" for="telefono">Teléfono</label>
                     <div class="contenedor-input">
-                        <input type="text" id="usuario" name="usuario" 
-                               placeholder="Ej: juan.perez" required>
+                        <input type="tel" id="telefono" name="telefono" 
+                               placeholder="+52 55 1234 5678">
                         <span class="icono-input"></span>
                     </div>
                 </div>
                 
+                <!-- Credenciales (solo contraseña) -->
                 <div class="fila-formulario">
                     <div class="grupo-formulario">
                         <label class="etiqueta-input" for="contrasena">Contraseña</label>
