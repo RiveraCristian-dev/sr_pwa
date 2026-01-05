@@ -706,64 +706,242 @@ def prediccion_trafico(
 @router.post("/ruta-multiparada")
 def calcular_ruta_multiparada(request: RutaMultiparadaRequest):
     """
-    Calcula ruta con múltiples paradas (problema del viajante)
+    Calcula una ruta optimizada y prepara los datos para el administrador y el repartidor 
     """
     MAPQUEST_API_KEY = os.getenv("MAPQUEST_API_KEY")
     if not MAPQUEST_API_KEY:
-        raise HTTPException(
-            status_code=500, 
-            detail="API Key no configurada"
-        )
-    
+        raise HTTPException(status_code=500, detail="API Key no configurada")
     if len(request.lugares) < 2:
-        raise HTTPException(
-            status_code=400,
-            detail="Se requieren al menos 2 ubicaciones"
-        )
-    
+        raise HTTPException(status_code=400, detail="Se requieren al menos dos lugares para calcular la ruta")
     try:
-        maniobras, geometria, bbox, orden = obtener_ruta_multiparada(
+        # 1. Llamada a Dijkstra (Usamos el que ya tiene el raise Exception)
+        maniobras, geometria, bbox, orden, = obtener_ruta_multiparada(
             MAPQUEST_API_KEY, 
-            request.lugares, 
-            request.optimizar
+            request.lugares,
+            request.optimizar    
         )
-        
-        if not maniobras:
+        # Si MapQuest no pudo trazar ruta, lanzamos 400 (Bad Request) 
+        if not maniobras or not geometria:
             raise HTTPException(
                 status_code=400,
-                detail="No se pudo calcular la ruta multiparada"
+                detail="MapQuest no pudo trazar la ruta con estas ubicaciones intenta con ubicaciones mas precisas"
             )
-        
-        # Procesar incidentes
+        # 2. Procesar incidentes y estadísticas
         incidentes = []
         if bbox:
             incidentes = obtener_incidencias_trafico(MAPQUEST_API_KEY, bbox)
-        
         eventos_procesados = procesar_incidentes_trafico(incidentes)
         instrucciones = procesar_maniobras_instrucciones(maniobras)
-        distancia_total = sum(man['distance'] for man in maniobras)
-        
-        # Generar mapa
+        distancia_total = sum(man.get('distance', 0) for man in maniobras)
+        # 3. Generar mapa físico
+
         grafo = construir_grafo_logico(maniobras)
-        generar_mapa_visual(grafo, geometria, incidentes, orden, "ruta_multiparada.html")
-        
+        mapa_path = os.path.join(os.getcwd(), "frontend", "Administrador", "Paneles", "ruta_multiparada.html")
+
+        # Guardamos el retorno de la función (la lista de puntos)
+        geom_para_repartidor = generar_mapa_visual(grafo, geometria, incidentes, orden, mapa_path)
+        print(f" Mapa generado y geometría capturada en: {mapa_path}")
+        # 4. Retorno de datos (Agregamos la geometría al JSON para el guardado posterior)
         return {
+            "status": "success",
             "paradas": len(request.lugares),
             "distancia_total_km": round(distancia_total, 2),
             "eventos_trafico": len(eventos_procesados),
-            "instrucciones": len(instrucciones),
+            "puntos_geometria": geom_para_repartidor,  # <--- CLAVE PARA EL REPARTIDOR
             "orden_optimizado": [p['dir'] for p in orden] if orden else request.lugares,
             "mapa_html": "ruta_multiparada.html",
             "estadisticas": {
-                "total_stops": len(request.lugares) - 1,  # Restamos 1 porque el origen está incluido
+                "total_stops": len(request.lugares) - 1,
                 "total_events": len(eventos_procesados),
                 "total_distance_km": round(distancia_total, 2),
-                "estimated_time_min": round(distancia_total * 1.5, 1)  # Estimación: 1.5 min/km
+                "estimated_time_min": round(distancia_total * 1.5, 1)
             }
         }
-        
+    except HTTPException as he:
+        # Re-lanzamos excepciones HTTP (como la de MapQuest 400)
+        raise he
     except Exception as e:
+        print(f"❌ Error crítico en el Router: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail=f"Error calculando ruta multiparada: {str(e)}"
+        )
+
+# ============================================
+# AGREGAR ESTE ENDPOINT AL FINAL DE ruta_router.py
+# (después del endpoint /ruta-multiparada)
+# ============================================
+
+from sqlalchemy import text
+from fastapi import status
+
+@router.get("/repartidor/{id_repartidor}")
+def obtener_ruta_repartidor(id_repartidor: int, db: Session = Depends(get_db)):
+    """
+    Obtiene la ruta asignada de un repartidor específico.
+    Consulta la tabla rutas_asignadas con todas sus relaciones.
+    
+    Args:
+        id_repartidor: ID del usuario repartidor
+        db: Sesión de base de datos
+    
+    Returns:
+        JSON con información completa de la ruta asignada
+    """
+    try:
+        # Consulta completa con todas las relaciones
+        query = text("""
+            SELECT 
+                -- Datos del repartidor
+                u.id as repartidor_id,
+                u.nombre_completo as repartidor_nombre,
+                u.telefono as repartidor_telefono,
+                
+                -- Datos de la asignación
+                a.id as asignacion_id,
+                a.numero_paquetes,
+                a.ruta_municipio,
+                a.estado as asignacion_estado,
+                a.fecha_asignacion,
+                
+                -- Datos del vehículo
+                v.id as vehiculo_id,
+                v.modelo as vehiculo_modelo,
+                v.tipo as vehiculo_tipo,
+                v.capacidad_maxima_paquetes,
+                v.velocidad_promedio_kmh,
+                v.hora_envio,
+                
+                -- Datos de la ruta
+                r.id as ruta_id,
+                r.origen_direccion,
+                r.destino_direccion,
+                r.distancia_km,
+                r.tiempo_min,
+                r.ruta_mapquest,
+                r.consumo_data,
+                r.costo_total,
+                r.emisiones_co2_kg,
+                r.fecha_calculo
+                
+            FROM usuarios u
+            INNER JOIN asignaciones a ON u.id = a.id_repartidor
+            INNER JOIN vehiculos v ON a.id_vehiculo = v.id
+            LEFT JOIN rutas_asignadas r ON a.id = r.id_asignacion AND r.activa = TRUE
+            
+            WHERE u.id = :id_repartidor 
+                AND u.rol = 'repartidor' 
+                AND u.activo = TRUE
+                AND a.estado = 'activa'
+            
+            ORDER BY a.fecha_asignacion DESC
+            LIMIT 1
+        """)
+        
+        result = db.execute(query, {"id_repartidor": id_repartidor})
+        ruta = result.fetchone()
+        
+        if not ruta:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No se encontró ruta asignada para este repartidor. Contacta al administrador."
+            )
+        
+        # Si NO hay ruta calculada en rutas_asignadas
+        if not ruta.ruta_id:
+            return {
+                "mensaje": "Asignación encontrada pero sin ruta calculada",
+                "tiene_ruta": False,
+                "repartidor": {
+                    "id": ruta.repartidor_id,
+                    "nombre": ruta.repartidor_nombre,
+                    "telefono": ruta.repartidor_telefono
+                },
+                "asignacion": {
+                    "id": ruta.asignacion_id,
+                    "numero_paquetes": ruta.numero_paquetes,
+                    "ruta_municipio": ruta.ruta_municipio,
+                    "estado": ruta.asignacion_estado,
+                    "fecha_asignacion": ruta.fecha_asignacion.isoformat(),
+                    "vehiculo_modelo": ruta.vehiculo_modelo,
+                    "vehiculo_tipo": ruta.vehiculo_tipo,
+                    "capacidad": ruta.capacidad_maxima_paquetes,
+                    "velocidad": ruta.velocidad_promedio_kmh,
+                    "hora_envio": str(ruta.hora_envio) if ruta.hora_envio else "No especificada"
+                }
+            }
+        
+        # Parsear ruta_mapquest (JSONB)
+        import json
+        ruta_data = ruta.ruta_mapquest if isinstance(ruta.ruta_mapquest, dict) else json.loads(ruta.ruta_mapquest)
+        
+        # Extraer geometría (shape.shapePoints del JSON de MapQuest)
+        geometria = []
+        if "route" in ruta_data and "shape" in ruta_data["route"]:
+            geometria = ruta_data["route"]["shape"].get("shapePoints", [])
+        
+        # Extraer maniobras
+        maniobras = []
+        if "route" in ruta_data and "legs" in ruta_data["route"]:
+            for leg in ruta_data["route"]["legs"]:
+                for maniobra in leg.get("maneuvers", []):
+                    maniobras.append({
+                        "instruccion": maniobra.get("narrative", ""),
+                        "distancia": maniobra.get("distance", 0),
+                        "tiempo": maniobra.get("time", 0)
+                    })
+        
+        # Parsear consumo_data si existe
+        consumo_info = {}
+        if ruta.consumo_data:
+            try:
+                consumo_info = ruta.consumo_data if isinstance(ruta.consumo_data, dict) else json.loads(ruta.consumo_data)
+            except:
+                consumo_info = {}
+        
+        # Respuesta completa
+        return {
+            "mensaje": "Ruta encontrada exitosamente",
+            "tiene_ruta": True,
+            "repartidor": {
+                "id": ruta.repartidor_id,
+                "nombre": ruta.repartidor_nombre,
+                "telefono": ruta.repartidor_telefono
+            },
+            "asignacion": {
+                "id": ruta.asignacion_id,
+                "numero_paquetes": ruta.numero_paquetes,
+                "ruta_municipio": ruta.ruta_municipio,
+                "estado": ruta.asignacion_estado,
+                "fecha_asignacion": ruta.fecha_asignacion.isoformat(),
+                "vehiculo_modelo": ruta.vehiculo_modelo,
+                "vehiculo_tipo": ruta.vehiculo_tipo,
+                "capacidad": ruta.capacidad_maxima_paquetes,
+                "velocidad": ruta.velocidad_promedio_kmh,
+                "hora_envio": str(ruta.hora_envio) if ruta.hora_envio else "No especificada"
+            },
+            "ruta": {
+                "id": ruta.ruta_id,
+                "origen": ruta.origen_direccion,
+                "destino": ruta.destino_direccion,
+                "distancia_km": float(ruta.distancia_km),
+                "tiempo_min": float(ruta.tiempo_min),
+                "geometria": geometria,
+                "maniobras": maniobras,
+                "consumo": consumo_info,
+                "costo_total": float(ruta.costo_total) if ruta.costo_total else 0,
+                "emisiones_co2_kg": float(ruta.emisiones_co2_kg) if ruta.emisiones_co2_kg else 0,
+                "fecha_calculo": ruta.fecha_calculo.isoformat()
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error al obtener ruta del repartidor: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error al consultar ruta: {str(e)}"
         )

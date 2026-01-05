@@ -1,7 +1,8 @@
 ﻿from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text  # IMPORTANTE: Añadir esta importación
-from .routers import auth_router, ruta_router, simulacion_router
+from .routers import auth_router, ruta_router, simulacion_router, pedidos_router, vehiculos_router, reportes_router, gestion_rutas_router
+
 import os
 from datetime import datetime  # Añadir para timestamp real
 
@@ -54,8 +55,12 @@ except Exception as e:
 
 # Registrar routers
 app.include_router(auth_router.router, prefix="/api/auth", tags=["Autenticación"])
-app.include_router(ruta_router.router, prefix="/api/ruta", tags=["Rutas y Tráfico"])
+app.include_router(ruta_router.router, prefix="/api/rutas", tags=["Rutas y Tráfico"])
 app.include_router(simulacion_router.router, prefix="/api/simulacion", tags=["Simulación"])
+app.include_router(pedidos_router.router, prefix="/api/pedidos", tags=["Pedidos"])
+app.include_router(vehiculos_router.router, prefix="/api/vehiculos", tags=["Gestión de Flota"])
+app.include_router(reportes_router.router, prefix="/api/reportes", tags=["Reportes"])
+app.include_router(gestion_rutas_router.router, prefix="/api/gestion-rutas", tags=["Gestión de Rutas"])
 
 # Endpoints básicos
 @app.get("/")

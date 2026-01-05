@@ -8,6 +8,7 @@ import folium
 import json
 import math
 
+# Asegúrate de que estos módulos existan en tu estructura de carpetas backend/core/
 from backend.core.dijkstra import (
     obtener_ruta_multiparada,
     obtener_incidencias_trafico
@@ -17,6 +18,7 @@ from backend.core.simulacion import traducir_detalles_trafico
 router = APIRouter()
 load_dotenv()
 
+# Diccionario de nombres de UES
 UES_NOMBRES = {
     'Km 2.5, Carretera al Ejido la Soledad, Ejido La Soledad, 50300 Villa de Acambay de Ruíz Castañeda, Méx.': 'UES Acambay',
     'Angel Castillo López S/N, A Santiago Oxtempan, 50600 El Oro de Hidalgo, Méx.': 'UES El Oro',
@@ -52,7 +54,6 @@ UES_NOMBRES = {
 def obtener_nombre_ues(direccion):
     """Obtiene el nombre de la UES a partir de la dirección"""
     return UES_NOMBRES.get(direccion, direccion)
-
 
 # =========================
 # MODELOS
@@ -501,7 +502,7 @@ def simular_ruta_multiparada_render(request: SimulacionRequestMulti):
     
     # Contar eventos por tipo
     for evento in eventos_procesados:
-        tipo = evento["type"] # Usamos el key interno (traffic, accident, etc)
+        tipo = evento["type"]
         datos_frontend["estadisticas"]["eventos_por_tipo"][tipo] = datos_frontend["estadisticas"]["eventos_por_tipo"].get(tipo, 0) + 1
     
     # Script para inyectar window.datosRuta en el HTML
@@ -539,7 +540,7 @@ def simular_ruta_multiparada_render(request: SimulacionRequestMulti):
     }};
     
     localStorage.setItem('ultimaRutaMulti', JSON.stringify(rutaData));
-    console.log('Ruta guardada en localStorage para GPS:', rutaData);
+    console.log('✅ Ruta guardada en localStorage para GPS:', rutaData);
     
     // Notificar al padre si está en iframe
     if (window.parent !== window) {{

@@ -318,7 +318,7 @@
         }
 
         .info-seguridad h3::before {
-            content: "🔐";
+            content: "🔒";
         }
 
         .info-seguridad ul {
@@ -373,7 +373,7 @@
         }
 
         .etiqueta-input[for="adminUsername"]::before {
-            content: "👤";
+            content: "📧";
         }
 
         .etiqueta-input[for="adminCode"]::before {
@@ -798,7 +798,7 @@
                 <h3>Niveles de Seguridad del Sistema</h3>
                 <ul>
                     <li>Acceso restringido a administradores autorizados</li>
-                    <li>Credenciales de usuario y código de acceso</li>
+                    <li>Autenticación mediante base de datos PostgreSQL</li>
                     <li>Registro de todas las actividades del sistema</li>
                     <li>Redirección segura al panel de control</li>
                 </ul>
@@ -811,44 +811,44 @@
 
             <!-- Formulario de Acceso -->
             <form id="formularioAccesoAdmin">
-                <!-- Campo para usuario -->
+                <!-- Campo para email -->
                 <div class="grupo-formulario">
                     <label class="etiqueta-input" for="adminUsername">
-                        Usuario Administrador
+                        Email Administrador
                     </label>
                     <div class="contenedor-input">
                         <input 
-                            type="text" 
+                            type="email" 
                             id="adminUsername" 
                             class="control-formulario user-field" 
-                            placeholder="admin.usuario"
-                            maxlength="30"
+                            placeholder="admin@rutatec.com"
+                            maxlength="100"
                             required
-                            autocomplete="off"
+                            autocomplete="email"
                             autofocus
                         >
                     </div>
-                    <span class="hint-formulario">Ingrese su nombre de usuario de administrador</span>
+                    <span class="hint-formulario">Ingrese su email de administrador registrado</span>
                 </div>
 
-                <!-- Campo para código -->
+                <!-- Campo para contraseña -->
                 <div class="grupo-formulario">
                     <label class="etiqueta-input" for="adminCode">
-                        Código de Administrador
+                        Contraseña
                     </label>
                     <div class="contenedor-input">
                         <input 
                             type="password" 
                             id="adminCode" 
                             class="control-formulario code-field" 
-                            placeholder="ADMIN-XXXX-XXXX"
-                            maxlength="20"
+                            placeholder="Tu contraseña"
+                            maxlength="100"
                             required
-                            autocomplete="off"
+                            autocomplete="current-password"
                         >
                         <button type="button" class="boton-visibilidad" id="botonVisibilidad">👁️</button>
                     </div>
-                    <span class="hint-formulario">Formato: ADMIN-XXXX-XXXX (Ej: ADMIN-2024-001)</span>
+                    <span class="hint-formulario">Ingrese su contraseña de administrador</span>
                     
                     <!-- Indicador de Estado -->
                     <div class="indicador-estado" id="indicadorEstado">
@@ -857,12 +857,10 @@
                     </div>
                 </div>
 
-                <!-- ===== AQUÍ DEBES PONER TU ENLACE DE REDIRECCIÓN ===== -->
                 <!-- Botón de Acceso -->
                 <button type="submit" class="boton-acceso" id="botonAcceso" disabled>
                     Acceder al Panel de Control
                 </button>
-                <!-- ===== FIN DEL ENLACE ===== -->
 
                 <!-- Indicador de Carga -->
                 <div class="indicador-carga" id="indicadorCarga">
@@ -881,271 +879,232 @@
     </div>
 
     <script>
-        // ===== CONFIGURACIÓN IMPORTANTE =====
-        // AQUÍ ES DONDE PONES EL ENLACE DE REDIRECCIÓN
-        const ENLACE_REDIRECCION = './PanelADM.html';  // ← CAMBIA ESTE ENLACE
-        // ====================================
+   // ===== SCRIPT COMPLETO PARA ACCAdmin.html =====
+// Copia este código y reemplaza todo el <script> al final de tu archivo
 
-        // ===== ELEMENTOS DEL DOM =====
-        const formulario = document.getElementById('formularioAccesoAdmin');
-        const adminUsernameInput = document.getElementById('adminUsername');
-        const adminCodeInput = document.getElementById('adminCode');
-        const botonVisibilidad = document.getElementById('botonVisibilidad');
-        const puntoEstado = document.getElementById('puntoEstado');
-        const indicadorEstado = document.getElementById('indicadorEstado');
-        const textoEstado = document.getElementById('textoEstado');
-        const botonAcceso = document.getElementById('botonAcceso');
-        const indicadorCarga = document.getElementById('indicadorCarga');
-        const contadorIntentos = document.getElementById('contadorIntentos');
-        const intentosRestantesSpan = document.getElementById('intentosRestantes');
-        const notificacion = document.getElementById('notificacion');
+// ===== CONFIGURACIÓN API =====
+const API_URL = 'http://localhost:8000';
+const ENLACE_REDIRECCION = './PanelADM.html';
 
-        // ===== CONFIGURACIÓN DE SEGURIDAD =====
-        const MAX_INTENTOS = 3;
-        const TIEMPO_BLOQUEO = 30000; // 30 segundos en milisegundos
-        
-        // Credenciales válidas (PUEDES CAMBIAR ESTOS VALORES)
-        const CREDENCIALES_VALIDAS = {
-            'admin.sistema': 'ADMIN-2024-002',
-            'sys.admin': 'SYS-ADMIN-001',
-            'administrador': 'ADMIN-2024-001'
-        };
+// ===== ELEMENTOS DEL DOM =====
+const formulario = document.getElementById('formularioAccesoAdmin');
+const adminUsernameInput = document.getElementById('adminUsername');
+const adminCodeInput = document.getElementById('adminCode');
+const botonVisibilidad = document.getElementById('botonVisibilidad');
+const puntoEstado = document.getElementById('puntoEstado');
+const indicadorEstado = document.getElementById('indicadorEstado');
+const textoEstado = document.getElementById('textoEstado');
+const botonAcceso = document.getElementById('botonAcceso');
+const indicadorCarga = document.getElementById('indicadorCarga');
+const contadorIntentos = document.getElementById('contadorIntentos');
+const intentosRestantesSpan = document.getElementById('intentosRestantes');
+const notificacion = document.getElementById('notificacion');
 
-        // ===== ESTADO DE LA APLICACIÓN =====
-        let intentosFallidos = parseInt(sessionStorage.getItem('adminIntentosFallidos')) || 0;
-        let tiempoBloqueo = parseInt(sessionStorage.getItem('adminTiempoBloqueo')) || 0;
-        let estaBloqueado = false;
+// ===== CONFIGURACIÓN DE SEGURIDAD =====
+const MAX_INTENTOS = 3;
+const TIEMPO_BLOQUEO = 30000;
 
-        // ===== FUNCIONES DE UTILIDAD =====
-        function mostrarNotificacion(mensaje, tipo = 'error') {
-            notificacion.textContent = mensaje;
-            notificacion.className = `notificacion ${tipo}`;
-            notificacion.style.display = 'block';
-            
-            setTimeout(() => {
-                notificacion.style.display = 'none';
-            }, 5000);
-        }
+let intentosFallidos = parseInt(sessionStorage.getItem('adminIntentosFallidos')) || 0;
+let tiempoBloqueo = parseInt(sessionStorage.getItem('adminTiempoBloqueo')) || 0;
+let estaBloqueado = false;
 
-        function actualizarEstado() {
-            if (estaBloqueado) {
-                const tiempoRestante = Math.ceil((tiempoBloqueo - Date.now()) / 1000);
-                puntoEstado.className = 'punto-estado bloqueado';
-                indicadorEstado.className = 'indicador-estado bloqueado';
-                textoEstado.textContent = `⏰ Sistema bloqueado. Espera ${tiempoRestante} segundos...`;
-                botonAcceso.disabled = true;
-                adminUsernameInput.disabled = true;
-                adminCodeInput.disabled = true;
-                return;
-            }
+// ===== FUNCIONES DE UTILIDAD =====
+function mostrarNotificacion(mensaje, tipo = 'error') {
+    notificacion.textContent = mensaje;
+    notificacion.className = `notificacion ${tipo}`;
+    notificacion.style.display = 'block';
+    
+    setTimeout(() => {
+        notificacion.style.display = 'none';
+    }, 5000);
+}
 
-            const usuario = adminUsernameInput.value.trim();
-            const codigo = adminCodeInput.value.trim().toUpperCase();
-            
-            // Actualizar contador de intentos
-            if (intentosFallidos > 0) {
-                contadorIntentos.classList.add('mostrar');
-                intentosRestantesSpan.textContent = MAX_INTENTOS - intentosFallidos;
-            } else {
-                contadorIntentos.classList.remove('mostrar');
-            }
+function actualizarEstado() {
+    if (estaBloqueado) {
+        const tiempoRestante = Math.ceil((tiempoBloqueo - Date.now()) / 1000);
+        puntoEstado.className = 'punto-estado bloqueado';
+        indicadorEstado.className = 'indicador-estado bloqueado';
+        textoEstado.textContent = `⏰ Sistema bloqueado. Espera ${tiempoRestante} segundos...`;
+        botonAcceso.disabled = true;
+        adminUsernameInput.disabled = true;
+        adminCodeInput.disabled = true;
+        return;
+    }
 
-            // Verificar campos
-            if (usuario.length >= 3 && codigo.length >= 5) {
-                const esValido = CREDENCIALES_VALIDAS.hasOwnProperty(usuario.toLowerCase()) && 
-                                CREDENCIALES_VALIDAS[usuario.toLowerCase()] === codigo;
-                
-                if (esValido) {
-                    // Credenciales válidas
-                    puntoEstado.className = 'punto-estado valido';
-                    indicadorEstado.className = 'indicador-estado valido';
-                    textoEstado.textContent = '✅ Credenciales válidas - Acceso autorizado';
-                    botonAcceso.disabled = false;
-                    adminUsernameInput.classList.add('success');
-                    adminCodeInput.classList.add('success');
-                    adminUsernameInput.classList.remove('error');
-                    adminCodeInput.classList.remove('error');
-                } else {
-                    // Credenciales inválidas
-                    puntoEstado.className = 'punto-estado invalido';
-                    indicadorEstado.className = 'indicador-estado invalido';
-                    textoEstado.textContent = '❌ Credenciales inválidas - Acceso denegado';
-                    botonAcceso.disabled = true;
-                    adminUsernameInput.classList.add('error');
-                    adminCodeInput.classList.add('error');
-                    adminUsernameInput.classList.remove('success');
-                    adminCodeInput.classList.remove('success');
-                }
-            } else {
-                // Campos vacíos o muy cortos
-                puntoEstado.className = 'punto-estado';
-                indicadorEstado.className = 'indicador-estado';
-                textoEstado.textContent = '⏳ Ingrese sus credenciales de administrador...';
-                botonAcceso.disabled = true;
-                adminUsernameInput.classList.remove('error', 'success');
-                adminCodeInput.classList.remove('error', 'success');
-            }
-        }
+    const username = adminUsernameInput.value.trim();
+    const password = adminCodeInput.value.trim();
+    
+    if (intentosFallidos > 0) {
+        contadorIntentos.classList.add('mostrar');
+        intentosRestantesSpan.textContent = MAX_INTENTOS - intentosFallidos;
+    } else {
+        contadorIntentos.classList.remove('mostrar');
+    }
 
-        function verificarBloqueo() {
-            if (tiempoBloqueo > Date.now()) {
-                estaBloqueado = true;
-                mostrarNotificacion(`Sistema bloqueado. Intenta de nuevo en ${Math.ceil((tiempoBloqueo - Date.now()) / 1000)} segundos.`, 'bloqueado');
-                return true;
-            } else {
-                estaBloqueado = false;
-                sessionStorage.removeItem('adminTiempoBloqueo');
-                return false;
-            }
-        }
+    if (username.length >= 3 && password.length >= 5) {
+        puntoEstado.className = 'punto-estado';
+        indicadorEstado.className = 'indicador-estado';
+        textoEstado.textContent = '✓ Listo para verificar credenciales';
+        botonAcceso.disabled = false;
+        adminUsernameInput.classList.remove('error');
+        adminCodeInput.classList.remove('error');
+    } else {
+        puntoEstado.className = 'punto-estado';
+        indicadorEstado.className = 'indicador-estado';
+        textoEstado.textContent = '⏳ Ingrese sus credenciales de administrador...';
+        botonAcceso.disabled = true;
+    }
+}
 
-        function reiniciarSistema() {
-            intentosFallidos = 0;
-            estaBloqueado = false;
-            sessionStorage.removeItem('adminIntentosFallidos');
-            sessionStorage.removeItem('adminTiempoBloqueo');
-            actualizarEstado();
-        }
+function verificarBloqueo() {
+    if (tiempoBloqueo > Date.now()) {
+        estaBloqueado = true;
+        mostrarNotificacion(`Sistema bloqueado. Intenta de nuevo en ${Math.ceil((tiempoBloqueo - Date.now()) / 1000)} segundos.`, 'bloqueado');
+        return true;
+    } else {
+        estaBloqueado = false;
+        sessionStorage.removeItem('adminTiempoBloqueo');
+        return false;
+    }
+}
 
-        // ===== INICIALIZACIÓN =====
-        document.addEventListener('DOMContentLoaded', function() {
-            // Verificar si el sistema está bloqueado
-            if (verificarBloqueo()) {
-                // Configurar temporizador para desbloquear
-                const intervalo = setInterval(() => {
-                    if (!verificarBloqueo()) {
-                        clearInterval(intervalo);
-                        mostrarNotificacion('Sistema desbloqueado. Puedes intentar nuevamente.', 'exito');
-                        adminUsernameInput.disabled = false;
-                        adminCodeInput.disabled = false;
-                        adminUsernameInput.focus();
-                    }
-                    actualizarEstado();
-                }, 1000);
-            }
+function reiniciarSistema() {
+    intentosFallidos = 0;
+    estaBloqueado = false;
+    sessionStorage.removeItem('adminIntentosFallidos');
+    sessionStorage.removeItem('adminTiempoBloqueo');
+    actualizarEstado();
+}
 
-            // Configurar eventos
-            botonVisibilidad.addEventListener('click', function() {
-                if (adminCodeInput.type === 'password') {
-                    adminCodeInput.type = 'text';
-                    this.innerHTML = '👁️‍🗨️';
-                } else {
-                    adminCodeInput.type = 'password';
-                    this.innerHTML = '👁️';
-                }
-            });
-
-            // Validación en tiempo real
-            adminUsernameInput.addEventListener('input', function() {
-                this.value = this.value.replace(/[^a-zA-Z0-9._-]/g, '');
-                actualizarEstado();
-            });
-
-            adminCodeInput.addEventListener('input', function() {
-                actualizarEstado();
-            });
-
-            // Formatear automáticamente el código
-            adminCodeInput.addEventListener('keyup', function(e) {
-                let valor = this.value.toUpperCase().replace(/[^A-Z0-9\-]/g, '');
-                
-                if (valor.length > 5 && !valor.includes('-')) {
-                    if (valor.startsWith('ADMIN') && valor.length > 5) {
-                        valor = valor.slice(0, 5) + '-' + valor.slice(5);
-                    }
-                    if (valor.length > 10 && valor.split('-').length === 2) {
-                        valor = valor.slice(0, 10) + '-' + valor.slice(10);
-                    }
-                }
-                
-                this.value = valor;
-            });
-
-            // Manejar el envío del formulario
-            formulario.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                if (estaBloqueado) return;
-                
-                const usuario = adminUsernameInput.value.trim().toLowerCase();
-                const codigo = adminCodeInput.value.trim().toUpperCase();
-                
-                // Validar credenciales
-                const esValido = CREDENCIALES_VALIDAS.hasOwnProperty(usuario) && 
-                                CREDENCIALES_VALIDAS[usuario] === codigo;
-                
-                if (!esValido) {
-                    // Incrementar intentos fallidos
-                    intentosFallidos++;
-                    sessionStorage.setItem('adminIntentosFallidos', intentosFallidos);
-                    
-                    // Verificar si se superó el límite
-                    if (intentosFallidos >= MAX_INTENTOS) {
-                        tiempoBloqueo = Date.now() + TIEMPO_BLOQUEO;
-                        sessionStorage.setItem('adminTiempoBloqueo', tiempoBloqueo);
-                        estaBloqueado = true;
-                        
-                        mostrarNotificacion('Demasiados intentos fallidos. Sistema bloqueado por 30 segundos.', 'bloqueado');
-                        formulario.classList.add('shake');
-                        
-                        setTimeout(() => {
-                            formulario.classList.remove('shake');
-                        }, 500);
-                    } else {
-                        mostrarNotificacion(`Credenciales incorrectas. Te quedan ${MAX_INTENTOS - intentosFallidos} intentos.`, 'error');
-                        formulario.classList.add('shake');
-                        
-                        setTimeout(() => {
-                            formulario.classList.remove('shake');
-                        }, 500);
-                    }
-                    
-                    actualizarEstado();
-                    return;
-                }
-
-                // CREDENCIALES VÁLIDAS - Proceder con el acceso
-                reiniciarSistema();
-                
-                // Mostrar indicador de carga
-                botonAcceso.style.display = 'none';
-                indicadorCarga.style.display = 'block';
-                textoEstado.textContent = '✅ Credenciales verificadas - Redirigiendo al panel...';
-                
-                // Registrar acceso
-                console.log(`Acceso administrador registrado - Usuario: ${usuario} - Hora: ${new Date().toLocaleString()}`);
-                mostrarNotificacion('Acceso concedido. Redirigiendo al panel de control...', 'exito');
-                
-                // Simular proceso de verificación
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                // ===== REDIRECCIÓN AQUÍ =====
-                // Esto es lo que se ejecutará cuando las credenciales sean correctas
-                window.location.href = ENLACE_REDIRECCION;
-                // ============================
-            });
-
-            // Auto-focus en el primer campo
-            setTimeout(() => {
-                if (!estaBloqueado) {
-                    adminUsernameInput.focus();
-                }
-            }, 500);
-            
-            // Validar estado inicial
-            actualizarEstado();
-            
-            // Mensaje de consola
-            console.log('Sistema de acceso administrador cargado - Versión mejorada');
-            console.log('Usuarios disponibles:', Object.keys(CREDENCIALES_VALIDAS));
-            console.log('Redirección configurada a:', ENLACE_REDIRECCION);
+// ===== FUNCIÓN DE LOGIN CON API =====
+async function loginConAPI(username, password) {
+    try {
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: username,
+                password: password
+            })
         });
 
-        // Función para probar credenciales (debug)
-        window.probarCredencial = function(usuario, codigo) {
-            return CREDENCIALES_VALIDAS.hasOwnProperty(usuario) && 
-                   CREDENCIALES_VALIDAS[usuario] === codigo;
-        };
-    </script>
-</body>
-</html>
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || 'Error en el login');
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error al conectar con la API:', error);
+        throw error;
+    }
+}
+
+// ===== INICIALIZACIÓN =====
+document.addEventListener('DOMContentLoaded', function() {
+    if (verificarBloqueo()) {
+        const intervalo = setInterval(() => {
+            if (!verificarBloqueo()) {
+                clearInterval(intervalo);
+                mostrarNotificacion('Sistema desbloqueado. Puedes intentar nuevamente.', 'exito');
+                adminUsernameInput.disabled = false;
+                adminCodeInput.disabled = false;
+                adminUsernameInput.focus();
+            }
+            actualizarEstado();
+        }, 1000);
+    }
+
+    botonVisibilidad.addEventListener('click', function() {
+        if (adminCodeInput.type === 'password') {
+            adminCodeInput.type = 'text';
+            this.innerHTML = '👁️‍🗨️';
+        } else {
+            adminCodeInput.type = 'password';
+            this.innerHTML = '👁️';
+        }
+    });
+
+    adminUsernameInput.addEventListener('input', actualizarEstado);
+    adminCodeInput.addEventListener('input', actualizarEstado);
+
+    formulario.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (estaBloqueado) return;
+        
+        const username = adminUsernameInput.value.trim();
+        const password = adminCodeInput.value.trim();
+        
+        botonAcceso.style.display = 'none';
+        indicadorCarga.style.display = 'block';
+        textoEstado.textContent = '🔄 Verificando credenciales...';
+        
+        try {
+            const userData = await loginConAPI(username, password);
+            
+            if (userData.rol !== 'admin') {
+                throw new Error('Acceso denegado: Solo administradores');
+            }
+            
+            reiniciarSistema();
+            
+            localStorage.setItem('token', userData.access_token);
+            localStorage.setItem('user_id', userData.user_id);
+            localStorage.setItem('rol', userData.rol);
+            localStorage.setItem('nombre_completo', userData.nombre_completo);
+            localStorage.setItem('email', userData.email);
+            localStorage.setItem('username', userData.username);
+            
+            puntoEstado.className = 'punto-estado valido';
+            indicadorEstado.className = 'indicador-estado valido';
+            textoEstado.textContent = '✅ Acceso autorizado - Redirigiendo...';
+            
+            mostrarNotificacion('¡Bienvenido Administrador! Redirigiendo...', 'exito');
+            
+            console.log('Login exitoso:', userData);
+            
+            setTimeout(() => {
+                window.location.href = ENLACE_REDIRECCION;
+            }, 1500);
+            
+        } catch (error) {
+            intentosFallidos++;
+            sessionStorage.setItem('adminIntentosFallidos', intentosFallidos);
+            
+            indicadorCarga.style.display = 'none';
+            botonAcceso.style.display = 'flex';
+            
+            if (intentosFallidos >= MAX_INTENTOS) {
+                tiempoBloqueo = Date.now() + TIEMPO_BLOQUEO;
+                sessionStorage.setItem('adminTiempoBloqueo', tiempoBloqueo);
+                estaBloqueado = true;
+                
+                mostrarNotificacion('Demasiados intentos fallidos. Sistema bloqueado por 30 segundos.', 'bloqueado');
+            } else {
+                mostrarNotificacion(`${error.message}. Intentos restantes: ${MAX_INTENTOS - intentosFallidos}`, 'error');
+            }
+            
+            formulario.classList.add('shake');
+            setTimeout(() => {
+                formulario.classList.remove('shake');
+            }, 500);
+            
+            actualizarEstado();
+        }
+    });
+
+    setTimeout(() => {
+        if (!estaBloqueado) {
+            adminUsernameInput.focus();
+        }
+    }, 500);
+    
+    actualizarEstado();
+    
+    console.log('✅ Sistema de login conectado a API:', API_URL);
+});
+</script>

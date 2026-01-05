@@ -104,7 +104,7 @@
         
         input[type="range"] {
             flex: 1;
-            -webkit-appearance: none;
+            /*-webkit-appearance: none;*/
             height: 6px;
             border-radius: 3px;
             background: rgba(255, 255, 255, 0.1);
@@ -864,6 +864,13 @@
                 grid-template-columns: 1fr;
             }
         }
+        #mapaFrame {
+    display: none; /* Se activa con JS */
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 500px;
+    background-color: white; /* Si se pone blanco, es que el iframe cargó pero el archivo no se encuentra */
+}
     </style>
 </head>
 <body>
@@ -894,7 +901,6 @@
             </div>
         </div>
         
-        <!-- DESTINATION SELECTOR CON SCROLL VERTICAL -->
         <div class="destination-selector">
             <div class="destination-form">
                 <div class="form-group">
@@ -906,10 +912,12 @@
                 <div class="form-group">
                     <label for="destinations"><i class="fas fa-flag-checkered"></i> Destinos</label>
                     <div class="destinations-wrapper" id="destinationsContainer">
-                        <!-- Los destinos se agregarán dinámicamente aquí -->
                         <div class="destination-item">
+
                             <select class="form-control destination-select" data-index="0">
+
                                 <option value="">Selecciona un destino</option>
+                                
                                 <optgroup label="REGIÓN NORTE">
                                     <option value="Km 2.5, Carretera al Ejido la Soledad, Ejido La Soledad, 50300 Villa de Acambay de Ruíz Castañeda, Méx.">UES Acambay</option>
                                     <option value="Angel Castillo López S/N, A Santiago Oxtempan, 50600 El Oro de Hidalgo, Méx.">UES El Oro</option>
@@ -991,14 +999,10 @@
                         </div>
                     </div>
                     
-                    <!-- PANEL DE ESTADÍSTICAS (se agregará dinámicamente) -->
-                    
                     <div class="events-section">
                         <div class="section-header">
                             <h5><i class="fas fa-exclamation-triangle"></i> Eventos en la Ruta</h5>
                         </div>
-                        
-                        <!-- NOTA: ELIMINAMOS LOS BOTONES DE FILTRO -->
                         
                         <div class="events-list" id="eventsList">
                             <div class="text-center py-4" style="color: rgba(255, 255, 255, 0.7);">
@@ -1082,7 +1086,7 @@
             </div>
             
             <div class="map-container" style="position: relative; width: 100%; height: 100%;">
-                <iframe id="mapaFrame" style="width: 100%; height: 100%; border: none; display: none;"></iframe>
+                <iframe id="mapaFrame" src="about:blanck" style="width: 100%; height: 500%; border: none; background-color: #ffffff none;"></iframe>
     
                 <div id="mapPlaceholder" class="map-placeholder">
                     <i class="fas fa-map-marked-alt"></i>
@@ -1123,6 +1127,18 @@
     
     <script>
     $(document).ready(function() {
+        function LimpiarSimulacion(){
+            console.log(" Limpiando datos de simulaciones anteriores...");
+            // Limpiar el iframe
+            $('#mapaFrame').attr('src', 'about:blanck');
+            // Limpiar los resultados de texto
+            $('distaciaTotal, #tiempoestimado, #costoEstimado').text('--');
+            // Ocultar el contenedor del mapa hasta que se este uno nuevo
+            $('mapaContainer').hide();
+            // Limpiar instrucciones si las hay
+            $('instrucionesDetalle').empty();
+        }
+        LimpiarSimulacion
         // Variables globales
         let eventosActuales = [];
         let instruccionesActuales = [];
@@ -1239,6 +1255,11 @@
                     destinos.push(valor);
                 }
             });
+            console.log('🔍 Destinos seleccionados:', {
+            total: destinos.length,
+            valores: destinos,
+            selects: $('.destination-select').length
+            });
             return destinos;
         }
         
@@ -1252,6 +1273,10 @@
                     nombres.push(nombre);
                 }
             });
+            console.log('🔍 Nombres de destinos:', {
+            total: nombres.length,
+            nombres: nombres
+         });
             return nombres;
         }
         
@@ -1486,133 +1511,91 @@
             });
         }
         
-        // ====================
-        // 5. MODIFICAR LA FUNCIÓN DE CALCULAR RUTA
-        // ====================
-        
-        $('#calculateRoute').click(function() {
-            const origen = "Manzana 005, Loma Bonita, 54879 Cuautitlán, Méx.";
-            const destinos = getSelectedDestinations();
-            const destinosNombres = getSelectedDestinationsNames();
+// ====================
+// 5. MODIFICAR LA FUNCIÓN DE CALCULAR RUTA
+// ====================
+$('#calculateRoute').click(async function() {
+    // 1. Obtener datos
+    const origen = "Manzana 005, Loma Bonita, 54879 Cuautitlán, Méx.";
+    const destinos = getSelectedDestinations();
+    // Limpieza antes de empezar
+    if (typeof LimpiarSimulacion === 'function') {
+        LimpiarSimulacion();
+    }
+    
+    if (destinos.length === 0) {
+        alert('Por favor selecciona al menos un destino');
+        return;
+    }
+    const destinosLimpios = destinos.map(d => {
+        let limpio = d.replace(/S\/N|s\/n|Domicilio Conocido|Km\.\s?\d+/g, '').trim();
 
-            if (destinos.length === 0) {
-                alert('Por favor selecciona al menos un destino');
-                return;
-            }
-            
-            // Mostrar loading
-            $('#loading').show();
-            $('#routeInfo').hide();
-            $('#mapPlaceholder').show();
-            $('#mapaFrame').hide();
-            
-            // Construir lista de lugares: origen + destinos
-            const lugares = [origen, ...destinos];
-            
-            // 1. Primero calcular la ruta multiparada
-            fetch('http://localhost:8000/ruta/ruta-multiparada', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                    lugares: lugares,
-                    optimizar: true
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        throw new Error(`Error ${response.status}: ${text}`);
-                    });
-                }
-                return response.json();
-            })
-            .then(datosRuta => {
-                // Actualizar la interfaz con los datos obtenidos
-                $('#destinosNombres').text(destinosNombres.join(', '));
-                
-                // Actualizar estadísticas básicas
-                if (datosRuta) {
-                    $('#totalStops').text(destinos.length);
-                    $('#totalEvents').text(datosRuta.eventos_trafico || 0);
-                    $('#totalDistance').text(datosRuta.distancia_total_km + ' km');
-                    $('#totalTime').text(Math.round(datosRuta.distancia_total_km * 1.5) + ' min');
-                }
-                
-                // Ocultar loading y mostrar info
-                $('#loading').hide();
-                $('#routeInfo').show();
-                
-                // 2. Ahora cargar el mapa en el iframe para múltiples destinos
-                return fetch('http://localhost:8000/simulacion/render-multi', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'text/html'
-                    },
-                    body: JSON.stringify({
-                        origen: origen,
-                        destinos: destinos
-                    })
-                });
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        throw new Error(`Error ${response.status}: ${text}`);
-                    });
-                }
-                return response.text();
-            })
-            .then(htmlMapa => {
-                const frame = document.getElementById('mapaFrame');
-                $('#mapPlaceholder').hide();
-                $(frame).show();
-                
-                const doc = frame.contentWindow.document;
-                doc.open();
-                doc.write(htmlMapa);
-                doc.close();
-                
-                // Esperar a que el mapa se cargue y extraer los datos
-                setTimeout(() => {
-                    try {
-                        const frameWindow = frame.contentWindow;
-                        if (frameWindow.datosRuta) {
-                            // Procesar instrucciones y eventos del mapa
-                            procesarInstrucciones(frameWindow.datosRuta.instrucciones || []);
-                            procesarEventos(frameWindow.datosRuta.eventos || []);
-                            
-                            console.log('Datos procesados del mapa:', frameWindow.datosRuta);
-                        } else {
-                            console.warn('No se encontraron datos en el mapa');
-                        }
-                    } catch (error) {
-                        console.error('Error al extraer datos del mapa:', error);
-                    }
-                }, 2000);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                $('#loading').hide();
-                $('#routeInfo').show();
-                alert('Hubo un error al calcular la ruta: ' + error.message);
-            });
+        if (!limpio.toLowerCase().includes("méxico")) {
+            limpio += ", Estado de México, México";
+        }
+        return limpio;
+    }) ;
 
-        const rutaParaGPS = {
-            origen: origen,
-            destinos: destinos,
-            destinosNombres: destinosNombres,
-            fecha: new Date().toISOString(),
-            distancia: datosRuta.distancia_total_km || 0
-        };
-            
+    // 2. Referencias seguras
+    const $loading = $('#loading');
+    const $placeholder = $('#mapPlaceholder');
+    const $frame = $('#mapaFrame'); // Usamos jQuery para evitar errores de null
+    const frameElement = document.getElementById('mapaFrame');
+
+    $loading.show();
+    console.log("🚀 Enviando a backend...");
+
+    try { // 3. llamar al seervidor 
+        const response = await fetch('http://127.0.0.1:8000/api/rutas/ruta-multiparada', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                lugares: [origen, ...destinosLimpios],
+                optimizar: true,
+            })
+                
         });
 
-        localStorage.setItem('ultimaRutaMulti', JSON.stringify(rutaParaGPS));
-        console.log('Ruta guardada para GPS:', rutaParaGPS);
+        if (!response.ok) throw new Error(`Error servidor: ${response.status}`);
+        
+        const resultado = await response.json();
+        console.log("✅ Backend respondió correctamente");
+
+        // 4. Pequeña pausa para asegurar que el archivo existe en disco
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        const urlFinal = "ruta_multiparada.html?t=" + new Date().getTime();
+
+        // 5. MOSTRAR MAPA (Sin rutas complicadas)
+        frameElement.onload = function(){
+            $loading.hide();
+            console.log(" El navegador termino de renderizar el mapa");
+
+        };
+        frameElement.src = urlFinal;
+        $placeholder.hide();
+        $frame.show(); // Quitamos el display:none
+        
+
+        // 6. Actualizar interfaz
+        $('#routeInfo').show();
+        $('#totalDistance').text((resultado.distancia_total_km || 0) + ' km');
+        $('#totalStops').text(destinos.length);
+
+    } catch (err) {
+        console.error('ERROR DETECTADO:', err);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        $placeholder.hide();
+        $frame.show();
+        const urlEmergencia = "ruta_multiparada.html?t=" + new Date().getTime();
+        frameElement.src = urlEmergencia;
+        console.log(" Intento de recuperacion cargando: " + urlEmergencia);
+
+        alert("Hubo un problema al calcular la ruta, se intentra cargar el ultimo mapa generado.");
+    } finally {
+        $loading.hide();
+    }
+});
         
         // ====================
         // 6. EVENTOS PARA LOS BOTONES DE EVENTOS
@@ -1655,6 +1638,26 @@
                   `📝 Descripción:\n${descripcion}`);
         });
         
+        $(document).on('change', '.destination-select', function() {
+    const index = $(this).data('index');
+    const valor = $(this).val();
+    const texto = $(this).find('option:selected').text();
+    
+    console.log('📝 Select cambiado:', {
+        index: index,
+        valor: valor,
+        texto: texto,
+        tieneValor: !!valor
+    });
+});
+
+// También verifica el estado inicial
+console.log('🔄 Estado inicial de la página:');
+console.log('  - Selects encontrados:', $('.destination-select').length);
+$('.destination-select').each(function(index) {
+    console.log(`  Select ${index}: valor = "${$(this).val()}"`);
+});
+
         // ====================
         // 7. FUNCIONALIDAD PARA EL MODAL DE INSTRUCCIONES
         // ====================
