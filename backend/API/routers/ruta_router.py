@@ -706,70 +706,68 @@ def prediccion_trafico(
 @router.post("/ruta-multiparada")
 def calcular_ruta_multiparada(request: RutaMultiparadaRequest):
     """
-    Calcula ruta con múltiples paradas (problema del viajante)
+    Calcula una ruta optimizada y prepara los datos para el administrador y el repartidor 
     """
     MAPQUEST_API_KEY = os.getenv("MAPQUEST_API_KEY")
     if not MAPQUEST_API_KEY:
-        raise HTTPException(
-            status_code=500, 
-            detail="API Key no configurada"
-        )
-    
+        raise HTTPException(status_code=500, detail="API Key no configurada")
     if len(request.lugares) < 2:
-        raise HTTPException(
-            status_code=400,
-            detail="Se requieren al menos 2 ubicaciones"
-        )
-    
+        raise HTTPException(status_code=400, detail="Se requieren al menos dos lugares para calcular la ruta")
     try:
-        maniobras, geometria, bbox, orden = obtener_ruta_multiparada(
+        # 1. Llamada a Dijkstra (Usamos el que ya tiene el raise Exception)
+        maniobras, geometria, bbox, orden, = obtener_ruta_multiparada(
             MAPQUEST_API_KEY, 
-            request.lugares, 
-            request.optimizar
+            request.lugares,
+            request.optimizar    
         )
-        
-        if not maniobras:
+        # Si MapQuest no pudo trazar ruta, lanzamos 400 (Bad Request) 
+        if not maniobras or not geometria:
             raise HTTPException(
                 status_code=400,
-                detail="No se pudo calcular la ruta multiparada"
+                detail="MapQuest no pudo trazar la ruta con estas ubicaciones intenta con ubicaciones mas precisas"
             )
-        
-        # Procesar incidentes
+        # 2. Procesar incidentes y estadísticas
         incidentes = []
         if bbox:
             incidentes = obtener_incidencias_trafico(MAPQUEST_API_KEY, bbox)
-        
         eventos_procesados = procesar_incidentes_trafico(incidentes)
         instrucciones = procesar_maniobras_instrucciones(maniobras)
-        distancia_total = sum(man['distance'] for man in maniobras)
-        
-        # Generar mapa
+        distancia_total = sum(man.get('distance', 0) for man in maniobras)
+        # 3. Generar mapa físico
+
         grafo = construir_grafo_logico(maniobras)
-        mapa_path = os.path.join(os.getcwd(),"frontend", "Administrador", "Paneles", "ruta_multiparada.html")
-        generar_mapa_visual(grafo, geometria, incidentes, orden, mapa_path)
-        print(f"Mapa generado en: {mapa_path}")
-        
+        mapa_path = os.path.join(os.getcwd(), "frontend", "Administrador", "Paneles", "ruta_multiparada.html")
+
+        # Guardamos el retorno de la función (la lista de puntos)
+        geom_para_repartidor = generar_mapa_visual(grafo, geometria, incidentes, orden, mapa_path)
+        print(f" Mapa generado y geometría capturada en: {mapa_path}")
+        # 4. Retorno de datos (Agregamos la geometría al JSON para el guardado posterior)
         return {
+            "status": "success",
             "paradas": len(request.lugares),
             "distancia_total_km": round(distancia_total, 2),
             "eventos_trafico": len(eventos_procesados),
-            "instrucciones": len(instrucciones),
+            "puntos_geometria": geom_para_repartidor,  # <--- CLAVE PARA EL REPARTIDOR
             "orden_optimizado": [p['dir'] for p in orden] if orden else request.lugares,
             "mapa_html": "ruta_multiparada.html",
             "estadisticas": {
-                "total_stops": len(request.lugares) - 1,  # Restamos 1 porque el origen está incluido
+                "total_stops": len(request.lugares) - 1,
                 "total_events": len(eventos_procesados),
                 "total_distance_km": round(distancia_total, 2),
-                "estimated_time_min": round(distancia_total * 1.5, 1)  # Estimación: 1.5 min/km
+                "estimated_time_min": round(distancia_total * 1.5, 1)
             }
         }
-        
+    except HTTPException as he:
+        # Re-lanzamos excepciones HTTP (como la de MapQuest 400)
+        raise he
     except Exception as e:
+        print(f"❌ Error crítico en el Router: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail=f"Error calculando ruta multiparada: {str(e)}"
         )
-    # ============================================
+
+# ============================================
 # AGREGAR ESTE ENDPOINT AL FINAL DE ruta_router.py
 # (después del endpoint /ruta-multiparada)
 # ============================================

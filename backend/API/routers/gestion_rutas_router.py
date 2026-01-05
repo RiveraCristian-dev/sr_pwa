@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 import requests
 
 from backend.API.database import get_db
+from backend.core.dijkstra import obtener_ruta_multiparada
+from backend.core.simulacion import generar_mapa_visual
 
 router = APIRouter()
 load_dotenv()
@@ -162,97 +164,79 @@ def calcular_ruta(
     db: Session = Depends(get_db)
 ):
     """
-    Calcula ruta para una asignación específica y la guarda en rutas_asignadas
+    Calcula ruta REAL con geometría para una asignación y la guarda en la DB
     """
     try:
-        # 1. Verificar que la asignación existe y no tiene ruta
+        # 1. Buscar los datos de la asignación
         check_query = text("""
-            SELECT 
-                a.id, a.ruta_municipio, a.numero_paquetes,
-                v.tipo as vehiculo_tipo,
-                u.nombre_completo as repartidor_nombre,
-                r.id as ruta_existente
+            SELECT a.id, a.ruta_municipio, v.tipo as vehiculo_tipo
             FROM asignaciones a
             INNER JOIN vehiculos v ON a.id_vehiculo = v.id
-            INNER JOIN usuarios u ON a.id_repartidor = u.id
-            LEFT JOIN rutas_asignadas r ON a.id = r.id_asignacion AND r.activa = TRUE
             WHERE a.id = :asignacion_id AND a.estado = 'activa'
         """)
-        
-        asignacion = db.execute(check_query, {"asignacion_id": asignacion_id}).fetchone()
-        
-        if not asignacion:
+        asig = db.execute(check_query, {"asignacion_id": asignacion_id}).fetchone()
+
+        if not asig:
             raise HTTPException(status_code=404, detail="Asignación no encontrada")
-        
-        if asignacion.ruta_existente:
-            raise HTTPException(status_code=400, detail="Esta asignación ya tiene una ruta calculada")
-        
-        # 2. Obtener dirección completa del destino
-        destino_completo = UNIVERSIDADES.get(asignacion.ruta_municipio)
-        
-        if not destino_completo:
-            destino_completo = f"{asignacion.ruta_municipio}, Estado de México"
-        
-        # 3. Calcular ruta con MapQuest
+        # 2. Definir origen y destino
+        destino_completo = UNIVERSIDADES.get(asig.ruta_municipio, f"{asig.ruta_municipio}, Estado de México")
         origen = request.origen or ORIGEN_BASE
         
-        ruta_data = obtener_ruta_mapquest(origen, destino_completo)
-        
-        # 4. Insertar en rutas_asignadas
+        # 3. LLAMAR A DIJKSTRA (La función que VS Code marcaba en amarillo)
+        api_key = os.getenv("MAPQUEST_API_KEY")
+        maniobras, geometria, bbox, orden = obtener_ruta_multiparada(api_key, [origen, destino_completo])
+
+        if not geometria:
+            raise HTTPException(status_code=400, detail="No se obtuvo geometría de MapQuest")
+        # 4. ACTUALIZAR MAPA PARA EL ADMINISTRADOR (simulacion.py)
+        # Esto genera el archivo HTML que ves en el panel
+        generar_mapa_visual(None, geometria, [], [{"pos": [0,0], "dir": origen}, {"pos": [0,0], "dir": destino_completo}])
+
+        # 5. GUARDAR EN BASE DE DATOS PARA EL REPARTIDOR
+        distancia_km = sum(m.get('distance', 0) for m in maniobras)
+        tiempo_min = sum(m.get('time', 0) for m in maniobras) / 60
+
+        datos_ruta = {
+            "puntos": geometria,
+            "maniobras": maniobras,
+            "bbox": bbox
+        }
+
         insert_query = text("""
             INSERT INTO rutas_asignadas (
-                id_asignacion,
-                origen_direccion,
-                destino_direccion,
-                distancia_km,
-                tiempo_min,
-                ruta_mapquest,
-                vehiculo_tipo,
-                activa
+                id_asignacion, origen_direccion, destino_direccion,
+                distancia_km, tiempo_min, ruta_mapquest,
+                vehiculo_tipo, activa
             ) VALUES (
-                :asignacion_id,
-                :origen,
-                :destino,
-                :distancia,
-                :tiempo,
-                CAST(:ruta_json AS jsonb),
-                :vehiculo_tipo,
-                TRUE
-            ) RETURNING id
+                :asig_id, :origen, :destino,
+                :dist, :tiempo, CAST(:ruta_json AS jsonb),
+                :v_tipo, TRUE
+            )
         """)
-        
-        result = db.execute(insert_query, {
-            "asignacion_id": asignacion_id,
+
+        db.execute(insert_query, {
+            "asig_id": asignacion_id,
             "origen": origen,
             "destino": destino_completo,
-            "distancia": ruta_data["distancia_km"],
-            "tiempo": ruta_data["tiempo_min"],
-            "ruta_json": json.dumps(ruta_data["ruta_completa"]),  # ✅ CORREGIDO
-            "vehiculo_tipo": asignacion.vehiculo_tipo
+            "dist": distancia_km,
+            "tiempo": tiempo_min,
+            "ruta_json": json.dumps(datos_ruta),
+            "v_tipo": asig.vehiculo_tipo
         })
-        
-        ruta_id = result.fetchone()[0]
+
         db.commit()
-        
-        return {
-            "mensaje": "Ruta calculada exitosamente",
-            "ruta_id": ruta_id,
-            "asignacion_id": asignacion_id,
-            "repartidor": asignacion.repartidor_nombre,
-            "origen": origen,
-            "destino": destino_completo,
-            "distancia_km": round(ruta_data["distancia_km"], 2),
-            "tiempo_min": round(ruta_data["tiempo_min"], 1)
-        }
-        
-    except HTTPException:
-        raise
+        return {"status": "success", "mensaje": "Ruta guardada y mapa actualizado"}
+    
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Error al calcular ruta: {str(e)}")
+        print(f"❌ Error en el router: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 
 @router.get("/calculadas")
 def listar_rutas_calculadas(db: Session = Depends(get_db)):
+    
     """
     Lista todas las rutas calculadas y activas
     """

@@ -1,4 +1,4 @@
-# NOMBRE DEL ARCHIVO: simulacion.py
+
 import os 
 import folium
 from . import dijkstra
@@ -269,74 +269,65 @@ def traducir_instruccion_ruta(instruccion_original):
         texto = texto.replace(f" {en.capitalize()} ", f" {es} ")
     
     return texto
-# revisar el proximo dia 
+
+
 def generar_mapa_visual(G, ruta_geometria, incidentes, paradas_ordenadas, nombre_archivo="ruta_multiparada.html"):
-    # 1. BORRADO DE SEGURIDAD (Para no ver mapas viejos si falla la nueva consulta)
+    """
+    Genera el mapa interactivo y asegura que el archivo se libere correctamente.
+    """
+    # 1. BORRADO INICIAL (Para evitar que el navegador lea basura vieja si la nueva falla)
     if os.path.exists(nombre_archivo):
         try:
             os.remove(nombre_archivo)
-            print(f"🗑️ Archivo anterior eliminado para limpieza: {nombre_archivo}")
-        except Exception as e:
-            print(f"⚠️ No se pudo eliminar el archivo anterior: {e}")
-
-    if not G or not ruta_geometria: 
-        print("❌ Datos insuficientes para generar mapa visual.")
-        return [] # Retornamos lista vacía si no hay datos
-
-    # Límites CDMX/Edomex
-    sw = [18.80, -100.20] 
-    ne = [20.20, -98.80]
+            print(f"Limpieza: Archivo anterior eliminado.")
+        except:
+            pass
+    if not G or not ruta_geometria:
+        print("Datos insuficientes para generar el mapa.")
+        return []
+    # configuracion de limites (EDOMEX/CDMX)
+    sw, ne = [18.80, -100.20], [20.20, -98.80]
     centro = [(sw[0]+ne[0])/2, (sw[1]+ne[1])/2]
 
     try:
-        mapa = folium.Map(location=centro, zoom_start=11, tiles='OpenStreetMap',
-                          min_zoom=9, max_bounds=True, min_lat=sw[0], max_lat=ne[0], min_lon=sw[1], max_lon=ne[1])
+        mapa = folium.Map(location=centro, zoom_start=11, tiles='OpenStreetMap', min_zoom=9, max_bounds=True, min_lat=sw[0], max_lat=ne[0], min_lon=sw[1], max_lon=ne[1])
 
-        # Ruta Azul
+        # Dibujar Ruta
         folium.PolyLine(ruta_geometria, color="#0055FF", weight=5, opacity=0.7).add_to(mapa)
 
-        # Tráfico
-        print(f"   -> Procesando {len(incidentes)} eventos de tráfico...")
+        # Dibujar trafico
         for inc in incidentes:
             lat, lng = inc['lat'], inc['lng']
             if sw[0] < lat < ne[0] and sw[1] < lng < ne[1]:
-                desc = traducir_detalles_trafico(inc['fullDesc'])
-                tipo = inc['type']
+                desc = traducir_detalles_trafico(inc.get('fullDesc', 'Sin descripción'))
+                tipo = inc.get('type', 0)
                 popup_html = f"<div style='font-family:Arial; width:200px'><b>Evento:</b> {desc}</div>"
-                
-                if tipo == 4: # Congestion
+
+                if tipo == 4:
                     folium.Circle(location=(lat, lng), radius=300, color='red', fill=True, fill_opacity=0.4, popup=popup_html).add_to(mapa)
-                elif tipo == 1: # Construccion
-                    folium.Marker(location=(lat, lng), icon=folium.Icon(color='orange', icon='wrench', prefix='fa'), popup=popup_html).add_to(mapa)
-                else: # Accidente/Otro
-                    folium.Marker(location=(lat, lng), icon=folium.Icon(color='red', icon='exclamation-triangle', prefix='fa'), popup=popup_html).add_to(mapa)
-
-        # Marcadores de Logística
+                else:
+                    folium.Marker(location=(lat, lng), icon=folium.Icon(color='orange', icon='info-sign'), popup=popup_html).add_to(mapa)
         for i, p in enumerate(paradas_ordenadas):
-            if i == 0:
-                folium.Marker(location=p['pos'], popup=f"<b>ALMACÉN</b><br>{p['dir']}", icon=folium.Icon(color='green', icon='home', prefix='fa')).add_to(mapa)
-            elif i < len(paradas_ordenadas) - 1:
-                folium.Marker(location=p['pos'], popup=f"<b>ENTREGA #{i}</b><br>{p['dir']}", icon=folium.Icon(color='blue', icon='truck', prefix='fa')).add_to(mapa)
-                folium.Marker(location=p['pos'], icon=folium.DivIcon(html=f"""<div style="color:white; background:darkblue; border-radius:50%; width:20px; height:20px; text-align:center; font-weight:bold; border:1px solid white; font-size:12px; line-height:20px;">{i}</div>""")).add_to(mapa)
+            color = 'green' if i == 0 else 'blue'
+            label = "ALMACÉN" if i == 0 else f"ENTREGA #{i}"
+            folium.Marker(location=p['pos'], popup=f"<b>{label}</b><br>{p['dir']}", 
+                          icon=folium.Icon(color=color, icon='truck', prefix='fa')).add_to(mapa)
 
-        # Nodos intermedios
-        for node_id in G.nodes():
-            datos = G.nodes[node_id]
-            desc_traducida = traducir_instruccion_ruta(datos['desc'])
-            folium.CircleMarker(
-                location=datos['pos'], radius=3, color='blue', fill=True, fill_color='white', fill_opacity=1, 
-                popup=f"<b>Instrucción {node_id}:</b><br>{desc_traducida}"
-            ).add_to(mapa)
-            
         mapa.fit_bounds([sw, ne])
-        
-        # 2. GUARDADO FORZADO
-        mapa.save(nombre_archivo)
-        print(f"✅ Mapa generado exitosamente: {nombre_archivo}")
-        
-        # 3. RETORNO DE GEOMETRÍA (Muy importante para mañana)
-        return ruta_geometria
 
+        #2 guardado atonomo
+        nombre_temp = nombre_archivo + ".tmp"
+        mapa.save(nombre_temp)
+        # si ya existe el archi real lo quitamos para poner el nuevo
+        if os.path.exists(nombre_archivo):
+            os.remove(nombre_archivo)
+        #renombramos el temporal al nombre final
+        os.rename(nombre_temp, nombre_archivo)
+
+        print(f" Mapa finalizado y liberado para el navegador: {nombre_archivo}")
+
+        # 3 retonro la geometria
+        return ruta_geometria
     except Exception as e:
-        print(f"❌ Error crítico al generar el mapa Folium: {e}")
+        print(f"Error al generar el mapa Folium: {e}")
         return []
