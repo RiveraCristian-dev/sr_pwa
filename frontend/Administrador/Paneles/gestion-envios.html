@@ -21,6 +21,34 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+        }
+
+        /* AÑADIDO: Botón de regresar */
+        .btn-regresar {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            z-index: 100;
+        }
+
+        .btn-regresar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.4);
+            background: linear-gradient(135deg, #2980b9, #3498db);
         }
 
         .header {
@@ -30,6 +58,8 @@
             margin-bottom: 30px;
             border: 2px solid #3498db;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            padding-right: 180px; /* Espacio para el botón */
         }
 
         .header h1 {
@@ -246,11 +276,27 @@
             .estadisticas {
                 grid-template-columns: 1fr;
             }
+            .header {
+                padding-right: 25px;
+            }
+            .btn-regresar {
+                position: relative;
+                top: 0;
+                right: 0;
+                width: 100%;
+                margin-top: 15px;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- AÑADIDO: Botón de regresar - CAMBIA LA URL POR LA QUE NECESITES -->
+        <a href="../PanelADM.html" class="btn-regresar">
+            ← Regresar al Panel
+        </a>
+
         <div class="header">
             <h1>Gestión de Pedidos</h1>
         </div>
@@ -382,6 +428,9 @@
     const capacidadInput = document.getElementById('capacidad');
     const estadoSelect = document.getElementById('estado');
 
+    // ===== VARIABLE GLOBAL PARA CONTROLAR PEDIDOS =====
+    let pedidosCargados = new Set(); // Para evitar duplicados
+
     // ===== FUNCIONES DE UTILIDAD =====
     function mostrarMensaje(texto, tipo) {
         mensaje.textContent = texto;
@@ -406,7 +455,6 @@
             
             if (data.repartidores && data.repartidores.length > 0) {
                 console.log('✅ Repartidores cargados:', data.repartidores);
-                // Aquí podrías poblar un dropdown con los repartidores
             }
         } catch (error) {
             console.error('❌ Error cargando repartidores:', error);
@@ -420,7 +468,6 @@
             
             if (data.vehiculos && data.vehiculos.length > 0) {
                 console.log('✅ Vehículos cargados:', data.vehiculos);
-                // Aquí podrías poblar un dropdown con los vehículos
             }
         } catch (error) {
             console.error('❌ Error cargando vehículos:', error);
@@ -480,10 +527,28 @@
                     No hay pedidos registrados. Crea el primero.
                 </p>
             `;
+            pedidosCargados.clear();
             return;
         }
 
-        listaPedidos.innerHTML = pedidos.map(pedido => `
+        // Filtrar pedidos duplicados usando un Set
+        const pedidosUnicos = [];
+        const numerosPedidosVistos = new Set();
+        
+        for (const pedido of pedidos) {
+            if (!numerosPedidosVistos.has(pedido.id)) {
+                numerosPedidosVistos.add(pedido.id);
+                pedidosUnicos.push(pedido);
+            }
+        }
+
+        // Actualizar el Set global
+        pedidosCargados = numerosPedidosVistos;
+
+        // Ordenar por fecha más reciente primero
+        pedidosUnicos.sort((a, b) => new Date(b.fecha_creacion) - new Date(a.fecha_creacion));
+
+        listaPedidos.innerHTML = pedidosUnicos.map(pedido => `
             <div class="pedido-item">
                 <div class="pedido-header">
                     <span class="pedido-numero">${pedido.numero_pedido}</span>
@@ -515,6 +580,44 @@
         }
     }
 
+    // ===== MEJORAS: Función para generar número de pedido automático =====
+    function generarNumeroPedido() {
+        const fecha = new Date();
+        const año = fecha.getFullYear();
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+        return `PED-${año}${mes}${dia}-${random}`;
+    }
+
+    // ===== MEJORAS: Limpiar formulario (no reset completo) =====
+    function limpiarFormulario() {
+        // Generar nuevo número de pedido automático
+        numeroPedidoInput.value = generarNumeroPedido();
+        
+        // Limpiar otros campos pero mantenerlos listos para usar
+        idRepartidorInput.value = '';
+        idVehiculoInput.value = '';
+        destinoSelect.selectedIndex = 0;
+        capacidadInput.value = '15'; // Valor por defecto útil
+        estadoSelect.selectedIndex = 0;
+        
+        // Enfocar el primer campo después del número de pedido
+        idRepartidorInput.focus();
+    }
+
+    // ===== MEJORAS: Verificar si pedido ya existe =====
+    async function verificarPedidoExistente(numeroPedido) {
+        try {
+            const response = await fetch(`${API_URL}/pedidos/verificar/${numeroPedido}`);
+            const data = await response.json();
+            return data.existe || false;
+        } catch (error) {
+            console.error('Error verificando pedido:', error);
+            return false;
+        }
+    }
+
     // ===== EVENTOS =====
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -528,7 +631,7 @@
             estado: estadoSelect.value
         };
 
-        // Validaciones
+        // Validaciones mejoradas
         if (!datos.numero_pedido || !datos.id_repartidor || !datos.id_vehiculo || 
             !datos.destino_entrega || !datos.capacidad_paquetes || !datos.estado) {
             mostrarMensaje('Por favor completa todos los campos', 'error');
@@ -537,6 +640,22 @@
 
         if (datos.capacidad_paquetes < 1) {
             mostrarMensaje('La capacidad debe ser al menos 1 paquete', 'error');
+            return;
+        }
+
+        if (datos.id_repartidor <= 0) {
+            mostrarMensaje('El ID del repartidor debe ser válido', 'error');
+            return;
+        }
+
+        if (datos.id_vehiculo <= 0) {
+            mostrarMensaje('El ID del vehículo debe ser válido', 'error');
+            return;
+        }
+
+        // Verificar si el pedido ya existe en la lista actual
+        if (pedidosCargados.has(datos.numero_pedido)) {
+            mostrarMensaje('⚠️ Este número de pedido ya está registrado', 'error');
             return;
         }
 
@@ -550,10 +669,10 @@
             
             mostrarMensaje(`✅ Pedido ${resultado.numero_pedido} creado exitosamente`, 'exito');
             
-            // Resetear formulario
-            form.reset();
+            // Limpiar formulario (sin reset completo)
+            limpiarFormulario();
             
-            // Recargar lista de pedidos
+            // Recargar lista de pedidos desde el servidor
             await cargarYRenderizarPedidos();
             
             console.log('✅ Pedido creado:', resultado);
@@ -567,25 +686,93 @@
         }
     });
 
+    // ===== MEJORAS: Cargar opciones de repartidores y vehículos =====
+    async function cargarOpcionesRepartidores() {
+        try {
+            const response = await fetch(`${API_URL}/pedidos/repartidores`);
+            const data = await response.json();
+            
+            if (data.repartidores && data.repartidores.length > 0) {
+                console.log('Repartidores disponibles:', data.repartidores);
+                // Opcional: crear datalist para autocompletar
+            }
+        } catch (error) {
+            console.error('Error cargando repartidores:', error);
+        }
+    }
+
+    async function cargarOpcionesVehiculos() {
+        try {
+            const response = await fetch(`${API_URL}/pedidos/vehiculos`);
+            const data = await response.json();
+            
+            if (data.vehiculos && data.vehiculos.length > 0) {
+                console.log('Vehículos disponibles:', data.vehiculos);
+                // Opcional: crear datalist para autocompletar
+            }
+        } catch (error) {
+            console.error('Error cargando vehículos:', error);
+        }
+    }
+
+    // ===== MEJORAS: Cargar pedidos periódicamente para mantener actualizado =====
+    let intervaloActualizacion = null;
+
+    function iniciarActualizacionAutomatica() {
+        // Cargar pedidos cada 30 segundos
+        intervaloActualizacion = setInterval(async () => {
+            console.log('🔄 Actualizando lista de pedidos automáticamente...');
+            await cargarYRenderizarPedidos();
+        }, 30000); // 30 segundos
+    }
+
+    function detenerActualizacionAutomatica() {
+        if (intervaloActualizacion) {
+            clearInterval(intervaloActualizacion);
+            intervaloActualizacion = null;
+        }
+    }
+
     // ===== INICIALIZACIÓN =====
     document.addEventListener('DOMContentLoaded', async () => {
         console.log('🚀 Sistema de gestión de pedidos iniciado');
+        
+        // Generar número de pedido automáticamente al inicio
+        numeroPedidoInput.value = generarNumeroPedido();
         
         // Cargar datos iniciales
         await cargarRepartidores();
         await cargarVehiculos();
         await cargarYRenderizarPedidos();
         
+        // Cargar opciones para selects
+        await cargarOpcionesRepartidores();
+        await cargarOpcionesVehiculos();
+        
+        // Iniciar actualización automática
+        iniciarActualizacionAutomatica();
+        
+        // Detener actualización cuando la pestaña no está activa
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                detenerActualizacionAutomatica();
+            } else {
+                iniciarActualizacionAutomatica();
+                // Recargar datos al volver a la pestaña
+                cargarYRenderizarPedidos();
+            }
+        });
+
         // Mostrar datos de ejemplo en consola
         console.log('📋 Usa estos datos de ejemplo:');
         console.log('- Repartidor ID: 2 (Juan Pérez)');
         console.log('- Vehículo ID: 1 (Toyota Hilux)');
-        console.log('- Número pedido: PED-' + new Date().getTime());
+        console.log('- Número pedido ya generado automáticamente');
         console.log('- Destino: destino1 (cualquiera de la lista)');
         console.log('- Capacidad: 15');
         console.log('- Estado: pendiente');
     });
-
+// v4 
     </script>
 </body>
 </html>
