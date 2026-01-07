@@ -1517,7 +1517,7 @@
 // ====================
 // Reemplaza la función actual (líneas ~546 en adelante)
 $('#calculateRoute').click(async function() {
-    // 1. Obtener datos
+    // 1. Obtener y validar datos de entrada
     const origen = "Manzana 005, Loma Bonita, 54879 Cuautitlán, Méx.";
     const destinos = getSelectedDestinations();
     const destinosNombres = getSelectedDestinationsNames();
@@ -1527,44 +1527,16 @@ $('#calculateRoute').click(async function() {
         return;
     }
     
-    // Mostrar loading
+    // UI: Mostrar estado de carga
     $('#loading').show();
     $('#routeInfo').hide();
     $('#mapPlaceholder').show();
     $('#mapaFrame').hide();
     
     try {
-        // 2. PRIMERA LLAMADA: Calcular ruta y guardar en BD
-        console.log('📡 Calculando ruta multiparada...');
-        const responseRuta = await fetch('http://127.0.0.1:8000/api/rutas/ruta-multiparada', {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                lugares: [origen, ...destinos],
-                optimizar: true
-            })
-        });
-        
-        if (!responseRuta.ok) {
-            const errorText = await responseRuta.text();
-            throw new Error(`Error ${responseRuta.status}: ${errorText}`);
-        }
-        
-        const datosRuta = await responseRuta.json();
-        console.log('✅ Ruta calculada:', datosRuta);
-        
-        // 3. Actualizar estadísticas básicas con primera respuesta
-        $('#destinosNombres').text(destinosNombres.join(', '));
-        $('#totalStops').text(destinos.length);
-        $('#totalEvents').text(datosRuta.eventos_trafico || 0);
-        $('#totalDistance').text(datosRuta.distancia_total_km + ' km');
-        $('#totalTime').text((datosRuta.estadisticas?.estimated_time_min || Math.round(datosRuta.distancia_total_km * 1.5)) + ' min');
-        
-        // 4. SEGUNDA LLAMADA: Obtener mapa con datos inyectados para el sidebar
-        console.log('📡 Generando mapa con datos para sidebar...');
+        // 2. LLAMADA AL BACKEND: Obtener el mapa renderizado (HTML)
+        // Usamos el endpoint que genera el HTML con Folium e inyecta window.datosRuta
+        console.log('📡 Solicitando renderizado de mapa multiparada...');
         const responseMapa = await fetch('http://127.0.0.1:8000/api/simulacion/render-multi', {
             method: 'POST',
             headers: {
@@ -1579,67 +1551,72 @@ $('#calculateRoute').click(async function() {
         
         if (!responseMapa.ok) {
             const errorText = await responseMapa.text();
-            throw new Error(`Error ${responseMapa.status}: ${errorText}`);
+            throw new Error(`Error del servidor: ${responseMapa.status} - ${errorText}`);
         }
         
         const htmlMapa = await responseMapa.text();
-        
-        // 5. Cargar el mapa en el iframe
+        console.log('✅ Mapa recibido del servidor');
+
+        // 3. INYECTAR EL MAPA EN EL IFRAME
         const frame = document.getElementById('mapaFrame');
         $('#mapPlaceholder').hide();
         $(frame).show();
         
-        const doc = frame.contentWindow.document;
+        // Forma segura de escribir en el iframe para evitar problemas de origen
+        const doc = frame.contentDocument || frame.contentWindow.document;
         doc.open();
         doc.write(htmlMapa);
         doc.close();
         
-        // 6. Extraer datos inyectados del mapa para el sidebar
-        setTimeout(() => {
-            try {
-                const frameWindow = frame.contentWindow;
-                if (frameWindow.datosRuta) {
-                    console.log('✅ Datos extraídos del mapa:', frameWindow.datosRuta);
-                    
-                    // Procesar instrucciones para el sidebar
-                    procesarInstrucciones(frameWindow.datosRuta.instrucciones || []);
-                    
-                    // Procesar eventos para el sidebar
-                    procesarEventos(frameWindow.datosRuta.eventos || []);
-                    
-                    // Actualizar estadísticas detalladas
-                    if (frameWindow.datosRuta.estadisticas) {
-                        $('#totalEvents').text(frameWindow.datosRuta.estadisticas.total_eventos || 0);
-                        $('#totalDistance').text(frameWindow.datosRuta.estadisticas.distancia_total_km + ' km');
-                        $('#totalTime').text(frameWindow.datosRuta.estadisticas.tiempo_estimado_min + ' min');
-                    }
-                    
-                    // Guardar todas las instrucciones para el modal
-                    window.todasInstrucciones = frameWindow.datosRuta.todas_instrucciones || 
-                                                frameWindow.datosRuta.instrucciones || [];
-                    
-                } else {
-                    console.warn('⚠️ No se encontraron datos inyectados en el mapa');
-                    // Usar datos de la primera respuesta como respaldo
-                    procesarInstrucciones([]);
-                    procesarEventos([]);
-                }
-            } catch (error) {
-                console.error('❌ Error al extraer datos del mapa:', error);
-            }
+        // 4. SINCRONIZACIÓN DE DATOS (Sidebar)
+        // Esperamos a que el script inyectado en el mapa se ejecute
+        let intentos = 0;
+        const maxIntentos = 10;
+        
+        const checkDataInterval = setInterval(() => {
+            intentos++;
+            const frameWindow = frame.contentWindow;
             
-            // Ocultar loading y mostrar sidebar
-            $('#loading').hide();
-            $('#routeInfo').show();
-        }, 2000);
+            if (frameWindow && frameWindow.datosRuta) {
+                console.log('📊 Datos de ruta detectados en el mapa:', frameWindow.datosRuta);
+                clearInterval(checkDataInterval);
+                
+                const data = frameWindow.datosRuta;
+
+                // Actualizar Textos del Sidebar
+                $('#destinosNombres').text(destinosNombres.join(' ➔ '));
+                $('#totalStops').text(data.estadisticas.destinos || destinos.length);
+                $('#totalEvents').text(data.estadisticas.total_eventos || 0);
+                $('#totalDistance').text(data.estadisticas.distancia_total_km + ' km');
+                $('#totalTime').text(data.estadisticas.tiempo_estimado_min + ' min');
+
+                // Procesar Listas
+                procesarInstrucciones(data.instrucciones || []);
+                procesarEventos(data.eventos || []);
+                
+                // Guardar para el modal de detalles
+                window.todasInstrucciones = data.todas_instrucciones || data.instrucciones || [];
+                
+                // Finalizar carga UI
+                $('#loading').hide();
+                $('#routeInfo').show();
+            } 
+            
+            if (intentos >= maxIntentos) {
+                clearInterval(checkDataInterval);
+                console.warn('⚠️ Se agotó el tiempo esperando datosRuta, usando valores por defecto.');
+                $('#loading').hide();
+                $('#routeInfo').show();
+            }
+        }, 300); // Revisa cada 300ms
         
     } catch (error) {
-        console.error('❌ ERROR:', error);
+        console.error('❌ ERROR CRÍTICO:', error);
         $('#loading').hide();
-        $('#routeInfo').show();
         $('#mapPlaceholder').show();
+        $('#mapaFrame').hide();
         
-        alert(`Hubo un error al calcular la ruta:\n${error.message}`);
+        alert(`Hubo un error al calcular la ruta:\n${error.message}\n\nVerifica que el backend esté corriendo en el puerto 8000.`);
     }
 });
         

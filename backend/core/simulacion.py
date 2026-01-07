@@ -1,6 +1,7 @@
 
 import os 
 import folium
+
 from . import dijkstra
 
 def traducir_detalles_trafico(texto_original):
