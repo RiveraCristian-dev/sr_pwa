@@ -919,7 +919,7 @@
                                 <option value="">Selecciona un destino</option>
                                 
                                 <optgroup label="REGIÓN NORTE">
-                                    <option value="Km 2.5, Carretera al Ejido la Soledad, Ejido La Soledad, 50300 Villa de Acambay de Ruíz Castañeda, Méx.">UES Acambay</option>
+                                    <option value="50300 Villa de Acambay de Ruíz Castañeda, Méx.">UES Acambay</option>
                                     <option value="Angel Castillo López S/N, A Santiago Oxtempan, 50600 El Oro de Hidalgo, Méx.">UES El Oro</option>
                                     <option value="Ignacio Zaragoza, 50400 Temascalcingo de José María Velasco, Méx.">UES Temascalcingo</option>
                                     <option value="Km. 7, Carretera Jilotepec-Chapa de Mota, Ejido de Jilotepec, 54240 Jilotepec de Molina Enríquez, Méx.">UES Jilotepec</option>
@@ -939,7 +939,7 @@
                                     <option value="De las Flores S/N, La Magdalena Chichicaspa, 52773 Huixquilucan de Degollado, Méx.">UES Huixquilucan</option>
                                     <option value="Cto de la Industria Pte S/N, Isidro Fabela, 52004 Lerma de Villada, Méx.">UES Lerma</option>
                                     <option value="Domicilio Conocido S/N, San Diego Alcalá, 50850 Temoaya, Méx.">UES Temoaya</option>
-                                    <option value="Los Hidalgos 233, Sin Nombre, 52316 Tenango de Arista, Méx.">UES Tenango del Valle</option>
+                                    <option value="Los Hidalgos 233, 52316 Tenango de Arista, Méx.">UES Tenango del Valle</option>
                                     <option value="Calle Colorines S/N,, Deportiva de Xalatlaco, 52680 Xalatlaco, Méx.">UES Xalatlaco</option>
                                 </optgroup>
                                 <optgroup label="REGIÓN VALLE DE MÉXICO">
@@ -951,7 +951,7 @@
                                     <option value="Carretera Villa del Carbon, KM 34.5, 54300 Villa del Carbón, Méx.">UES Villa</option>
                                 </optgroup>
                                 <optgroup label="REGIÓN SUR">
-                                    <option value="Domicilio Conocido, Paraje la Chimenea, Comunidad Agua Fría, Paraje la Chimenea, 51860 Almoloya de Alquisiras, Méx.">UES Almoloya de Alquisiras</option>
+                                    <option value="Domicilio Conocido, Paraje la Chimenea, 51860 Almoloya de Alquisiras, Méx.">UES Almoloya de Alquisiras</option>
                                     <option value="Domicilio conocido, San Luis, 51700 Coatepec Harinas, Méx.">UES Coatepec Harinas</option>
                                     <option value="Carretera Toluca–Sultepec, Libramiento Sultepec–La Goleta S/N,, Barrio Camino Nacional, 51600 Sultepec de Pedro Ascencio de Alquisiras, Méx.">UES Sultepec</option>
                                     <option value="Domicilio Conocido, El Rodeo, Tejupilco de Hidalgo, 51400 Méx.">UES Tejupilco</option>
@@ -1512,88 +1512,121 @@
         }
         
 // ====================
-// 5. MODIFICAR LA FUNCIÓN DE CALCULAR RUTA
+// 5. FUNCIÓN DE CALCULAR RUTA 
+// ====================
+// ====================
+// 5. FUNCIÓN DE CALCULAR RUTA 
 // ====================
 $('#calculateRoute').click(async function() {
     // 1. Obtener datos
     const origen = "Manzana 005, Loma Bonita, 54879 Cuautitlán, Méx.";
     const destinos = getSelectedDestinations();
-    // Limpieza antes de empezar
-    if (typeof LimpiarSimulacion === 'function') {
-        LimpiarSimulacion();
-    }
     
+    // Limpieza previa
+    if (typeof LimpiarSimulacion === 'function') {
+        LimpiarSimulacion(); 
+    }
+
     if (destinos.length === 0) {
         alert('Por favor selecciona al menos un destino');
         return;
     }
-    const destinosLimpios = destinos.map(d => {
-        let limpio = d.replace(/S\/N|s\/n|Domicilio Conocido|Km\.\s?\d+/g, '').trim();
-
-        if (!limpio.toLowerCase().includes("méxico")) {
+    
+    // --- CORRECCIÓN 1: Definir destinosFinales (Limpieza de direcciones) ---
+    // Esto es vital para que MapQuest reconozca lugares como Tenango
+    const destinosFinales = destinos.map(d => {
+        let limpio = d.trim();
+        // Aseguramos que tenga el contexto de estado y país si le falta
+        if (!limpio.toLowerCase().includes("méx")) {
             limpio += ", Estado de México, México";
         }
         return limpio;
-    }) ;
+    });
 
-    // 2. Referencias seguras
-    const $loading = $('#loading');
-    const $placeholder = $('#mapPlaceholder');
-    const $frame = $('#mapaFrame'); // Usamos jQuery para evitar errores de null
-    const frameElement = document.getElementById('mapaFrame');
-
-    $loading.show();
-    console.log("🚀 Enviando a backend...");
-
-    try { // 3. llamar al seervidor 
+    const destinosNombres = getSelectedDestinationsNames();
+    
+    // 2. Mostrar loading
+    $('#loading').show();
+    $('#routeInfo').hide();
+    $('#mapPlaceholder').show();
+    $('#mapaFrame').hide();
+    
+    console.log('🚀 Iniciando cálculo de ruta...');
+    console.log('📍 Origen:', origen);
+    console.log('📍 Destinos Procesados:', destinosFinales); // Ver en consola qué se envía
+    
+    try {
+        // 3. PRIMERA LLAMADA: Calcular ruta
+        console.log('📡 Llamando a /api/rutas/ruta-multiparada...');
+        
         const response = await fetch('http://127.0.0.1:8000/api/rutas/ruta-multiparada', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
             body: JSON.stringify({
-                lugares: [origen, ...destinosLimpios],
-                optimizar: true,
+                // --- CORRECCIÓN 2: Usar destinosFinales en la petición ---
+                lugares: [origen, ...destinosFinales], 
+                optimizar: true
             })
-                
         });
-
-        if (!response.ok) throw new Error(`Error servidor: ${response.status}`);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Error ${response.status}: ${errorText}`);
+        }
         
         const resultado = await response.json();
-        console.log("✅ Backend respondió correctamente");
-
-        // 4. Pequeña pausa para asegurar que el archivo existe en disco
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        const urlFinal = "ruta_multiparada.html?t=" + new Date().getTime();
-
-        // 5. MOSTRAR MAPA (Sin rutas complicadas)
-        frameElement.onload = function(){
-            $loading.hide();
-            console.log(" El navegador termino de renderizar el mapa");
-
-        };
-        frameElement.src = urlFinal;
-        $placeholder.hide();
-        $frame.show(); // Quitamos el display:none
+        console.log('✅ Backend respondió:', resultado);
         
-
-        // 6. Actualizar interfaz
-        $('#routeInfo').show();
-        $('#totalDistance').text((resultado.distancia_total_km || 0) + ' km');
+        // 4. Actualizar interfaz con estadísticas
+        $('#destinosNombres').text(destinosNombres.join(', '));
         $('#totalStops').text(destinos.length);
+        $('#totalEvents').text(resultado.estadisticas?.total_events || 0);
+        $('#totalDistance').text(resultado.distancia_total_km + ' km');
+        $('#totalTime').text(resultado.estadisticas?.estimated_time_min || 0 + ' min');
+        
+        // 5. ESPERAR UN MOMENTO para que el archivo se escriba en disco
+        console.log('⏳ Esperando que el mapa se genere en disco...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // 6. CARGAR EL MAPA (Con cachebuster)
+        const urlMapa = `ruta_multiparada.html?t=${new Date().getTime()}`;
+        console.log('🗺️ Cargando mapa desde:', urlMapa);
+        
+        const frameElement = document.getElementById('mapaFrame');
+        
+        // Evento cuando el iframe cargue
+        frameElement.onload = function() {
+            console.log('✅ Mapa cargado en iframe');
+            $('#loading').hide();
+            $('#routeInfo').show();
+        };
+        
+        frameElement.onerror = function() {
+            console.error('❌ Error al cargar el mapa');
+            $('#loading').hide();
+            alert('Error al cargar el mapa. Verifica que el archivo se haya generado.');
+        };
+        
+        // Asignar URL y mostrar
+        $('#mapPlaceholder').hide();
+        $('#mapaFrame').attr('src', urlMapa).show();
+        
+        console.log('✅ Proceso completado');
+        
+    } catch (error) {
+        console.error('ERROR:', error);
+        $('#loading').hide();
+        $('#routeInfo').show(); // Mostramos el panel aunque falle para ver qué pasó
+        $('#mapPlaceholder').show();
+        
+        // --- CORRECCIÓN 3: El bloque catch con la lista de direcciones ---
+        // Ahora sí funciona porque destinosFinales ya existe
+        const listaDirecciones = [origen, ...destinosFinales].map(d => `• ${d}`).join('\n');
 
-    } catch (err) {
-        console.error('ERROR DETECTADO:', err);
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        $placeholder.hide();
-        $frame.show();
-        const urlEmergencia = "ruta_multiparada.html?t=" + new Date().getTime();
-        frameElement.src = urlEmergencia;
-        console.log(" Intento de recuperacion cargando: " + urlEmergencia);
-
-        alert("Hubo un problema al calcular la ruta, se intentra cargar el ultimo mapa generado.");
-    } finally {
-        $loading.hide();
+        alert(`⚠️ Hubo un error al calcular la ruta:\n${error.message}\n\n🔎 ESTAS SON LAS DIRECCIONES ENVIADAS:\n${listaDirecciones}`);
     }
 });
         
