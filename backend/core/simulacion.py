@@ -276,12 +276,7 @@ def generar_mapa_visual(G, ruta_geometria, incidentes, paradas_ordenadas, nombre
     Genera el mapa interactivo y asegura que el archivo se libere correctamente.
     """
     # 1. BORRADO INICIAL (Para evitar que el navegador lea basura vieja si la nueva falla)
-    if os.path.exists(nombre_archivo):
-        try:
-            os.remove(nombre_archivo)
-            print(f"Limpieza: Archivo anterior eliminado.")
-        except:
-            pass
+    
     if not G or not ruta_geometria:
         print("Datos insuficientes para generar el mapa.")
         return []
@@ -289,45 +284,85 @@ def generar_mapa_visual(G, ruta_geometria, incidentes, paradas_ordenadas, nombre
     sw, ne = [18.80, -100.20], [20.20, -98.80]
     centro = [(sw[0]+ne[0])/2, (sw[1]+ne[1])/2]
 
-    try:
-        mapa = folium.Map(location=centro, zoom_start=11, tiles='OpenStreetMap', min_zoom=9, max_bounds=True, min_lat=sw[0], max_lat=ne[0], min_lon=sw[1], max_lon=ne[1])
+    mapa = folium.Map(location=centro, zoom_start=11, tiles='OpenStreetMap', min_zoom=9, max_bounds=True, min_lat=sw[0], max_lat=ne[0], min_lon=sw[1], max_lon=ne[1])
 
-        # Dibujar Ruta
-        folium.PolyLine(ruta_geometria, color="#0055FF", weight=5, opacity=0.7).add_to(mapa)
+    # Dibujar Ruta
+    folium.PolyLine(ruta_geometria, color="#0055FF", weight=5, opacity=0.7).add_to(mapa)
 
-        # Dibujar trafico
-        for inc in incidentes:
-            lat, lng = inc['lat'], inc['lng']
-            if sw[0] < lat < ne[0] and sw[1] < lng < ne[1]:
-                desc = traducir_detalles_trafico(inc.get('fullDesc', 'Sin descripción'))
-                tipo = inc.get('type', 0)
-                popup_html = f"<div style='font-family:Arial; width:200px'><b>Evento:</b> {desc}</div>"
+    # Dibujar trafico
+    print(f"   -> Procesando {len(incidentes)} eventos de tráfico...")
+    for inc in incidentes:
+        lat, lng = inc['lat'], inc['lng']
+        if sw[0] < lat < ne[0] and sw[1] < lng < ne[1]:
+            desc = traducir_detalles_trafico(inc['fullDesc'])
+            tipo = inc['type']
+            popup_html = f"<div style='font-family:Arial; width:200px'><b>Evento:</b> {desc}</div>"
 
-                if tipo == 4:
-                    folium.Circle(location=(lat, lng), radius=300, color='red', fill=True, fill_opacity=0.4, popup=popup_html).add_to(mapa)
-                else:
-                    folium.Marker(location=(lat, lng), icon=folium.Icon(color='orange', icon='info-sign'), popup=popup_html).add_to(mapa)
-        for i, p in enumerate(paradas_ordenadas):
-            color = 'green' if i == 0 else 'blue'
-            label = "ALMACÉN" if i == 0 else f"ENTREGA #{i}"
-            folium.Marker(location=p['pos'], popup=f"<b>{label}</b><br>{p['dir']}", 
-                          icon=folium.Icon(color=color, icon='truck', prefix='fa')).add_to(mapa)
+            if tipo == 4:  # Congestion
+                folium.Circle(location=(lat, lng), radius=300, color='red', fill=True, fill_opacity=0.4, popup=popup_html).add_to(mapa)
+            elif tipo == 1:  # Construccion
+                folium.Marker(location=(lat, lng), icon=folium.Icon(color='orange', icon='wrench', prefix='fa'), popup=popup_html).add_to(mapa)
+            else:  # Accidente/Otro
+                folium.Marker(location=(lat, lng), icon=folium.Icon(color='red', icon='exclamation-triangle', prefix='fa'), popup=popup_html).add_to(mapa)
 
-        mapa.fit_bounds([sw, ne])
+    # Marcadores de Logística
+    for i, p in enumerate(paradas_ordenadas):
+        if i == 0:
+            folium.Marker(location=p['pos'], popup=f"<b>ALMACÉN</b><br>{p['dir']}", icon=folium.Icon(color='green', icon='truck', prefix='fa')).add_to(mapa)
+        elif i < len(paradas_ordenadas) - 1:
+            folium.Marker(location=p['pos'], popup=f"<b>ENTREGA #{i}</b><br>{p['dir']}", icon=folium.Icon(color='blue', icon='truck', prefix='fa')).add_to(mapa)
 
-        #2 guardado atonomo
-        nombre_temp = nombre_archivo + ".tmp"
-        mapa.save(nombre_temp)
-        # si ya existe el archi real lo quitamos para poner el nuevo
-        if os.path.exists(nombre_archivo):
-            os.remove(nombre_archivo)
-        #renombramos el temporal al nombre final
-        os.rename(nombre_temp, nombre_archivo)
+    # Nodos intermedios
+    if G:  # ← VALIDACIÓN AGREGADA
+        for node_id in G.nodes():
+            datos = G.nodes[node_id]
+            desc_traducida = traducir_instruccion_ruta(datos.get('desc', ''))
+            folium.CircleMarker(
+                location=datos['pos'], 
+                radius=3, 
+                color='blue', 
+                fill=True, 
+                popup=f"<b>Instrucción {node_id}:</b><br>{desc_traducida}"
+            ).add_to(mapa)
+        
+    mapa.fit_bounds([sw, ne])
+    mapa.save(nombre_archivo)
+    print(f"\nMapa generado exitosamente: {nombre_archivo}")
+    
+    #  RETORNAR GEOMETRÍA (formato [(lat, lon), ...])
+    geometria_formato_repartidor = [(punto[0], punto[1]) for punto in ruta_geometria]
+    return geometria_formato_repartidor
 
-        print(f" Mapa finalizado y liberado para el navegador: {nombre_archivo}")
 
-        # 3 retonro la geometria
-        return ruta_geometria
-    except Exception as e:
-        print(f"Error al generar el mapa Folium: {e}")
-        return []
+#  RESTAURAR __main__ PARA PRUEBAS INDEPENDIENTES
+if __name__ == "__main__":
+    API_KEY = "0wSs0qcTStL21HNT4VhipGi7CDsjXnkw"
+    
+    print("--- SISTEMA LOGÍSTICO DE RUTAS ---")
+    lugares = []
+    
+    inicio = input("1. Salida (Almacén): ") or "Zocalo, Mexico City"
+    lugares.append(inicio)
+    
+    c = 1
+    while True:
+        d = input(f"2. Entrega #{c} (o 'fin'): ")
+        if d.lower() == 'fin': break
+        lugares.append(d)
+        c += 1
+    lugares.append(inicio)  # Regreso al almacén
+    
+    if len(lugares) < 3:
+        print("Se requieren destinos para calcular ruta.")
+    else:
+        print("\nCalculando ruta optimizada...")
+        maniobras, geom, bbox, orden = dijkstra.obtener_ruta_multiparada(API_KEY, lugares)
+        
+        if maniobras:
+            print("Obteniendo datos de tráfico...")
+            trafico = dijkstra.obtener_incidencias_trafico(API_KEY, bbox)
+            
+            grafo = dijkstra.construir_grafo_logico(maniobras)
+            generar_mapa_visual(grafo, geom, trafico, orden)
+        else:
+            print("Error al obtener ruta.")

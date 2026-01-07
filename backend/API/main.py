@@ -9,7 +9,7 @@ from datetime import datetime  # Añadir para timestamp real
 # Crear app FastAPI
 app = FastAPI(
     title="Simulador de Rutas PWA - RutaTec",
-    version="2.0",
+    version="2.5",
     description="API para gestión de rutas con PostgreSQL Neon",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -69,7 +69,7 @@ def root():
     return {
         "message": "API Simulador de Rutas PWA - RutaTec",
         "status": "activo",
-        "version": "2.0",
+        "version": "2.5",
         "database": "PostgreSQL Neon",
         "endpoints": {
             "docs": "/docs",

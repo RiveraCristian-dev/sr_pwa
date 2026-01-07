@@ -20,7 +20,7 @@ load_dotenv()
 
 # Diccionario de nombres de UES
 UES_NOMBRES = {
-    'Km 2.5, Carretera al Ejido la Soledad, Ejido La Soledad, 50300 Villa de Acambay de Ruíz Castañeda, Méx.': 'UES Acambay',
+    '50300 Villa de Acambay de Ruíz Castañeda, Méx.': 'UES Acambay',
     'Angel Castillo López S/N, A Santiago Oxtempan, 50600 El Oro de Hidalgo, Méx.': 'UES El Oro',
     'Ignacio Zaragoza, 50400 Temascalcingo de José María Velasco, Méx.': 'UES Temascalcingo',
     'Km. 7, Carretera Jilotepec-Chapa de Mota, Ejido de Jilotepec, 54240 Jilotepec de Molina Enríquez, Méx.': 'UES Jilotepec',
@@ -36,7 +36,7 @@ UES_NOMBRES = {
     'De las Flores S/N, La Magdalena Chichicaspa, 52773 Huixquilucan de Degollado, Méx.': 'UES Huixquilucan',
     'Cto de la Industria Pte S/N, Isidro Fabela, 52004 Lerma de Villada, Méx.': 'UES Lerma',
     'Domicilio Conocido S/N, San Diego Alcalá, 50850 Temoaya, Méx.': 'UES Temoaya',
-    'Los Hidalgos 233, Sin Nombre, 52316 Tenango de Arista, Méx.': 'UES Tenango del Valle',
+    '52316 Tenango de Arista, Méx.': 'UES Tenango del Valle',
     'Calle Colorines S/N,, Deportiva de Xalatlaco, 52680 Xalatlaco, Méx.': 'UES Xalatlaco',
     'Av Insurgentes, Fraccionamiento Las Americas, Las Américas, 55070 Ecatepec de Morelos, Méx.': 'UES Ecatepec',
     'Calle Blvrd Jardines Mz 66, Los Heroes Tecamac, 55764 Ojo de Agua, Méx.': 'UES Tecámac',
@@ -44,7 +44,7 @@ UES_NOMBRES = {
     'San Antonio s/n, Villa Esmeralda, 54910 Tultitlán de Mariano Escobedo, Méx.': 'UES Tultitlán',
     'Calle al Quemado S/N, Fracción I del Ex Ejido, 54980 San Pablo de las Salinas, Méx.': 'UES Tultepec',
     'Carretera Villa del Carbon, KM 34.5, 54300 Villa del Carbón, Méx.': 'UES Villa del Carbón',
-    'Domicilio Conocido, Paraje la Chimenea, Comunidad Agua Fría, Paraje la Chimenea, 51860 Almoloya de Alquisiras, Méx.': 'UES Almoloya de Alquisiras',
+    '51860 Almoloya de Alquisiras, Méx.': 'UES Almoloya de Alquisiras',
     'Domicilio conocido, San Luis, 51700 Coatepec Harinas, Méx.': 'UES Coatepec Harinas',
     'Carretera Toluca–Sultepec, Libramiento Sultepec–La Goleta S/N,, Barrio Camino Nacional, 51600 Sultepec de Pedro Ascencio de Alquisiras, Méx.': 'UES Sultepec',
     'Domicilio Conocido, El Rodeo, Tejupilco de Hidalgo, 51400 Méx.': 'UES Tejupilco',
@@ -540,7 +540,7 @@ def simular_ruta_multiparada_render(request: SimulacionRequestMulti):
     }};
     
     localStorage.setItem('ultimaRutaMulti', JSON.stringify(rutaData));
-    console.log('✅ Ruta guardada en localStorage para GPS:', rutaData);
+    console.log('Ruta guardada en localStorage para GPS:', rutaData);
     
     // Notificar al padre si está en iframe
     if (window.parent !== window) {{
