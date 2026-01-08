@@ -70,6 +70,9 @@
             text-decoration: none;
             color: #fff;
             transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
         }
 
         .nav-btn:hover {
@@ -345,6 +348,10 @@
             background: #e74c3c;
         }
 
+        .notification.warning {
+            background: #f39c12;
+        }
+
         @keyframes slideIn {
             from {
                 transform: translateX(400px);
@@ -435,8 +442,8 @@
                 </div>
             </div>
             <div class="nav-buttons">
-                <a href="#" class="nav-btn"><i class="fas fa-home"></i> Panel</a>
-                <a href="tel:+525512345678" class="nav-btn"><i class="fas fa-phone"></i> Llamar</a>
+                <a href="../PanelADM.html" class="nav-btn"><i class="fas fa-home"></i> Panel</a>
+                <button onclick="mostrarMensajeLlamada()" class="nav-btn"><i class="fas fa-phone"></i> Llamar</button>
             </div>
         </div>
 
@@ -577,6 +584,10 @@
             notif.textContent = mensaje;
             notif.className = `notification ${tipo} show`;
             setTimeout(() => notif.classList.remove('show'), 3000);
+        }
+
+        function mostrarMensajeLlamada() {
+            mostrarNotificacion('⚠️ Función en desarrollo', 'warning');
         }
 
         function limpiarForm() {
