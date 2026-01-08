@@ -903,9 +903,15 @@ def obtener_ruta_repartidor(id_repartidor: int, db: Session = Depends(get_db)):
         import json
         ruta_data = ruta.ruta_mapquest if isinstance(ruta.ruta_mapquest, dict) else json.loads(ruta.ruta_mapquest)
         
-        # Extraer geometría (shape.shapePoints del JSON de MapQuest)
+       # Extraer geometría
         geometria = []
-        if "route" in ruta_data and "shape" in ruta_data["route"]:
+        
+        # CASO 1: Formato simplificado (guardado por el Admin en gestion_rutas_router)
+        if "puntos" in ruta_data:
+            geometria = ruta_data["puntos"]
+            
+        # CASO 2: Formato crudo de MapQuest (por si acaso)
+        elif "route" in ruta_data and "shape" in ruta_data["route"]:
             geometria = ruta_data["route"]["shape"].get("shapePoints", [])
         
         # Extraer maniobras

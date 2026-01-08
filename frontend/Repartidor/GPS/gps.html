@@ -229,12 +229,6 @@
                 
                 rutaActual = JSON.parse(rutaGuardada);
                 console.log('✅ Ruta recuperada:', rutaActual);
-                console.log('🔍 Estructura:', {
-                    tiene_ruta: rutaActual.tiene_ruta,
-                    tiene_objeto_ruta: !!rutaActual.ruta,
-                    tiene_geometria: rutaActual.ruta ? !!rutaActual.ruta.geometria : false,
-                    longitud_geometria: rutaActual.ruta?.geometria?.length
-                });
                 
                 // 2. Validar estructura completa
                 if (!rutaActual.tiene_ruta) {
@@ -243,33 +237,49 @@
                 }
                 
                 if (!rutaActual.ruta) {
-                    mostrarError('Objeto "ruta" no encontrado en los datos.<br>DEBUG: ' + JSON.stringify(Object.keys(rutaActual)));
+                    mostrarError('Objeto "ruta" no encontrado en los datos.');
                     return;
                 }
                 
                 if (!rutaActual.ruta.geometria) {
-                    mostrarError('Campo "geometria" no encontrado.<br>DEBUG: Campos disponibles: ' + JSON.stringify(Object.keys(rutaActual.ruta)));
+                    mostrarError('Campo "geometria" no encontrado.');
                     return;
                 }
                 
-                if (rutaActual.ruta.geometria.length === 0) {
-                    mostrarError('La geometría está vacía.<br>Intenta recalcular la ruta desde el panel.');
-                    return;
-                }
-                
-                // 3. Convertir geometría a coordenadas [lat, lng]
+                // 3. PROCESAMIENTO ROBUSTO DE GEOMETRÍA (SOLUCIÓN ERROR NaN)
                 const geometria = rutaActual.ruta.geometria;
-                const coordenadas = [];
+                let coordenadas = [];
                 
                 console.log(`📍 Procesando ${geometria.length} puntos de geometría`);
-                
-                for (let i = 0; i < geometria.length; i += 2) {
-                    coordenadas.push([geometria[i], geometria[i + 1]]);
+                console.log('🔍 Muestra del formato (primer elemento):', geometria[0]);
+
+                if (geometria.length > 0) {
+                    // CASO A: Formato lista de pares [[lat, lng], [lat, lng]]
+                    if (Array.isArray(geometria[0])) {
+                        console.log('Detected: Formato Array de Arrays');
+                        coordenadas = geometria;
+                    }
+                    // CASO B: Formato lista plana [lat, lng, lat, lng]
+                    else if (typeof geometria[0] === 'number') {
+                        console.log('Detected: Formato Array Plano');
+                        for (let i = 0; i < geometria.length; i += 2) {
+                            coordenadas.push([geometria[i], geometria[i + 1]]);
+                        }
+                    }
+                    // CASO C: Formato objeto [{lat:..., lng:...}]
+                    else if (typeof geometria[0] === 'object' && 'lat' in geometria[0]) {
+                        console.log('Detected: Formato Objeto LatLng');
+                        coordenadas = geometria.map(p => [p.lat, p.lng]);
+                    }
+                }
+
+                // Verificación final de coordenadas
+                if (coordenadas.length === 0) {
+                    mostrarError('La geometría está vacía o el formato no es reconocido.');
+                    return;
                 }
                 
-                console.log(`✅ ${coordenadas.length} coordenadas procesadas`);
-                console.log('📍 Primera coord:', coordenadas[0]);
-                console.log('📍 Última coord:', coordenadas[coordenadas.length - 1]);
+                console.log(`✅ ${coordenadas.length} coordenadas procesadas exitosamente`);
                 
                 // 4. Calcular centro del mapa
                 const latitudes = coordenadas.map(c => c[0]);
