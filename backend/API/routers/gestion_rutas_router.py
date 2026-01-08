@@ -4,7 +4,7 @@ from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 import os
-import json  # ← AGREGADO
+import json
 from dotenv import load_dotenv
 import requests
 
@@ -21,37 +21,46 @@ load_dotenv()
 
 ORIGEN_BASE = "Universidad Mexiquense del Bicentenario, Manzana 005, Loma Bonita, 54879 Cuautitlán, Estado de México"
 
-# Mapeo UMB → Dirección completa
+# Mapeo UMB → Dirección completa (NECESARIO PARA GEOMETRÍA EXACTA)
 UNIVERSIDADES = {
-    "UMB Acambay": "Universidad Mexiquense del Bicentenario, Acambay de Arteaga, Estado de México",
-    "UMB El oro": "Universidad Mexiquense del Bicentenario, El Oro, Estado de México",
-    "UMB Temascalciongo": "Universidad Mexiquense del Bicentenario, Temascalcingo, Estado de México",
-    "UMB Jilotepec": "Universidad Mexiquense del Bicentenario, Jilotepec de Molina Enríquez, Estado de México",
-    "UMB Morelos": "Universidad Mexiquense del Bicentenario, Villa del Carbón, Estado de México",
-    "UMB Ixtlahuaca": "Universidad Mexiquense del Bicentenario, Ixtlahuaca de Rayón, Estado de México",
-    "UMB San Jose del Rincon": "Universidad Mexiquense del Bicentenario, San José del Rincón, Estado de México",
-    "UMB Jiquipilco": "Universidad Mexiquense del Bicentenario, Jiquipilco, Estado de México",
-    "UMB Villa Vivtoria": "Universidad Mexiquense del Bicentenario, Villa Victoria, Estado de México",
-    "UMB Atenco": "Universidad Mexiquense del Bicentenario, Atenco, Estado de México",
-    "UMB Chalco": "Universidad Mexiquense del Bicentenario, Chalco, Estado de México",
-    "UMB Ixtapaluca": "Universidad Mexiquense del Bicentenario, Ixtapaluca, Estado de México",
-    "UMB La Paz": "Universidad Mexiquense del Bicentenario, La Paz, Estado de México",
-    "UMB Huixquilucan": "Universidad Mexiquense del Bicentenario, Huixquilucan de Degollado, Estado de México",
-    "UMB Lerma": "Universidad Mexiquense del Bicentenario, Lerma de Villada, Estado de México",
-    "UMB Temoaya": "Universidad Mexiquense del Bicentenario, Temoaya, Estado de México",
-    "UMB Tenango del Valle": "Universidad Mexiquense del Bicentenario, Tenango del Valle, Estado de México",
-    "UMB Xalatlaco": "Universidad Mexiquense del Bicentenario, Xalatlaco, Estado de México",
-    "UMB Ecatepec": "Universidad Mexiquense del Bicentenario, Ecatepec de Morelos, Estado de México",
-    "UMB Tecámac": "Universidad Mexiquense del Bicentenario, Tecámac, Estado de México",
-    "UMB Tepotzotlán": "Universidad Mexiquense del Bicentenario, Tepotzotlán, Estado de México",
-    "UMB Tultitlán": "Universidad Mexiquense del Bicentenario, Tultitlán de Mariano Escobedo, Estado de México",
-    "UMB Tultepec": "Universidad Mexiquense del Bicentenario, Tultepec, Estado de México",
-    "UMB Villa": "Universidad Mexiquense del Bicentenario, Villa Nicolás Romero, Estado de México",
-    "UMB Almoloya de Alquisiras": "Universidad Mexiquense del Bicentenario, Almoloya de Alquisiras, Estado de México",
-    "UMB Coatepec Harinas": "Universidad Mexiquense del Bicentenario, Coatepec Harinas, Estado de México",
-    "UMB Sultepec": "Universidad Mexiquense del Bicentenario, Sultepec, Estado de México",
-    "UMB Tejupilco": "Universidad Mexiquense del Bicentenario, Tejupilco de Hidalgo, Estado de México",
-    "UMB Tlatlaya": "Universidad Mexiquense del Bicentenario, Tlatlaya, Estado de México"
+    # REGIÓN NORTE
+    "UMB Acambay": "50300 Villa de Acambay de Ruíz Castañeda, Méx.",
+    "UMB El oro": "Angel Castillo López S/N, A Santiago Oxtempan, 50600 El Oro de Hidalgo, Méx.",
+    "UMB Temascalciongo": "Ignacio Zaragoza, 50400 Temascalcingo de José María Velasco, Méx.",
+    "UMB Jilotepec": "Km. 7, Carretera Jilotepec-Chapa de Mota, Ejido de Jilotepec, 54240 Jilotepec de Molina Enríquez, Méx.",
+    "UMB Morelos": "Camino Real S/N, Barrio Primero, 50550 San Bartolo Morelos, Méx.",
+    "UMB Ixtlahuaca": "Domicilio Conocido S/N, Ixtlahuaca, 50740 Barrio de San Pedro la Cabecera, Méx.",
+    "UMB San Jose del Rincon": "AVENIDA UNIVERSIDAD SN, 50660 Colonia Las Tinajas, Méx.",
+    "UMB Jiquipilco": "Km.1, Carretera San Felipe Santiago, 50800 Méx.",
+    "UMB Villa Vivtoria": "Km. 47 Carretera Federal Toluca-Zitácuaro, 50960 San Agustín Berros, Méx.",
+
+    # REGIÓN ORIENTE
+    "UMB Atenco": "Independencia 1, Sta Isabel Ixtapan, 56300 Santa Isabel Ixtapan, Méx.",
+    "UMB Chalco": "Carr Federal México-Cuautla Km 14 s/n, La Candelaria tlapala, 56641 Chalco de Díaz Covarrubias, Méx.",
+    "UMB Ixtapaluca": "Avenida Hacienda La Escondida 589, Geovillas Santa Barbara, 56630 Ixtapaluca, Méx.",
+    "UMB La Paz": "S. Agustín S/N, El Pino, 56400 San Isidro, Méx.",
+
+    # REGIÓN VALLE DE TOLUCA
+    "UMB Huixquilucan": "De las Flores S/N, La Magdalena Chichicaspa, 52773 Huixquilucan de Degollado, Méx.",
+    "UMB Lerma": "Cto de la Industria Pte S/N, Isidro Fabela, 52004 Lerma de Villada, Méx.",
+    "UMB Temoaya": "Domicilio Conocido S/N, San Diego Alcalá, 50850 Temoaya, Méx.",
+    "UMB Tenango del Valle": "Los Hidalgos 233, 52316 Tenango de Arista, Méx.",
+    "UMB Xalatlaco": "Calle Colorines S/N, Deportiva de Xalatlaco, 52680 Xalatlaco, Méx.",
+
+    # REGIÓN VALLE DE MÉXICO
+    "UMB Ecatepec": "Av Insurgentes, Fraccionamiento Las Americas, Las Américas, 55070 Ecatepec de Morelos, Méx.",
+    "UMB Tecámac": "Calle Blvrd Jardines Mz 66, Los Heroes Tecamac, 55764 Ojo de Agua, Méx.",
+    "UMB Tepotzotlán": "Calle Av. del Convento S/N, El Trebol, 54614 Tepotzotlán, Méx.",
+    "UMB Tultitlán": "San Antonio s/n, Villa Esmeralda, 54910 Tultitlán de Mariano Escobedo, Méx.",
+    "UMB Tultepec": "Calle al Quemado S/N, Fracción I del Ex Ejido, 54980 San Pablo de las Salinas, Méx.",
+    "UMB Villa": "Carretera Villa del Carbon, KM 34.5, 54300 Villa del Carbón, Méx.",
+
+    # REGIÓN SUR
+    "UMB Almoloya de Alquisiras": "Domicilio Conocido, Paraje la Chimenea, 51860 Almoloya de Alquisiras, Méx.",
+    "UMB Coatepec Harinas": "Domicilio conocido, San Luis, 51700 Coatepec Harinas, Méx.",
+    "UMB Sultepec": "Carretera Toluca–Sultepec, Libramiento Sultepec–La Goleta S/N, Barrio Camino Nacional, 51600 Sultepec, Méx.",
+    "UMB Tejupilco": "Domicilio Conocido, El Rodeo, Tejupilco de Hidalgo, 51400 Méx.",
+    "UMB Tlatlaya": "Carretera Los Cuervos-Arcelia km 35, San Pedro, Limón, 51585 Tlatlaya, Méx"
 }
 
 # ============================================
@@ -178,18 +187,19 @@ def calcular_ruta(
 
         if not asig:
             raise HTTPException(status_code=404, detail="Asignación no encontrada")
+        
         # 2. Definir origen y destino
         destino_completo = UNIVERSIDADES.get(asig.ruta_municipio, f"{asig.ruta_municipio}, Estado de México")
         origen = request.origen or ORIGEN_BASE
         
-        # 3. LLAMAR A DIJKSTRA (La función que VS Code marcaba en amarillo)
+        # 3. LLAMAR A DIJKSTRA
         api_key = os.getenv("MAPQUEST_API_KEY")
         maniobras, geometria, bbox, orden = obtener_ruta_multiparada(api_key, [origen, destino_completo])
 
         if not geometria:
             raise HTTPException(status_code=400, detail="No se obtuvo geometría de MapQuest")
+        
         # 4. ACTUALIZAR MAPA PARA EL ADMINISTRADOR (simulacion.py)
-        # Esto genera el archivo HTML que ves en el panel
         generar_mapa_visual(None, geometria, [], [{"pos": [0,0], "dir": origen}, {"pos": [0,0], "dir": destino_completo}])
 
         # 5. GUARDAR EN BASE DE DATOS PARA EL REPARTIDOR
@@ -225,7 +235,16 @@ def calcular_ruta(
         })
 
         db.commit()
-        return {"status": "success", "mensaje": "Ruta guardada y mapa actualizado"}
+
+        # ✅ CORREGIDO: Devolvemos los datos numéricos para evitar el error 'toFixed' en el frontend
+        return {
+            "status": "success", 
+            "mensaje": "Ruta guardada y mapa actualizado",
+            "distancia_km": distancia_km,
+            "tiempo_min": tiempo_min,
+            "costo_total": 0,       # Valor por defecto para frontend
+            "emisiones_co2_kg": 0   # Valor por defecto para frontend
+        }
     
     except Exception as e:
         db.rollback()
@@ -233,10 +252,8 @@ def calcular_ruta(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
 @router.get("/calculadas")
 def listar_rutas_calculadas(db: Session = Depends(get_db)):
-    
     """
     Lista todas las rutas calculadas y activas
     """
@@ -360,7 +377,7 @@ def recalcular_ruta(ruta_id: int, db: Session = Depends(get_db)):
             "ruta_id": ruta_id,
             "distancia": ruta_data["distancia_km"],
             "tiempo": ruta_data["tiempo_min"],
-            "ruta_json": json.dumps(ruta_data["ruta_completa"])  # ✅ CORREGIDO
+            "ruta_json": json.dumps(ruta_data["ruta_completa"])
         })
         
         db.commit()
